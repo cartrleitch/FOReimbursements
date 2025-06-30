@@ -1,0 +1,40 @@
+services:
+  client:
+    build: 
+      context: ./rs25-client/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+  server:
+    build: 
+      context: .
+      dockerfile: RS25/Dockerfile  
+    ports:
+      - "5000:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=churchdb;Username=postgres;Password=research25
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: research25
+      POSTGRES_DB: churchdb
+    ports:
+        - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+
+volumes:
+  postgres_data:
