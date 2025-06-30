@@ -7,6 +7,8 @@ function App() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+
+    // GET reimbursements from the API
     async function fetchReimbursements() {
         setLoading(true);
         setError(null);
@@ -24,9 +26,185 @@ function App() {
         }
     }
 
+    // POST a new reimbursement to the API
+    async function createReimbursement() {
+        const vendor = (document.getElementById("vendor") as HTMLInputElement).value;
+        const vendorAddress = (document.getElementById("vendoraddress") as HTMLInputElement).value;
+        const vendorWebsite = (document.getElementById("vendorwebsite") as HTMLInputElement).value;
+        const totalAmount = parseFloat((document.getElementById("totalamount") as HTMLInputElement).value);
+        const dateSubmittedIn = (document.getElementById("datesubmitted") as HTMLInputElement).value;
+        const paymentMethod = (document.getElementById("paymentmethod") as HTMLSelectElement).value;
+
+        const dateSubmitted = new Date(dateSubmittedIn).toISOString();
+
+        if (!vendor || !vendorAddress || !vendorWebsite || isNaN(totalAmount) || !dateSubmitted) {
+            alert("Please fill in all fields correctly. " + dateSubmitted);
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    vendor,
+                    vendorAddress,
+                    vendorWebsite,
+                    totalAmount,
+                    dateSubmitted,
+                    paymentMethod
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            await fetchReimbursements();
+            alert("Reimbursement created successfully!");
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // DELETE a reimbursement by ID
+    async function DeleteReimbursement() {
+        const id = (document.getElementById("deleteId") as HTMLInputElement).value;
+        try {
+            await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.status;
+                })
+        }
+        catch (err: any) {
+            setError(err.message);
+        }
+    }
+
+    // PUT a new reimbursement to the API
+    async function updateReimbursement() {
+        const id = (document.getElementById("updateId") as HTMLInputElement).value;
+        const vendor = (document.getElementById("vendoru") as HTMLInputElement).value;
+        const vendorAddress = (document.getElementById("vendoraddressu") as HTMLInputElement).value;
+        const vendorWebsite = (document.getElementById("vendorwebsiteu") as HTMLInputElement).value;
+        const totalAmount = parseFloat((document.getElementById("totalamountu") as HTMLInputElement).value);
+        const dateSubmittedIn = (document.getElementById("datesubmittedu") as HTMLInputElement).value;
+        const paymentMethod = (document.getElementById("paymentmethodu") as HTMLSelectElement).value;
+
+        const dateSubmitted = new Date(dateSubmittedIn).toISOString();
+
+        if (!vendor || !vendorAddress || !vendorWebsite || isNaN(totalAmount) || !dateSubmitted) {
+            alert("Please fill in all fields correctly. " + dateSubmitted);
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: Number(id),
+                    vendor,
+                    vendorAddress,
+                    vendorWebsite,
+                    totalAmount,
+                    dateSubmitted,
+                    paymentMethod
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            await fetchReimbursements();
+            alert("Reimbursement updated successfully!");
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
   return (
       <div className="App">
+          <div>
+              <h1>Create Reimbursement</h1>
+              <form>
+                  <label htmlFor="vendor">Vendor: </label>
+                  <input type="text" id="vendor" placeholder="Vendor" />
+                  <br />
+                  <label htmlFor="vendoraddress">Vendor Address: </label>
+                  <input type="text" id="vendoraddress" placeholder="Vendor Address" />
+                  <br />
+                  <label htmlFor="vendorwebsite">Vendor Website: </label>
+                  <input type="text" id="vendorwebsite" placeholder="Vendor Website" />
+                  <br />
+                  <label htmlFor="total">Total Amount: </label>
+                  <input type="number" id="totalamount" placeholder="Total Amount" />
+                  <br />
+                  <label htmlFor="datesubmitted">Date Submitted: </label>
+                  <input type="date" id="datesubmitted" placeholder="Date Submitted" />
+                  <br />
+                  <label htmlFor="paymentmethod">Payment Method: </label>
+                  <select id="paymentmethod">
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                      <option value="Bank Transfer">Bank Transfer</option>
+                  </select>
+                  <br />
+                  <button type="button" onClick={createReimbursement}>Submit</button>
+              </form>
 
+              <button onClick={fetchReimbursements} disabled={loading}>
+                  {loading ? "Loading..." : "Fetch Reimbursements"}
+              </button>
+              <br />
+              <input type="number" id="deleteId" placeholder="Enter ID to delete" />
+              <br />
+              <button type="button" onClick={DeleteReimbursement}>Delete</button>
+              <br />
+
+              <h1>Update Reimbursement</h1>
+              <form>
+                  <label htmlFor="updateId">Update: </label>
+                  <input type="number" id="updateId" placeholder="Enter ID to update" />
+                  <label htmlFor="vendor">Vendor: </label>
+                  <input type="text" id="vendoru" placeholder="Vendor" />
+                  <br />
+                  <label htmlFor="vendoraddress">Vendor Address: </label>
+                  <input type="text" id="vendoraddressu" placeholder="Vendor Address" />
+                  <br />
+                  <label htmlFor="vendorwebsite">Vendor Website: </label>
+                  <input type="text" id="vendorwebsiteu" placeholder="Vendor Website" />
+                  <br />
+                  <label htmlFor="total">Total Amount: </label>
+                  <input type="number" id="totalamountu" placeholder="Total Amount" />
+                  <br />
+                  <label htmlFor="datesubmitted">Date Submitted: </label>
+                  <input type="date" id="datesubmittedu" placeholder="Date Submitted" />
+                  <br />
+                  <label htmlFor="paymentmethod">Payment Method: </label>
+                  <select id="paymentmethodu">
+                      <option value="Credit Card">Credit Card</option>
+                      <option value="Cash">Cash</option>
+                      <option value="Check">Check</option>
+                      <option value="Bank Transfer">Bank Transfer</option>
+                  </select>
+                  <br />
+                  <button type="button" onClick={updateReimbursement}>Submit</button>
+              </form>
+          </div>
       </div>
   );
 }
