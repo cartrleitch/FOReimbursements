@@ -39,5 +39,56 @@ namespace RS25.Controllers
 
             return CreatedAtAction(nameof(GetReimbursements), new { id = reimbursement.Id }, reimbursement);
         }
+
+        // PUT: api/reimbursement/{id}
+        [HttpPut("{id}", Name = "UpdateReimbursement")]
+        public async Task<IActionResult> UpdateReimbursement(int id, [FromBody] Reimbursement Reimbursement)
+        {
+            if (Reimbursement == null || id != Reimbursement.Id)
+            {
+                return BadRequest("Reimbursement data is invalid");
+            }
+
+            var currReim = await _context.Reimbursement.FindAsync(id);
+
+            if (currReim == null)
+            {
+                return NotFound("Reimbursement not found");
+            }
+            currReim.Vendor = Reimbursement.Vendor;
+            currReim.VendorAddress = Reimbursement.VendorAddress;
+            currReim.VendorWebsite = Reimbursement.VendorWebsite;
+            currReim.TotalAmount = Reimbursement.TotalAmount;
+            currReim.DateSubmitted = Reimbursement.DateSubmitted;
+            currReim.PaymentMethod = Reimbursement.PaymentMethod;
+            currReim.Status = Reimbursement.Status;
+            currReim.DateApproved = Reimbursement.DateApproved;
+            
+            await _context.SaveChangesAsync();
+
+            return Ok(id);
+        }
+
+        // DELETE: api/reimbursement/{id}
+        [HttpDelete("{id}", Name = "DeleteReimbursement")]
+        public async Task<IActionResult> DeleteReimbursement(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid Reimbursement ID");
+            }
+
+            var reim = await _context.Reimbursement.FindAsync(id);
+
+            if (reim == null)
+            {
+                return NotFound("Reimbursement not found");
+            }
+
+            _context.Reimbursement.Remove(reim);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
