@@ -8,6 +8,6 @@ namespace RS25.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
-        public DbSet<WeatherForecast> WeatherForecast { get; set; }
+        public DbSet<Reimbursement> Reimbursement { get; set; }
     }
 }
