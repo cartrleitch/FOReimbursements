@@ -99,10 +99,10 @@ function App() {
                   </select>
                   <br />
                   <button type="button" onClick={createReimbursement}>Submit</button>
-
-                  
-
               </form>
+              <button onClick={fetchReimbursements} disabled={loading}>
+                  {loading ? "Loading..." : "Fetch Reimbursements"}
+              </button>
           </div>
       </div>
   );
