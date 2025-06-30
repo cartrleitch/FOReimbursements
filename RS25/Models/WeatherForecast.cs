@@ -1,4 +1,4 @@
-namespace RS25
+namespace RS25.Models
 {
     public class WeatherForecast
     {

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using RS25.Models;
 
 namespace RS25.Controllers
 {
