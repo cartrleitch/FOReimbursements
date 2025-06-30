@@ -15,7 +15,7 @@ namespace RS25.Models
         // public string EmployeeId { get; set; } // Foreign key to Employee
         // public string ManagerId { get; set; } // Foreign key to Manager
         public DateTime? DateApproved { get; set; } // Nullable if not yet approved
-        // public string Comments { get; set; } // Optional comments from the manager
+        // public string Comments { get; set; } // Optional comments from the managers
 
     }
 }
