@@ -73,15 +73,20 @@ function App() {
     // DELETE a reimbursement by ID
     async function DeleteReimbursement() {
         const id = (document.getElementById("deleteId") as HTMLInputElement).value;
-        await fetch(`${API_URL}/${id}`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
+        try {
+            await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.status;
+                })
+        }
+        catch (err: any) {
+            setError(err.message);
+        }
     }
 
   return (
@@ -95,8 +100,8 @@ function App() {
                   <label htmlFor="vendoraddress">Vendor Address: </label>
                   <input type="text" id="vendoraddress" placeholder="Vendor Address" />
                   <br />
-                  <label htmlFor="vendorweb">Vendor Website: </label>
-                  <input type="text" id="vendorweb" placeholder="Vendor Website" />
+                  <label htmlFor="vendorwebsite">Vendor Website: </label>
+                  <input type="text" id="vendorwebsite" placeholder="Vendor Website" />
                   <br />
                   <label htmlFor="total">Total Amount: </label>
                   <input type="number" id="total" placeholder="Total Amount" />
