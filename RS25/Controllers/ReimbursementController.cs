@@ -15,18 +15,8 @@ namespace RS25.Controllers
         {
             _context = context;
         }
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
 
-        /*private readonly ILogger<ReimbursementController> _logger;
-
-        public ReimbursementController(ILogger<ReimbursementController> logger)
-        {
-            _logger = logger;
-        }*/
-
+        // GET: api/reimbursement
         [HttpGet(Name = "GetReimbursement")]
         public async Task<IActionResult> GetReimbursements()
         {
@@ -34,15 +24,20 @@ namespace RS25.Controllers
 
             return Ok(reimbursements);
         }
-        /*public IEnumerable<Reimbursement> Get()
+
+        // POST: api/reimbursement
+        [HttpPost(Name = "CreateReimbursement")]
+        public async Task<IActionResult> CreateReimbursement([FromBody] Reimbursement reimbursement)
         {
-            return Enumerable.Range(1, 5).Select(index => new Reimbursement
+            if (reimbursement == null)
             {
-                DateSubmitted = DateTime.Now.AddDays(index),
-                Id = Random.Shared.Next(-20, 55),
-                TotalAmount = Random.Shared.Next(100, 1000)
-            })
-            .ToArray();
-        }*/
+                return BadRequest("Reimbursement cannot be null");
+            }
+
+            _context.Reimbursement.Add(reimbursement);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetReimbursements), new { id = reimbursement.Id }, reimbursement);
+        }
     }
 }
