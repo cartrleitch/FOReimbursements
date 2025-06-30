@@ -30,14 +30,14 @@ function App() {
     async function createReimbursement() {
         const vendor = (document.getElementById("vendor") as HTMLInputElement).value;
         const vendorAddress = (document.getElementById("vendoraddress") as HTMLInputElement).value;
-        const vendorWeb = (document.getElementById("vendorweb") as HTMLInputElement).value;
+        const vendorWebsite = (document.getElementById("vendorwebsite") as HTMLInputElement).value;
         const total = parseFloat((document.getElementById("total") as HTMLInputElement).value);
         const dateSubmittedIn = (document.getElementById("datesubmitted") as HTMLInputElement).value;
         const paymentMethod = (document.getElementById("paymentmethod") as HTMLSelectElement).value;
 
         const dateSubmitted = new Date(dateSubmittedIn).toISOString();
 
-        if (!vendor || !vendorAddress || !vendorWeb || isNaN(total) || !dateSubmitted) {
+        if (!vendor || !vendorAddress || !vendorWebsite || isNaN(total) || !dateSubmitted) {
             alert("Please fill in all fields correctly. " + dateSubmitted);
             return;
         }
@@ -52,7 +52,7 @@ function App() {
                 body: JSON.stringify({
                     vendor,
                     vendorAddress,
-                    vendorWeb,
+                    vendorWebsite,
                     total,
                     dateSubmitted,
                     paymentMethod
@@ -68,6 +68,20 @@ function App() {
         } finally {
             setLoading(false);
         }
+    }
+
+    // DELETE a reimbursement by ID
+    async function DeleteReimbursement() {
+        const id = (document.getElementById("deleteId") as HTMLInputElement).value;
+        await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
     }
 
   return (
@@ -103,6 +117,10 @@ function App() {
               <button onClick={fetchReimbursements} disabled={loading}>
                   {loading ? "Loading..." : "Fetch Reimbursements"}
               </button>
+              <br />
+              <input type="number" id="deleteId" placeholder="Enter ID to delete" />
+              <br />
+              <button type="button" onClick={DeleteReimbursement}>Delete</button>
           </div>
       </div>
   );
