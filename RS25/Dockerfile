@@ -22,9 +22,12 @@ RUN dotnet build "./RS25.csproj" -c $BUILD_CONFIGURATION -o /app/build
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./RS25.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+COPY RS25/efbundle /app/publish/efbundle
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=publish /app/publish/efbundle ./efbundle
+RUN chmod +x ./efbundle
 ENTRYPOINT ["dotnet", "RS25.dll"]
