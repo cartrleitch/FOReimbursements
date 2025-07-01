@@ -29,7 +29,7 @@ function MainPage() {
         fetchReimbursements,
         deleteReimbursement,
     } = useReimbursementFunctions();
-    useEffect(() => { fetchReimbursements()}, [fetchReimbursements]);
+    useEffect(() => { fetchReimbursements()}, []);
     return (
         <div className="content">
             <Title content="Reimbursement Dashboard" />
@@ -65,7 +65,7 @@ function CreateReimbursementPage() {
     return (
         <div className="content">
             <Title content="Create Reimbursement" />
-            <form className="normal-form">
+            <form className="normal-form" onSubmit={e => { e.preventDefault(); createReimbursement(); }}>
                 <InputField id="vendor" placeholder="Vendor" type="text" label="Vendor" />
                 <InputField id="vendoraddress" placeholder="Vendor Address" type="text" label="Vendor Address" />
                 <InputField id="vendorwebsite" placeholder="Vendor Website" type="text" label="Vendor Website" />
@@ -73,7 +73,7 @@ function CreateReimbursementPage() {
                 <InputField id="datesubmitted" placeholder="Date Submitted" type="date" label="Date Submitted" />
                 <InputSelect id="paymentmethod" options={["Credit Card", "Cash", "Check", "Bank Transfer"]} label="Payment Method" />
                 <FileInput id="receipts" label="Receipts" />
-                <SubmitButton onClick={createReimbursement} content="Submit" />
+                <SubmitButton content="Submit" />
             </form>
         </div>
     );

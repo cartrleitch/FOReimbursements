@@ -20,7 +20,7 @@ const columnns: GridColDef[] = [
     { field: 'vendorAddress', headerName: 'Vendor Address', flex: 1 }, 
     { field: 'vendorWebsite', headerName: 'Vendor Website', flex: 1 }, 
     { field: 'totalAmount', headerName: 'Total Amount', flex: 1, type: 'number', headerAlign: 'left' }, 
-    { field: 'dateSubmitted', headerName: 'Date Submitted', flex: 1, type: 'date' }, 
+    { field: 'dateSubmitted', headerName: 'Date Submitted', flex: 1, type: 'date', valueGetter: (params : any) => params.value ? new Date(params.value) : null}, 
     { field: 'paymentMethod', headerName: 'Payment Method', flex: 1 } 
 
 ];

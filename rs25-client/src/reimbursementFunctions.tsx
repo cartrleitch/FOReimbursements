@@ -35,6 +35,7 @@ export function useReimbursementFunctions() {
         const paymentMethod = (document.getElementById("paymentmethod") as HTMLSelectElement).value;
 
         const dateSubmitted = new Date(dateSubmittedIn).toISOString();
+        console.log("createReimbursement triggered");
 
         if (!vendor || !vendorAddress || !vendorWebsite || isNaN(totalAmount) || !dateSubmitted) {
             alert("Please fill in all fields correctly. " + dateSubmitted);

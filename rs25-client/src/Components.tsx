@@ -22,10 +22,10 @@ export function RedirectButton({ to, content }: { to: string, content: string })
     );
 }
 
-export function SubmitButton({ onClick, content }: { onClick: () => void, content: string }) {
+export function SubmitButton({ onClick, content }: { onClick?: () => void, content: string }) {
     return (
         <div className="submit-button-container">
-            <button onClick={onClick} className="submit-button">
+            <button type="submit" onClick={onClick} className="submit-button">
                 {content}
             </button>
         </div>
