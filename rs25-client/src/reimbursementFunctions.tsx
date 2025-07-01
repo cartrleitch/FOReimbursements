@@ -1,0 +1,148 @@
+import React, { useState } from 'react';
+
+export function useReimbursementFunctions() {
+    const API_URL = "http://localhost:5000/api/Reimbursement";
+    // eslint-disable-next-line
+    const [data, setData] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+    // eslint-disable-next-line
+    const [error, setError] = useState<string | null>(null);
+
+    async function fetchReimbursements() {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+            setData(result);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // POST a new reimbursement to the API
+    async function createReimbursement() {
+        const vendor = (document.getElementById("vendor") as HTMLInputElement).value;
+        const vendorAddress = (document.getElementById("vendoraddress") as HTMLInputElement).value;
+        const vendorWebsite = (document.getElementById("vendorwebsite") as HTMLInputElement).value;
+        const totalAmount = parseFloat((document.getElementById("totalamount") as HTMLInputElement).value);
+        const dateSubmittedIn = (document.getElementById("datesubmitted") as HTMLInputElement).value;
+        const paymentMethod = (document.getElementById("paymentmethod") as HTMLSelectElement).value;
+
+        const dateSubmitted = new Date(dateSubmittedIn).toISOString();
+
+        if (!vendor || !vendorAddress || !vendorWebsite || isNaN(totalAmount) || !dateSubmitted) {
+            alert("Please fill in all fields correctly. " + dateSubmitted);
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    vendor,
+                    vendorAddress,
+                    vendorWebsite,
+                    totalAmount,
+                    dateSubmitted,
+                    paymentMethod
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            await fetchReimbursements();
+            alert("Reimbursement created successfully!");
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // DELETE a reimbursement by ID
+    async function deleteReimbursement() {
+        const id = (document.getElementById("deleteId") as HTMLInputElement).value;
+        try {
+            await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.status;
+                })
+        }
+        catch (err: any) {
+            setError(err.message);
+        }
+    }
+
+    // PUT a new reimbursement to the API
+    async function updateReimbursement() {
+        const id = (document.getElementById("updateId") as HTMLInputElement).value;
+        const vendor = (document.getElementById("vendoru") as HTMLInputElement).value;
+        const vendorAddress = (document.getElementById("vendoraddressu") as HTMLInputElement).value;
+        const vendorWebsite = (document.getElementById("vendorwebsiteu") as HTMLInputElement).value;
+        const totalAmount = parseFloat((document.getElementById("totalamountu") as HTMLInputElement).value);
+        const dateSubmittedIn = (document.getElementById("datesubmittedu") as HTMLInputElement).value;
+        const paymentMethod = (document.getElementById("paymentmethodu") as HTMLSelectElement).value;
+
+        const dateSubmitted = new Date(dateSubmittedIn).toISOString();
+
+        if (!vendor || !vendorAddress || !vendorWebsite || isNaN(totalAmount) || !dateSubmitted) {
+            alert("Please fill in all fields correctly. " + dateSubmitted);
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: Number(id),
+                    vendor,
+                    vendorAddress,
+                    vendorWebsite,
+                    totalAmount,
+                    dateSubmitted,
+                    paymentMethod
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            await fetchReimbursements();
+            alert("Reimbursement updated successfully!");
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // This hook is used to manage the state and functions related to reimbursements.
+    // It includes fetching, creating, updating, and deleting reimbursements.
+    return {
+        data, loading, error,
+        fetchReimbursements,
+        createReimbursement,
+        updateReimbursement,
+        deleteReimbursement,
+    };
+}
+
+// GET reimbursements from the API
