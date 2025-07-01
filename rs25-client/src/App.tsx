@@ -30,6 +30,7 @@ function MainPage() {
         deleteReimbursement,
     } = useReimbursementFunctions();
     useEffect(() => { fetchReimbursements()}, []);
+
     return (
         <div className="content">
             <Title content="Reimbursement Dashboard" />

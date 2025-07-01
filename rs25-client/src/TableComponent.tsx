@@ -28,7 +28,7 @@ const columnns: GridColDef[] = [
 export function ReimbursementTable({ rows }: TableProps) {
     return (
         <div className="reim-table">
-            <DataGrid rows={rows} columns={columnns} checkboxSelection autoPageSize columnVisibilityModel={{id: false}} /> 
+            <DataGrid rows={rows} columns={columnns} checkboxSelection disableMultipleRowSelection autoPageSize columnVisibilityModel={{id: false}} /> 
         </div>
     );
 }
