@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useReimbursementFunctions } from './reimbursementFunctions';
 import { Button, RedirectButton, SubmitButton, InputField, InputSelect, FileInput, Title, InputFieldTextArea } from './Components';
+import { ReimbursementTable } from './TableComponent';
+import { useEffect } from 'react';
 import './App.css';
 
 function AboutPage() {
@@ -23,14 +25,16 @@ function ErrorPage() {
 }
 function MainPage() {
     const {
+        data: reimbursements,
         fetchReimbursements,
         deleteReimbursement,
     } = useReimbursementFunctions();
+    useEffect(() => { fetchReimbursements()}, [fetchReimbursements]);
     return (
         <div className="content">
             <Title content="Reimbursement Dashboard" />
             <div>
-            
+                <ReimbursementTable rows={reimbursements} />
             </div>
             <input type="number" id="deleteId" placeholder="Enter ID to delete" className="normal-input" />
             <br />
