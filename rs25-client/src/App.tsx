@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useReimbursementFunctions } from './reimbursementFunctions';
+import { Button, RedirectButton, SubmitButton } from './Elements';
 import './App.css';
 
 function AboutPage() {
@@ -28,92 +29,15 @@ function MainPage() {
             <h1>Main Page</h1>
             <h1>Welcome to the Reimbursement App</h1>
             <p>This app allows you to create, update, and delete reimbursements.</p>
-            <button onClick={fetchReimbursements}>
-                Fetch Reimbursements
-            </button>
+            <Button onClick={fetchReimbursements} content="Fetch Reimbursements" />
             <br />
-            <input type="number" id="deleteId" placeholder="Enter ID to delete" />
             <br />
-            <button type="button" onClick={deleteReimbursement}>Delete</button>
+            <input type="number" id="deleteId" placeholder="Enter ID to delete" className="normal-input" />
             <br />
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
+            <Button onClick={deleteReimbursement} content="Delete" />
+            <br />
+            <RedirectButton to="/create" content="Create Reimbursement" />
+            <RedirectButton to="/update" content="Update Reimbursement" />
         </div>
     );
 }
@@ -132,31 +56,31 @@ function CreateReimbursementPage() {
     return (
         <div className="content">
             <h1>Create Reimbursement</h1>
-            <form>
-                <label htmlFor="vendor">Vendor: </label>
-                <input type="text" id="vendor" placeholder="Vendor" />
+            <form className="create-reim-form">
+                <label htmlFor="vendor">Vendor </label>
+                <input type="text" id="vendor" placeholder="Vendor" className="normal-input" />
                 <br />
-                <label htmlFor="vendoraddress">Vendor Address: </label>
-                <input type="text" id="vendoraddress" placeholder="Vendor Address" />
+                <label htmlFor="vendoraddress">Vendor Address </label>
+                <input type="text" id="vendoraddress" placeholder="Vendor Address" className="normal-input" />
                 <br />
-                <label htmlFor="vendorwebsite">Vendor Website: </label>
-                <input type="text" id="vendorwebsite" placeholder="Vendor Website" />
+                <label htmlFor="vendorwebsite">Vendor Website </label>
+                <input type="text" id="vendorwebsite" placeholder="Vendor Website" className="normal-input" />
                 <br />
-                <label htmlFor="total">Total Amount: </label>
-                <input type="number" id="totalamount" placeholder="Total Amount" />
+                <label htmlFor="total">Total Amount </label>
+                <input type="number" id="totalamount" placeholder="Total Amount" className="normal-input" />
                 <br />
-                <label htmlFor="datesubmitted">Date Submitted: </label>
-                <input type="date" id="datesubmitted" placeholder="Date Submitted" />
+                <label htmlFor="datesubmitted">Date Submitted </label>
+                <input type="date" id="datesubmitted" placeholder="Date Submitted" className="normal-input" />
                 <br />
-                <label htmlFor="paymentmethod">Payment Method: </label>
-                <select id="paymentmethod">
+                <label htmlFor="paymentmethod">Payment Method </label>
+                <select id="paymentmethod" className="normal-input">
                     <option value="Credit Card">Credit Card</option>
                     <option value="Cash">Cash</option>
                     <option value="Check">Check</option>
                     <option value="Bank Transfer">Bank Transfer</option>
                 </select>
                 <br />
-                <button type="button" onClick={createReimbursement}>Submit</button>
+                <SubmitButton onClick={createReimbursement} content="Submit" />
             </form>
         </div>
     );
@@ -206,11 +130,8 @@ function App() {
           <nav className="nav-bar">
               <Link to="/"><img src="/fiveoaksbanner.png" alt="Five Oaks Church" className="nav-bar-image"></img></Link>
               <ul className="link-list">
-                  <li><Link className="link-list-item" to="/">Main</Link></li>
-                  <li ><Link className="link-list-item" to="/create">Create Reimbursement</Link></li>
-                  <li><Link className="link-list-item" to="/update">Update Reimbursement</Link></li>
-                  <li><Link className="link-list-item" to="/bugreport">Bug Report</Link></li>
                   <li><Link className="link-list-item" to="/about">About</Link></li>
+                  <li><Link className="link-list-item" to="/bugreport">Bug Report</Link></li>
                 </ul>
             </nav>
     
