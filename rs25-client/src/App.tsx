@@ -28,16 +28,14 @@ function MainPage() {
     } = useReimbursementFunctions();
     return (
         <div className="content">
-            <h1>Main Page</h1>
-            <h1>Welcome to the Reimbursement App</h1>
-            <p>This app allows you to create, update, and delete reimbursements.</p>
-            <Button onClick={fetchReimbursements} content="Fetch Reimbursements" />
-            <br />
-            <br />
+            <Title content="Reimbursement Dashboard" />
+            <div>
+            
+            </div>
             <input type="number" id="deleteId" placeholder="Enter ID to delete" className="normal-input" />
             <br />
             <Button onClick={deleteReimbursement} content="Delete" />
-            <br />
+            <Button onClick={fetchReimbursements} content="Fetch Reimbursements" />
             <RedirectButton to="/create" content="Create Reimbursement" />
             <RedirectButton to="/update" content="Update Reimbursement" />
         </div>
