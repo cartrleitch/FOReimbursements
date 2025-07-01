@@ -4,7 +4,7 @@ import './App.css';
 
 function AboutPage() {
     return (
-        <div>
+        <div className="content">
             <h1>About Page</h1>
             I am Cartr Hi
         </div>
@@ -12,7 +12,7 @@ function AboutPage() {
 }
 function ErrorPage() {
     return (
-        <div>
+        <div className="content">
             <h1>Missing 404</h1>
             <p>Something went wrong. Please try again later. This is not the page you are looking for.</p>
         </div>
@@ -24,7 +24,7 @@ function MainPage() {
         deleteReimbursement,
     } = useReimbursementFunctions();
     return (
-        <div>
+        <div className="content">
             <h1>Main Page</h1>
             <h1>Welcome to the Reimbursement App</h1>
             <p>This app allows you to create, update, and delete reimbursements.</p>
@@ -119,7 +119,7 @@ function MainPage() {
 }
 function BugReportPage() {
     return (
-        <div>
+        <div className="content">
             <h1>Bug Report Page</h1>
             <p>If you find any bugs, please report them here.</p>
         </div>
@@ -130,7 +130,7 @@ function CreateReimbursementPage() {
         createReimbursement,
     } = useReimbursementFunctions();
     return (
-        <div>
+        <div className="content">
             <h1>Create Reimbursement</h1>
             <form>
                 <label htmlFor="vendor">Vendor: </label>
@@ -166,7 +166,7 @@ function UpdateReimbursementPage(){
         updateReimbursement,
     } = useReimbursementFunctions();
     return (
-        <div>
+        <div className="content">
             <h1>Update Reimbursement</h1>
             <form>
                 <label htmlFor="updateId">Update: </label>
