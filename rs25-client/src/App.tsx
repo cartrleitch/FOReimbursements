@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useReimbursementFunctions } from './reimbursementFunctions';
-import { Button, RedirectButton, SubmitButton, InputField, InputSelect, FileInput} from './Components';
+import { Button, RedirectButton, SubmitButton, InputField, InputSelect, FileInput, Title, InputFieldTextArea } from './Components';
 import './App.css';
 
 function AboutPage() {
@@ -44,8 +44,13 @@ function MainPage() {
 function BugReportPage() {
     return (
         <div className="content">
-            <h1>Bug Report Page</h1>
-            <p>If you find any bugs, please report them here.</p>
+            <Title content="Bug Report" />
+            <p className="center-p">If you find any bugs or have any feature suggestions, please submit them here.</p>
+            <form className="normal-form">
+                <InputSelect id="bugtype" options={["Bug", "Feature Request", "Other"]} label="Report Type" />
+                <InputFieldTextArea id="description" placeholder="Describe the issue or suggestion" label="Description" />                
+                <SubmitButton onClick={() => alert("Report submitted!")} content="Submit Report" />
+            </form>
         </div>
     );
 }
@@ -55,8 +60,8 @@ function CreateReimbursementPage() {
     } = useReimbursementFunctions();
     return (
         <div className="content">
-            <h1>Create Reimbursement</h1>
-            <form className="create-reim-form">
+            <Title content="Create Reimbursement" />
+            <form className="normal-form">
                 <InputField id="vendor" placeholder="Vendor" type="text" label="Vendor" />
                 <InputField id="vendoraddress" placeholder="Vendor Address" type="text" label="Vendor Address" />
                 <InputField id="vendorwebsite" placeholder="Vendor Website" type="text" label="Vendor Website" />
@@ -75,34 +80,16 @@ function UpdateReimbursementPage(){
     } = useReimbursementFunctions();
     return (
         <div className="content">
-            <h1>Update Reimbursement</h1>
-            <form>
-                <label htmlFor="updateId">Update: </label>
-                <input type="number" id="updateId" placeholder="Enter ID to update" />
-                <label htmlFor="vendor">Vendor: </label>
-                <input type="text" id="vendoru" placeholder="Vendor" />
-                <br />
-                <label htmlFor="vendoraddress">Vendor Address: </label>
-                <input type="text" id="vendoraddressu" placeholder="Vendor Address" />
-                <br />
-                <label htmlFor="vendorwebsite">Vendor Website: </label>
-                <input type="text" id="vendorwebsiteu" placeholder="Vendor Website" />
-                <br />
-                <label htmlFor="total">Total Amount: </label>
-                <input type="number" id="totalamountu" placeholder="Total Amount" />
-                <br />
-                <label htmlFor="datesubmitted">Date Submitted: </label>
-                <input type="date" id="datesubmittedu" placeholder="Date Submitted" />
-                <br />
-                <label htmlFor="paymentmethod">Payment Method: </label>
-                <select id="paymentmethodu">
-                    <option value="Credit Card">Credit Card</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Check">Check</option>
-                    <option value="Bank Transfer">Bank Transfer</option>
-                </select>
-                <br />
-                <button type="button" onClick={updateReimbursement}>Submit</button>
+            <Title content="Update Reimbursement" />
+            <form className="normal-form">
+                <InputField id="vendoru" placeholder="Vendor" type="text" label="Vendor" />
+                <InputField id="vendoraddressu" placeholder="Vendor Address" type="text" label="Vendor Address" />
+                <InputField id="vendorwebsiteu" placeholder="Vendor Website" type="text" label="Vendor Website" />
+                <InputField id="totalamountu" placeholder="Total Amount" type="number" label="Total Amount" />
+                <InputField id="datesubmittedu" placeholder="Date Submitted" type="date" label="Date Submitted" />
+                <InputSelect id="paymentmethodu" options={["Credit Card", "Cash", "Check", "Bank Transfer"]} label="Payment Method" />
+                <FileInput id="receiptsu" label="Receipts" />
+                <SubmitButton onClick={updateReimbursement} content="Submit" />
             </form>
         </div>
     );

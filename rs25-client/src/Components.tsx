@@ -40,6 +40,14 @@ export function InputField({ id, placeholder, type, label }: { id: string, place
         </div>
     );
 }
+export function InputFieldTextArea({ id, placeholder, label }: { id: string, placeholder: string, label: string }) {
+    return (
+        <div>
+            <label htmlFor={id}>{label}</label>
+            <textarea id={id} placeholder={placeholder} className="normal-input" />
+        </div>
+    );
+}
 
 export function InputSelect({ id, options, label }: { id: string, options: string[], label: string }) {
     return (
@@ -47,7 +55,7 @@ export function InputSelect({ id, options, label }: { id: string, options: strin
             <label htmlFor={id}>{label}</label>
             <select id={id} className="normal-input">
                 {options.map(option => (
-                    <option value={option}>
+                    <option key={option} value={option}>
                         {option}
                     </option>
                 ))}
@@ -63,6 +71,14 @@ export function FileInput({ id, label }: { id: string, label: string }) {
             <div className="file-input-container">
                 <input type="file" id={id} multiple accept=".jpg,.jpeg,.png,.pdf" className="file-input" />
             </div>
+        </div>
+    );
+}
+
+export function Title({ content }: { content: string }) {
+    return (
+        <div className="content-title-container">
+            <h1 className="content-title">{content}</h1>
         </div>
     );
 }
