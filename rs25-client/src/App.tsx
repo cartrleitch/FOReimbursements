@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useReimbursementFunctions } from './reimbursementFunctions';
-import { Button, RedirectButton, SubmitButton } from './Elements';
+import { Button, RedirectButton, SubmitButton, InputField, InputSelect, FileInput} from './Components';
 import './App.css';
 
 function AboutPage() {
@@ -57,34 +57,13 @@ function CreateReimbursementPage() {
         <div className="content">
             <h1>Create Reimbursement</h1>
             <form className="create-reim-form">
-                <label htmlFor="vendor">Vendor </label>
-                <input type="text" id="vendor" placeholder="Vendor" className="normal-input" />
-                <br />
-                <label htmlFor="vendoraddress">Vendor Address </label>
-                <input type="text" id="vendoraddress" placeholder="Vendor Address" className="normal-input" />
-                <br />
-                <label htmlFor="vendorwebsite">Vendor Website </label>
-                <input type="text" id="vendorwebsite" placeholder="Vendor Website" className="normal-input" />
-                <br />
-                <label htmlFor="total">Total Amount </label>
-                <input type="number" id="totalamount" placeholder="Total Amount" className="normal-input" />
-                <br />
-                <label htmlFor="datesubmitted">Date Submitted </label>
-                <input type="date" id="datesubmitted" placeholder="Date Submitted" className="normal-input" />
-                <br />
-                <label htmlFor="paymentmethod">Payment Method </label>
-                <select id="paymentmethod" className="normal-input">
-                    <option value="Credit Card">Credit Card</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Check">Check</option>
-                    <option value="Bank Transfer">Bank Transfer</option>
-                </select>
-                <br />
-                <label htmlFor="receipts">Receipts</label>
-                <div className="file-input-container">
-                    <input type="file" id="receipts" multiple accept=".jpg,.jpeg,.png,.pdf" className="file-input" />
-                </div>
-                    <br />
+                <InputField id="vendor" placeholder="Vendor" type="text" label="Vendor" />
+                <InputField id="vendoraddress" placeholder="Vendor Address" type="text" label="Vendor Address" />
+                <InputField id="vendorwebsite" placeholder="Vendor Website" type="text" label="Vendor Website" />
+                <InputField id="totalamount" placeholder="Total Amount" type="number" label="Total Amount" />
+                <InputField id="datesubmitted" placeholder="Date Submitted" type="date" label="Date Submitted" />
+                <InputSelect id="paymentmethod" options={["Credit Card", "Cash", "Check", "Bank Transfer"]} label="Payment Method" />
+                <FileInput id="receipts" label="Receipts" />
                 <SubmitButton onClick={createReimbursement} content="Submit" />
             </form>
         </div>
