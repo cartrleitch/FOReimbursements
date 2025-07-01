@@ -165,9 +165,14 @@ body{
     display:flex;
     justify-content: center;
 }
-
 .center-p{
     text-align: center;
     margin: 0 auto;
+    width: 50%;
+}
+.error-image {
+    display: block;
+    margin: 0 auto; /* Center the image */
+    height: 50%;
     width: 50%;
 }
