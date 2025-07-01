@@ -6,8 +6,8 @@ import './App.css';
 function AboutPage() {
     return (
         <div className="content">
-            <h1>About Page</h1>
-            I am Cartr Hi
+            <Title content="About the Reimbursement App" />
+            <p className="center-p">This app is used to easily submit reimbursement requests for employees and volunteers of Five Oaks Church. These requests can then be easily accessed, exported, and approved by an admin. <br/><br/>Made by Carter Leitch.</p>    
         </div>
     );
 }
