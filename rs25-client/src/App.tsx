@@ -3,8 +3,10 @@ import './App.css';
 
 function App() {
     const API_URL = "http://localhost:5000/api/Reimbursement";
+    // eslint-disable-next-line
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    // eslint-disable-next-line
     const [error, setError] = useState<string | null>(null);
 
 
