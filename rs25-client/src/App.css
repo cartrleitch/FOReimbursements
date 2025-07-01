@@ -92,6 +92,29 @@ body{
     font-size: 16px; /* Font size for input */
 }
 
+.file-input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    box-sizing: border-box; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    font-size: 16px; 
+    height: 96px;
+    background: #fff;
+}
+
+.file-input {
+    padding: 8px;
+    box-sizing: border-box;
+    border: none; 
+    font-size: 16px; 
+    background: transparent;
+}
+
 .create-reim-form {
     width: 50%;
     margin: auto;

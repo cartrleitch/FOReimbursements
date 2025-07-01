@@ -80,6 +80,11 @@ function CreateReimbursementPage() {
                     <option value="Bank Transfer">Bank Transfer</option>
                 </select>
                 <br />
+                <label htmlFor="receipts">Receipts</label>
+                <div className="file-input-container">
+                    <input type="file" id="receipts" multiple accept=".jpg,.jpeg,.png,.pdf" className="file-input" />
+                </div>
+                    <br />
                 <SubmitButton onClick={createReimbursement} content="Submit" />
             </form>
         </div>
