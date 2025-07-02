@@ -28,7 +28,6 @@ const columnns: GridColDef[] = [
 ];
 
 export function ReimbursementTable({ rows, deleteReimbursement } : TableProps) {
-    console.log("ReimbursementTable rows:", rows);
     const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>();
     const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
   
@@ -40,13 +39,11 @@ export function ReimbursementTable({ rows, deleteReimbursement } : TableProps) {
                     setRowSelectionModel(id);
                     const selectedRowData = rows.find((row) => row.id === Array.from(id.ids)[0]);
                     setSelectedRowId(selectedRowData?.id || null);
-                    console.log(selectedRowData?.id);
                 }}
                 rowSelectionModel={rowSelectionModel}
             /> 
             <button
                 onClick={async () => {
-                    console.log(selectedRowId);
                     if (selectedRowId !== null) {
                         deleteReimbursement(selectedRowId)
                     } else {

@@ -32,10 +32,6 @@ function MainPage() {
     // eslint-disable-next-line
     useEffect(() => { fetchReimbursements() }, []);
 
-    useEffect(() => {
-        console.log("Reimbursements updated:", data); // Log the updated state
-    }, [data]);
-
     return (
         <div className="content">
             <Title content="Reimbursement Dashboard" />
