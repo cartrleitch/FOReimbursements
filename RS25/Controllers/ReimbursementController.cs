@@ -63,7 +63,7 @@ namespace RS25.Controllers
             currReim.PaymentMethod = Reimbursement.PaymentMethod;
             currReim.Status = Reimbursement.Status;
             currReim.DateApproved = Reimbursement.DateApproved;
-            
+
             await _context.SaveChangesAsync();
 
             return Ok(id);
