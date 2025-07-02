@@ -54,7 +54,7 @@ export function ReimbursementTable({ rows, deleteReimbursement, fetchReimburseme
                     } else {
                         alert("No row selected!");
                     }
-                    }} content="Delete" />
+                    }} content="Delete" className="spooky-button" />
             </div>
         </div>
     );

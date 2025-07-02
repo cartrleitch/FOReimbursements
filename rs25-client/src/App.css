@@ -94,6 +94,29 @@ body{
     background-color: #2a3d16; /* Even darker green on click */
 }
 
+.spooky-button {
+    display: inline-block;
+    background-color: #dc0303; 
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 8px 16px; /* Padding for button */
+    font-size: 16px; /* Font size for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 4px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    text-decoration: none;
+    margin: 1px;
+    margin-right: 3px;
+}
+
+    .spooky-button:hover {
+        background-color: #b90808;
+    }
+
+    .spooky-button:active {
+        background-color: #b70000;
+    }
+
 .normal-input {
     width: 100%;
     padding: 8px;

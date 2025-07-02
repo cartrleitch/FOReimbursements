@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 
-export function Button({ onClick, content }: { onClick: () => void, content: string }) {
+export function Button({ onClick, content, className = "normal-button" }: { onClick: () => void, content: string, className? : string }) {
   return (
     <button
-      className="normal-button"
+      className={className}
       onClick={onClick}
     >
       {content}
