@@ -1,213 +1,128 @@
-import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useReimbursementFunctions } from './reimbursementFunctions';
+import { Button, RedirectButton, SubmitButton, InputField, InputSelect, FileInput, Title, InputFieldTextArea } from './Components';
+import { ReimbursementTable } from './TableComponent';
+import { useEffect, useState } from 'react';
 import './App.css';
 
+function AboutPage() {
+    return (
+        <div className="content">
+            <Title content="About the Reimbursement App" />
+            <p className="center-p">This app is used to easily submit reimbursement requests for employees and volunteers of Five Oaks Church. These requests can then be easily accessed, exported, and approved by an admin. <br/><br/>Made by Carter Leitch.</p>    
+        </div>
+    );
+}
+function ErrorPage() {
+    return (
+        <div className="content">
+            <Title content="Missing 404" />
+            <p className="center-p">Something went wrong. Please try again later or check url. This is not the page you are looking for.</p>
+            <br />
+            <img src="/404.jpeg" alt="404 Not Found" className="error-image" />
+        </div>
+    );
+}
+function MainPage() {
+    const {
+        data,
+        fetchReimbursements,
+        deleteReimbursement
+    } = useReimbursementFunctions();
+    // eslint-disable-next-line
+    useEffect(() => { fetchReimbursements() }, []);
+
+    useEffect(() => {
+        console.log("Reimbursements updated:", data); // Log the updated state
+    }, [data]);
+
+    return (
+        <div className="content">
+            <Title content="Reimbursement Dashboard" />
+            <div className="table-container">
+                <ReimbursementTable rows={data} deleteReimbursement={deleteReimbursement} />
+            </div>
+            <Button onClick={fetchReimbursements} content="Refresh" />
+            <RedirectButton to="/create" content="Create Reimbursement" />
+            <RedirectButton to="/update" content="Update Reimbursement" />
+        </div>
+    );
+}
+function BugReportPage() {
+    return (
+        <div className="content">
+            <Title content="Bug Report" />
+            <p className="center-p">If you find any bugs or have any feature suggestions, please submit them here.</p>
+            <form className="normal-form">
+                <InputSelect id="bugtype" options={["Bug", "Feature Request", "Other"]} label="Report Type" />
+                <InputFieldTextArea id="description" placeholder="Describe the issue or suggestion" label="Description" />                
+                <SubmitButton onClick={() => alert("Report submitted!")} content="Submit Report" />
+            </form>
+        </div>
+    );
+}
+function CreateReimbursementPage() {
+    const {
+        createReimbursement,
+    } = useReimbursementFunctions();
+    return (
+        <div className="content">
+            <Title content="Create Reimbursement" />
+            <form className="normal-form" onSubmit={e => { e.preventDefault(); createReimbursement(); }}>
+                <InputField id="vendor" placeholder="Vendor" type="text" label="Vendor" />
+                <InputField id="vendoraddress" placeholder="Vendor Address" type="text" label="Vendor Address" />
+                <InputField id="vendorwebsite" placeholder="Vendor Website" type="text" label="Vendor Website" />
+                <InputField id="totalamount" placeholder="Total Amount" type="number" label="Total Amount" />
+                <InputField id="datesubmitted" placeholder="Date Submitted" type="date" label="Date Submitted" />
+                <InputSelect id="paymentmethod" options={["Credit Card", "Cash", "Check", "Bank Transfer"]} label="Payment Method" />
+                <FileInput id="receipts" label="Receipts" />
+                <SubmitButton content="Submit" />
+            </form>
+        </div>
+    );
+}
+function UpdateReimbursementPage(){ 
+    const {
+        updateReimbursement,
+    } = useReimbursementFunctions();
+    return (
+        <div className="content">
+            <Title content="Update Reimbursement" />
+            <form className="normal-form">
+                <InputField id="vendoru" placeholder="Vendor" type="text" label="Vendor" />
+                <InputField id="vendoraddressu" placeholder="Vendor Address" type="text" label="Vendor Address" />
+                <InputField id="vendorwebsiteu" placeholder="Vendor Website" type="text" label="Vendor Website" />
+                <InputField id="totalamountu" placeholder="Total Amount" type="number" label="Total Amount" />
+                <InputField id="datesubmittedu" placeholder="Date Submitted" type="date" label="Date Submitted" />
+                <InputSelect id="paymentmethodu" options={["Credit Card", "Cash", "Check", "Bank Transfer"]} label="Payment Method" />
+                <FileInput id="receiptsu" label="Receipts" />
+                <SubmitButton onClick={updateReimbursement} content="Submit" />
+            </form>
+        </div>
+    );
+}
 function App() {
-    const API_URL = "http://localhost:5000/api/Reimbursement";
-    // eslint-disable-next-line
-    const [data, setData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
-    // eslint-disable-next-line
-    const [error, setError] = useState<string | null>(null);
-
-
-    // GET reimbursements from the API
-    async function fetchReimbursements() {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(API_URL);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
-            setData(result);
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    // POST a new reimbursement to the API
-    async function createReimbursement() {
-        const vendor = (document.getElementById("vendor") as HTMLInputElement).value;
-        const vendorAddress = (document.getElementById("vendoraddress") as HTMLInputElement).value;
-        const vendorWebsite = (document.getElementById("vendorwebsite") as HTMLInputElement).value;
-        const totalAmount = parseFloat((document.getElementById("totalamount") as HTMLInputElement).value);
-        const dateSubmittedIn = (document.getElementById("datesubmitted") as HTMLInputElement).value;
-        const paymentMethod = (document.getElementById("paymentmethod") as HTMLSelectElement).value;
-
-        const dateSubmitted = new Date(dateSubmittedIn).toISOString();
-
-        if (!vendor || !vendorAddress || !vendorWebsite || isNaN(totalAmount) || !dateSubmitted) {
-            alert("Please fill in all fields correctly. " + dateSubmitted);
-            return;
-        }
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    vendor,
-                    vendorAddress,
-                    vendorWebsite,
-                    totalAmount,
-                    dateSubmitted,
-                    paymentMethod
-                }),
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            await fetchReimbursements();
-            alert("Reimbursement created successfully!");
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    // DELETE a reimbursement by ID
-    async function DeleteReimbursement() {
-        const id = (document.getElementById("deleteId") as HTMLInputElement).value;
-        try {
-            await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.status;
-                })
-        }
-        catch (err: any) {
-            setError(err.message);
-        }
-    }
-
-    // PUT a new reimbursement to the API
-    async function updateReimbursement() {
-        const id = (document.getElementById("updateId") as HTMLInputElement).value;
-        const vendor = (document.getElementById("vendoru") as HTMLInputElement).value;
-        const vendorAddress = (document.getElementById("vendoraddressu") as HTMLInputElement).value;
-        const vendorWebsite = (document.getElementById("vendorwebsiteu") as HTMLInputElement).value;
-        const totalAmount = parseFloat((document.getElementById("totalamountu") as HTMLInputElement).value);
-        const dateSubmittedIn = (document.getElementById("datesubmittedu") as HTMLInputElement).value;
-        const paymentMethod = (document.getElementById("paymentmethodu") as HTMLSelectElement).value;
-
-        const dateSubmitted = new Date(dateSubmittedIn).toISOString();
-
-        if (!vendor || !vendorAddress || !vendorWebsite || isNaN(totalAmount) || !dateSubmitted) {
-            alert("Please fill in all fields correctly. " + dateSubmitted);
-            return;
-        }
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: Number(id),
-                    vendor,
-                    vendorAddress,
-                    vendorWebsite,
-                    totalAmount,
-                    dateSubmitted,
-                    paymentMethod
-                }),
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            await fetchReimbursements();
-            alert("Reimbursement updated successfully!");
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }
-
+    
   return (
-      <div className="App">
-          <div>
-              <h1>Create Reimbursement</h1>
-              <form>
-                  <label htmlFor="vendor">Vendor: </label>
-                  <input type="text" id="vendor" placeholder="Vendor" />
-                  <br />
-                  <label htmlFor="vendoraddress">Vendor Address: </label>
-                  <input type="text" id="vendoraddress" placeholder="Vendor Address" />
-                  <br />
-                  <label htmlFor="vendorwebsite">Vendor Website: </label>
-                  <input type="text" id="vendorwebsite" placeholder="Vendor Website" />
-                  <br />
-                  <label htmlFor="total">Total Amount: </label>
-                  <input type="number" id="totalamount" placeholder="Total Amount" />
-                  <br />
-                  <label htmlFor="datesubmitted">Date Submitted: </label>
-                  <input type="date" id="datesubmitted" placeholder="Date Submitted" />
-                  <br />
-                  <label htmlFor="paymentmethod">Payment Method: </label>
-                  <select id="paymentmethod">
-                        <option value="Credit Card">Credit Card</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Check">Check</option>
-                      <option value="Bank Transfer">Bank Transfer</option>
-                  </select>
-                  <br />
-                  <button type="button" onClick={createReimbursement}>Submit</button>
-              </form>
+      <Router>
+          <nav className="nav-bar">
+              <Link to="/"><img src="/fiveoaksbanner.png" alt="Five Oaks Church" className="nav-bar-image"></img></Link>
+              <ul className="link-list">
+                  <li><Link className="link-list-item" to="/about">About</Link></li>
+                  <li><Link className="link-list-item" to="/bugreport">Bug Report</Link></li>
+                </ul>
+            </nav>
+    
+          <Routes>
+              <Route path="/" element={<MainPage />} />
+              <Route path="/create" element={<CreateReimbursementPage />} />
+              <Route path="/update" element={<UpdateReimbursementPage />} />
+              <Route path="/bugreport" element={<BugReportPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="*" element={<ErrorPage />} />
+          </Routes>
 
-              <button onClick={fetchReimbursements} disabled={loading}>
-                  {loading ? "Loading..." : "Fetch Reimbursements"}
-              </button>
-              <br />
-              <input type="number" id="deleteId" placeholder="Enter ID to delete" />
-              <br />
-              <button type="button" onClick={DeleteReimbursement}>Delete</button>
-              <br />
-
-              <h1>Update Reimbursement</h1>
-              <form>
-                  <label htmlFor="updateId">Update: </label>
-                  <input type="number" id="updateId" placeholder="Enter ID to update" />
-                  <label htmlFor="vendor">Vendor: </label>
-                  <input type="text" id="vendoru" placeholder="Vendor" />
-                  <br />
-                  <label htmlFor="vendoraddress">Vendor Address: </label>
-                  <input type="text" id="vendoraddressu" placeholder="Vendor Address" />
-                  <br />
-                  <label htmlFor="vendorwebsite">Vendor Website: </label>
-                  <input type="text" id="vendorwebsiteu" placeholder="Vendor Website" />
-                  <br />
-                  <label htmlFor="total">Total Amount: </label>
-                  <input type="number" id="totalamountu" placeholder="Total Amount" />
-                  <br />
-                  <label htmlFor="datesubmitted">Date Submitted: </label>
-                  <input type="date" id="datesubmittedu" placeholder="Date Submitted" />
-                  <br />
-                  <label htmlFor="paymentmethod">Payment Method: </label>
-                  <select id="paymentmethodu">
-                      <option value="Credit Card">Credit Card</option>
-                      <option value="Cash">Cash</option>
-                      <option value="Check">Check</option>
-                      <option value="Bank Transfer">Bank Transfer</option>
-                  </select>
-                  <br />
-                  <button type="button" onClick={updateReimbursement}>Submit</button>
-              </form>
-          </div>
-      </div>
+      </Router>
   );
 }
 
