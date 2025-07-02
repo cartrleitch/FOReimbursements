@@ -52,7 +52,7 @@ export function InputFieldTextArea({ id, placeholder, label }: { id: string, pla
     return (
         <div>
             <label htmlFor={id}>{label}</label>
-            <textarea id={id} placeholder={placeholder} className="normal-input" />
+            <textarea id={id} placeholder={placeholder} className="text-area-input" />
         </div>
     );
 }
