@@ -1,6 +1,6 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid'; 
 import React from 'react';
-import { useReimbursementFunctions } from './reimbursementFunctions';
+import { RedirectButton, Button } from './Components';
 interface Reimbursement {
     id: number;
     vendor: string;
@@ -14,6 +14,7 @@ interface Reimbursement {
 interface TableProps {
     rows: Reimbursement[];
     deleteReimbursement: (id: number) => Promise<void>;
+    fetchReimbursements: () => Promise<void>;
 }
 
 const columnns: GridColDef[] = [
@@ -21,13 +22,13 @@ const columnns: GridColDef[] = [
     { field: 'vendor', headerName: 'Vendor', flex: 1 }, 
     { field: 'vendorAddress', headerName: 'Vendor Address', flex: 1 }, 
     { field: 'vendorWebsite', headerName: 'Vendor Website', flex: 1 }, 
-    { field: 'totalAmount', headerName: 'Total Amount', flex: 1, type: 'number', headerAlign: 'left' }, 
-    { field: 'dateSubmitted', headerName: 'Date Submitted', flex: 1, type: 'date', valueGetter: (params : any) => params.value ? new Date(params.value) : null}, 
+    { field: 'totalAmount', headerName: 'Total Amount', flex: 1, type: 'number', headerAlign: 'left', align: 'left' }, 
+    { field: 'dateSubmitted', headerName: 'Date Submitted', flex: 1, type: 'date', valueGetter: (value : any) => new Date(value)}, 
     { field: 'paymentMethod', headerName: 'Payment Method', flex: 1 } 
 
 ];
 
-export function ReimbursementTable({ rows, deleteReimbursement } : TableProps) {
+export function ReimbursementTable({ rows, deleteReimbursement, fetchReimbursements } : TableProps) {
     const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>();
     const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
   
@@ -42,19 +43,19 @@ export function ReimbursementTable({ rows, deleteReimbursement } : TableProps) {
                 }}
                 rowSelectionModel={rowSelectionModel}
             /> 
-            <button
-                onClick={async () => {
+            <br />
+            <div className="table-button-div">
+                <Button onClick={fetchReimbursements} content="Refresh" />
+                <RedirectButton to="/create" content="New" />
+                <RedirectButton to="/update" content="Edit" />
+                <Button onClick={async () => {
                     if (selectedRowId !== null) {
                         deleteReimbursement(selectedRowId)
                     } else {
                         alert("No row selected!");
                     }
-                }}
-                disabled={selectedRowId === null}
-                className="normal-button"
-            >
-                Delete Selected Row
-            </button>
+                    }} content="Delete" />
+            </div>
         </div>
     );
 }

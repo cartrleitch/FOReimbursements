@@ -19,7 +19,6 @@ export function useReimbursementFunctions() {
             }
             const result = await response.json();
             setData(result);
-            console.log("Reimbursements fetched successfully:", result);
             return result;
         } catch (err: any) {
             setError(err.message);
@@ -36,12 +35,15 @@ export function useReimbursementFunctions() {
         const totalAmount = parseFloat((document.getElementById("totalamount") as HTMLInputElement).value);
         const dateSubmittedIn = (document.getElementById("datesubmitted") as HTMLInputElement).value;
         const paymentMethod = (document.getElementById("paymentmethod") as HTMLSelectElement).value;
-
-        const dateSubmitted = new Date(dateSubmittedIn).toISOString();
-        console.log("createReimbursement triggered");
-
+        var dateSubmitted: string;
+        if (dateSubmittedIn !== "") {
+            dateSubmitted = new Date(dateSubmittedIn).toISOString();
+        }
+        else {
+            dateSubmitted = new Date().toISOString();
+        }
         if (!vendor || !vendorAddress || !vendorWebsite || isNaN(totalAmount) || !dateSubmitted) {
-            alert("Please fill in all fields correctly. " + dateSubmitted);
+            alert("Please fill in all fields correctly. ");
             return;
         }
         setLoading(true);

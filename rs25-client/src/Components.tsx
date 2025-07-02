@@ -40,6 +40,14 @@ export function InputField({ id, placeholder, type, label }: { id: string, place
         </div>
     );
 }
+export function InputFieldNumber({ id, placeholder, type, label, step, min }: { id: string, placeholder: string, type: string, label: string, step: string, min: string }) {
+    return (
+        <div>
+            <label htmlFor={id}>{label}</label>
+            <input type={type} id={id} placeholder={placeholder} step={step} min={min} className="normal-input" />
+        </div>
+    );
+}
 export function InputFieldTextArea({ id, placeholder, label }: { id: string, placeholder: string, label: string }) {
     return (
         <div>

@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useReimbursementFunctions } from './reimbursementFunctions';
-import { Button, RedirectButton, SubmitButton, InputField, InputSelect, FileInput, Title, InputFieldTextArea } from './Components';
+import { SubmitButton, InputField, InputSelect, FileInput, Title, InputFieldTextArea, InputFieldNumber } from './Components';
 import { ReimbursementTable } from './TableComponent';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './App.css';
 
 function AboutPage() {
@@ -36,11 +36,8 @@ function MainPage() {
         <div className="content">
             <Title content="Reimbursement Dashboard" />
             <div className="table-container">
-                <ReimbursementTable rows={data} deleteReimbursement={deleteReimbursement} />
+                <ReimbursementTable rows={data} deleteReimbursement={deleteReimbursement} fetchReimbursements={fetchReimbursements} />
             </div>
-            <Button onClick={fetchReimbursements} content="Refresh" />
-            <RedirectButton to="/create" content="Create Reimbursement" />
-            <RedirectButton to="/update" content="Update Reimbursement" />
         </div>
     );
 }
@@ -68,7 +65,7 @@ function CreateReimbursementPage() {
                 <InputField id="vendor" placeholder="Vendor" type="text" label="Vendor" />
                 <InputField id="vendoraddress" placeholder="Vendor Address" type="text" label="Vendor Address" />
                 <InputField id="vendorwebsite" placeholder="Vendor Website" type="text" label="Vendor Website" />
-                <InputField id="totalamount" placeholder="Total Amount" type="number" label="Total Amount" />
+                <InputFieldNumber id="totalamount" placeholder="Total Amount $" type="number" label="Total Amount" step="0.01" min="0" />
                 <InputField id="datesubmitted" placeholder="Date Submitted" type="date" label="Date Submitted" />
                 <InputSelect id="paymentmethod" options={["Credit Card", "Cash", "Check", "Bank Transfer"]} label="Payment Method" />
                 <FileInput id="receipts" label="Receipts" />
