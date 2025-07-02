@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useReimbursementFunctions } from './reimbursementFunctions';
 import { Button, RedirectButton, SubmitButton, InputField, InputSelect, FileInput, Title, InputFieldTextArea } from './Components';
 import { ReimbursementTable } from './TableComponent';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 function AboutPage() {
@@ -25,22 +25,24 @@ function ErrorPage() {
 }
 function MainPage() {
     const {
-        data: reimbursements,
+        data,
         fetchReimbursements,
-        deleteReimbursement,
+        deleteReimbursement
     } = useReimbursementFunctions();
-    useEffect(() => { fetchReimbursements()}, []);
+    // eslint-disable-next-line
+    useEffect(() => { fetchReimbursements() }, []);
+
+    useEffect(() => {
+        console.log("Reimbursements updated:", data); // Log the updated state
+    }, [data]);
 
     return (
         <div className="content">
             <Title content="Reimbursement Dashboard" />
-            <div>
-                <ReimbursementTable rows={reimbursements} />
+            <div className="table-container">
+                <ReimbursementTable rows={data} deleteReimbursement={deleteReimbursement} />
             </div>
-            <input type="number" id="deleteId" placeholder="Enter ID to delete" className="normal-input" />
-            <br />
-            <Button onClick={deleteReimbursement} content="Delete" />
-            <Button onClick={fetchReimbursements} content="Fetch Reimbursements" />
+            <Button onClick={fetchReimbursements} content="Refresh" />
             <RedirectButton to="/create" content="Create Reimbursement" />
             <RedirectButton to="/update" content="Update Reimbursement" />
         </div>

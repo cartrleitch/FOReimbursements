@@ -11,6 +11,7 @@ export function useReimbursementFunctions() {
     async function fetchReimbursements() {
         setLoading(true);
         setError(null);
+        console.log("fetchReimbursements triggered");
         try {
             const response = await fetch(API_URL);
             if (!response.ok) {
@@ -18,6 +19,8 @@ export function useReimbursementFunctions() {
             }
             const result = await response.json();
             setData(result);
+            console.log("Reimbursements fetched successfully:", result);
+            return result;
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -71,18 +74,16 @@ export function useReimbursementFunctions() {
     }
 
     // DELETE a reimbursement by ID
-    async function deleteReimbursement() {
-        const id = (document.getElementById("deleteId") as HTMLInputElement).value;
+    async function deleteReimbursement(id: number) {
         try {
-            await fetch(`${API_URL}/${id}`, {
+            const response = await fetch(`${API_URL}/${id}`, {
                 method: 'DELETE'
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.status;
-                })
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            console.log("Reimbursement deleted successfully");
+            await fetchReimbursements();
         }
         catch (err: any) {
             setError(err.message);
