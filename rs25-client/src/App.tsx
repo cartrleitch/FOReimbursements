@@ -14,8 +14,10 @@ import {
   Title,
   InputFieldTextArea,
   InputFieldNumber,
+  Button,
 } from "./Components";
-import { ReimbursementTable } from "./TableComponent";
+import { ReimbursementTable } from "./ReimTableComponent";
+import { PurchaseTable } from "./PurTableComponent";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
@@ -155,7 +157,10 @@ function CreateReimbursementPage() {
           id="paymentmethod"
           options={["Credit Card", "Cash", "Check", "Bank Transfer"]}
           label="Payment Method"
-        />
+              />
+        <div className="pur-table-container">
+            <PurchaseTable rows={[]} />
+        </div>
         <FileInput id="receipts" label="Receipts" />
         <SubmitButton content="Submit" />
       </form>

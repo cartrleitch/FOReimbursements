@@ -10,7 +10,7 @@ export function Button({
   className?: string;
 }) {
   return (
-    <button className={className} onClick={onClick}>
+    <button className={className} onClick={onClick} type="button">
       {content}
     </button>
   );
