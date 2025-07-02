@@ -1,8 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { useReimbursementFunctions } from './reimbursementFunctions';
 import { SubmitButton, InputField, InputSelect, FileInput, Title, InputFieldTextArea, InputFieldNumber } from './Components';
 import { ReimbursementTable } from './TableComponent';
 import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 function AboutPage() {
@@ -58,10 +61,20 @@ function CreateReimbursementPage() {
     const {
         createReimbursement,
     } = useReimbursementFunctions();
+
+    const nav = useNavigate();
+    const handleSubmit = async () => {
+        const success = await createReimbursement();
+        if (success) {
+            toast.success("Reimbursement created successfully!");
+            nav("/");
+        }
+    }
+
     return (
         <div className="content">
             <Title content="Create Reimbursement" />
-            <form className="normal-form" onSubmit={e => { e.preventDefault(); createReimbursement(); }}>
+            <form className="normal-form" onSubmit={e => {e.preventDefault(); handleSubmit()}}>
                 <InputField id="vendor" placeholder="Vendor" type="text" label="Vendor" />
                 <InputField id="vendoraddress" placeholder="Vendor Address" type="text" label="Vendor Address" />
                 <InputField id="vendorwebsite" placeholder="Vendor Website" type="text" label="Vendor Website" />
@@ -96,26 +109,29 @@ function UpdateReimbursementPage(){
 }
 function App() {
     
-  return (
-      <Router>
-          <nav className="nav-bar">
-              <Link to="/"><img src="/fiveoaksbanner.png" alt="Five Oaks Church" className="nav-bar-image"></img></Link>
-              <ul className="link-list">
-                  <li><Link className="link-list-item" to="/about">About</Link></li>
-                  <li><Link className="link-list-item" to="/bugreport">Bug Report</Link></li>
-                </ul>
-            </nav>
+    return (
+      <div>
+          <Router>
+              <nav className="nav-bar">
+                  <Link to="/"><img src="/fiveoaksbanner.png" alt="Five Oaks Church" className="nav-bar-image"></img></Link>
+                  <ul className="link-list">
+                      <li><Link className="link-list-item" to="/about">About</Link></li>
+                      <li><Link className="link-list-item" to="/bugreport">Bug Report</Link></li>
+                    </ul>
+                </nav>
     
-          <Routes>
-              <Route path="/" element={<MainPage />} />
-              <Route path="/create" element={<CreateReimbursementPage />} />
-              <Route path="/update" element={<UpdateReimbursementPage />} />
-              <Route path="/bugreport" element={<BugReportPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="*" element={<ErrorPage />} />
-          </Routes>
+              <Routes>
+                  <Route path="/" element={<MainPage />} />
+                  <Route path="/create" element={<CreateReimbursementPage />} />
+                  <Route path="/update" element={<UpdateReimbursementPage />} />
+                  <Route path="/bugreport" element={<BugReportPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="*" element={<ErrorPage />} />
+              </Routes>
 
-      </Router>
+          </Router>
+          <ToastContainer position="bottom-left" autoClose={3000} />
+      </div>
   );
 }
 

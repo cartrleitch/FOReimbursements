@@ -67,9 +67,10 @@ export function useReimbursementFunctions() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             await fetchReimbursements();
-            alert("Reimbursement created successfully!");
+            return true;
         } catch (err: any) {
             setError(err.message);
+            return false;
         } finally {
             setLoading(false);
         }
