@@ -1,5 +1,5 @@
-import { DataGrid, GridColDef } from '@mui/x-data-grid'; 
-
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid'; 
+import React from 'react';
 interface Reimbursement {
     id: number;
     vendor: string;
@@ -26,9 +26,21 @@ const columnns: GridColDef[] = [
 ];
 
 export function ReimbursementTable({ rows }: TableProps) {
+    const [rowSelectionModel, setRowSelectionModel] = React.useState<(GridRowSelectionModel)>();
+
     return (
         <div className="reim-table">
-            <DataGrid rows={rows} columns={columnns} checkboxSelection disableMultipleRowSelection autoPageSize columnVisibilityModel={{id: false}} /> 
+            <DataGrid rows={rows} columns={columnns} checkboxSelection disableMultipleRowSelection autoPageSize columnVisibilityModel={{ id: false }}
+                getRowId={(row) => row.id}
+                onRowSelectionModelChange={(id) => {
+                    setRowSelectionModel(id);
+                    const selectedRowData = rows.find((row) => row.id);
+                    console.log(selectedRowData);
+                    console.log(id);
+                    console.log(selectedRowData?.id);
+                }}
+                rowSelectionModel={rowSelectionModel}
+            /> 
         </div>
     );
 }
