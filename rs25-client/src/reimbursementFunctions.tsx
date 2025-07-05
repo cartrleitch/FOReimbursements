@@ -183,5 +183,3 @@ export function useReimbursementFunctions() {
     deleteReimbursement,
   };
 }
-
-// GET reimbursements from the API
