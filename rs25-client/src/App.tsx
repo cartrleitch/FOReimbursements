@@ -79,7 +79,8 @@ function BugReportPage() {
       <p className="center-p">
         If you find any bugs or have any feature suggestions, please submit them
         here.
-      </p>
+          </p>
+      <br />
       <form className="normal-form">
         <InputSelect
           id="bugtype"
