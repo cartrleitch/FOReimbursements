@@ -14,7 +14,6 @@ import {
   Title,
   InputFieldTextArea,
   InputFieldNumber,
-  Button,
 } from "./Components";
 import { ReimbursementTable } from "./ReimTableComponent";
 import { PurchaseTable } from "./PurTableComponent";
@@ -56,7 +55,8 @@ function MainPage() {
     useReimbursementFunctions();
   // eslint-disable-next-line
   useEffect(() => {
-    fetchReimbursements();
+      fetchReimbursements();
+      // eslint-disable-next-line
   }, []);
 
   return (
@@ -159,7 +159,7 @@ function CreateReimbursementPage() {
           label="Payment Method"
               />
         <div className="pur-table-container">
-            <PurchaseTable rows={[]} />
+            <PurchaseTable />
         </div>
         <FileInput id="receipts" label="Receipts" />
         <SubmitButton content="Submit" />

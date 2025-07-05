@@ -51,11 +51,15 @@ export function InputField({
   placeholder,
   type,
   label,
+  onChange,
+  value,
 }: {
   id: string;
   placeholder: string;
   type: string;
   label: string;
+  onChange?: (e: any) => void;
+  value?: string;
 }) {
   return (
     <div>
@@ -65,6 +69,8 @@ export function InputField({
         id={id}
         placeholder={placeholder}
         className="normal-input"
+        onChange={onChange}
+        value={value}
       />
     </div>
   );
@@ -76,6 +82,8 @@ export function InputFieldNumber({
   label,
   step,
   min,
+  onChange,
+  value,
 }: {
   id: string;
   placeholder: string;
@@ -83,6 +91,8 @@ export function InputFieldNumber({
   label: string;
   step: string;
   min: string;
+  onChange?: (e: any) => void;
+  value?: string;
 }) {
   return (
     <div>
@@ -94,6 +104,8 @@ export function InputFieldNumber({
         step={step}
         min={min}
         className="normal-input"
+        onChange={onChange}
+        value={value}
       />
     </div>
   );
@@ -102,15 +114,25 @@ export function InputFieldTextArea({
   id,
   placeholder,
   label,
+  onChange,
+  value,
 }: {
   id: string;
   placeholder: string;
   label: string;
+  onChange?: (e: any) => void;
+  value?: string;
 }) {
   return (
     <div>
       <label htmlFor={id}>{label}</label>
-      <textarea id={id} placeholder={placeholder} className="text-area-input" />
+      <textarea
+        id={id}
+        placeholder={placeholder}
+        className="text-area-input"
+        onChange={onChange}
+        value={value}
+      />
     </div>
   );
 }
@@ -119,15 +141,28 @@ export function InputSelect({
   id,
   options,
   label,
+  onChange,
+  value,
 }: {
   id: string;
   options: string[];
   label: string;
+  onChange?: (e: any) => void;
+  value?: string;
 }) {
   return (
     <div>
       <label htmlFor={id}>{label}</label>
-      <select id={id} className="normal-input">
+      <select
+        id={id}
+        className="normal-input"
+        onChange={onChange}
+        defaultValue=""
+        value={value}
+      >
+        <option disabled value="">
+          -- Select an option --
+        </option>
         {options.map((option) => (
           <option key={option} value={option}>
             {option}

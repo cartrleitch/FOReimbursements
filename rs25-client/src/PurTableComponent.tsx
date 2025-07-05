@@ -1,85 +1,153 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import React from "react";
-import { RedirectButton, Button } from "./Components";
+import {
+  Button,
+  InputField,
+  InputFieldNumber,
+  InputFieldTextArea,
+  InputSelect,
+} from "./Components";
 interface Purchase {
-    id: number;
-    description: string;
-    account: string;
-    amount: string;
-    date: string;
-    reimId: string;
+  id: number;
+  accountp: string;
+  descriptionp: string;
+  amountp: string;
+  datep: string;
+  reimId?: string;
 }
 
-interface TableProps {
+/*interface TableProps {
     rows: Purchase[];
-}
+}*/
 
 const columnns: GridColDef[] = [
-    { field: "id", headerName: "ID", flex: 1, hideable: false },
-    { field: "description", headerName: "Description", flex: 1 },
-    { field: "account", headerName: "Account", flex: 1 },
-    {
-        field: "amount",
-        headerName: "Amount",
-        flex: 1,
-        type: "number",
-        headerAlign: "left",
-        align: "left",
-    },
-    {
-        field: "date",
-        headerName: "Date",
-        flex: 1,
-        type: "date",
-        valueGetter: (value: any) => new Date(value),
-    },
+  { field: "id", headerName: "ID", flex: 1, hideable: false },
+  { field: "accountp", headerName: "Account", flex: 1 },
+  { field: "descriptionp", headerName: "Description", flex: 1 },
+  {
+    field: "amountp",
+    headerName: "Amount",
+    flex: 1,
+    type: "number",
+    headerAlign: "left",
+    align: "left",
+  },
+  {
+    field: "datep",
+    headerName: "Date",
+    flex: 1,
+    type: "date",
+    valueGetter: (value: any) => new Date(value),
+  },
 ];
 
-export function PurchaseTable({
-    rows,
-}: TableProps) {
-    const [rowSelectionModel, setRowSelectionModel] =
-        React.useState<GridRowSelectionModel>();
-    const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
+export function PurchaseTable() {
+  const [rows, setRows] = React.useState<Purchase[]>([]);
+  const [rowSelectionModel, setRowSelectionModel] =
+    React.useState<GridRowSelectionModel>();
+  const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
 
-    return (
-        <div className="pur-table">
-            <DataGrid
-                rows={rows}
-                columns={columnns}
-                checkboxSelection
-                disableMultipleRowSelection
-                autoPageSize
-                columnVisibilityModel={{ id: false }}
-                getRowId={(row) => row.id}
-                onRowSelectionModelChange={(id) => {
-                    setRowSelectionModel(id);
-                    const selectedRowData = rows.find(
-                        (row) => row.id === Array.from(id.ids)[0]
-                    );
-                    setSelectedRowId(selectedRowData?.id || null);
-                }}
-                rowSelectionModel={rowSelectionModel}
-            />
-            <br />
-            <div className="pur-table-button-div">
-                <Button content="Add Purchase" onClick={() => { console.log("Add Purchase clicked"); }} />
-                <Button content="Remove Purchase" className="spooky-button" onClick={() => { console.log("Add Purchase clicked"); }} />
-                {/*<Button onClick={fetchReimbursements} content="Refresh" />
-                <RedirectButton to="/create" content="New" />
-                <RedirectButton to="/update" content="Edit" />
-                <Button
-                    onClick={async () => {
-                        if (selectedRowId !== null) {
-                            deleteReimbursement(selectedRowId);
-                        } else {
-                            alert("No row selected!");
-                        }
-                    }}
-                    content="Delete"
-                    className="spooky-button"
-                />*/}
-            </div>
-        </div>
-    );
+  const [accountp, setAccount] = React.useState("");
+  const [descriptionp, setDescription] = React.useState("");
+  const [amountp, setAmount] = React.useState("");
+  const [datep, setDate] = React.useState("");
+
+  const addPurchase = () => {
+    console.log(accountp, descriptionp, amountp, datep);
+    if (!accountp || !descriptionp || !amountp || !datep) {
+      alert("Please fill in all fields.");
+    } else {
+      const newPurchase: Purchase = {
+        id: rows.length + 1,
+        accountp,
+        descriptionp,
+        amountp,
+        datep,
+      };
+      setRows([...rows, newPurchase]);
+      setAccount("");
+      setDescription("");
+      setAmount("");
+      setDate("");
+      console.log(accountp, descriptionp, amountp, datep);
+    }
+  };
+
+  const deletePurchase = () => {
+    if (selectedRowId === null) {
+      alert("Please select a purchase to delete.");
+      return;
+    }
+    setRows(rows.filter((row) => row.id !== selectedRowId));
+    setSelectedRowId(null);
+  };
+
+  return (
+    <div className="pur-table">
+      <h3>Purchases</h3>
+      <DataGrid
+        rows={rows}
+        columns={columnns}
+        checkboxSelection
+        disableMultipleRowSelection
+        autoPageSize
+        columnVisibilityModel={{ id: false }}
+        getRowId={(row) => row.id}
+        onRowSelectionModelChange={(id) => {
+          setRowSelectionModel(id);
+          const selectedRowData = rows.find(
+            (row) => row.id === Array.from(id.ids)[0]
+          );
+          setSelectedRowId(selectedRowData?.id || null);
+        }}
+        rowSelectionModel={rowSelectionModel}
+      />
+      <div className="pur-table-inputs">
+        <InputSelect
+          id="accountp"
+          options={["Account 1", "Account 2", "Account 3"]}
+          label="Account"
+          onChange={(e) => setAccount(e.target.value)}
+          value={accountp}
+        />
+        <InputFieldTextArea
+          id="descriptionp"
+          placeholder="Description"
+          label="Description"
+          onChange={(e) => setDescription(e.target.value)}
+          value={descriptionp}
+        />
+        <InputFieldNumber
+          id="amountp"
+          placeholder="Amount"
+          type="number"
+          label="Amount"
+          step="0.01"
+          min="0"
+          onChange={(e) => setAmount(e.target.value)}
+          value={amountp}
+        />
+        <InputField
+          id="datep"
+          placeholder="Date"
+          type="date"
+          label="Date"
+          onChange={(e) => setDate(e.target.value)}
+          value={datep}
+        />
+      </div>
+      <div className="pur-table-button-div">
+        <Button
+          content="Add Purchase"
+          className="pur-table-normal-button"
+          onClick={addPurchase}
+        />
+        <Button
+          content="Remove Purchase"
+          className="pur-table-spooky-button"
+          onClick={deletePurchase}
+        />
+      </div>
+    </div>
+  );
 }
