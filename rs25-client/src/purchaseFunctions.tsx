@@ -1,7 +1,8 @@
 import { useState } from 'react';
-
+import { Purchase } from './PurTableComponent';
 export function usePurchaseFunctions() {
     const API_URL = 'http://localhost:5000/api/Purchase';
+    // eslint-disable-next-line
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -24,42 +25,46 @@ export function usePurchaseFunctions() {
         }
     }
 
-    async function createPurchase() {
-        const account = "";
-        const description = "";
-        const amount = 1;
-        const purchasedate = new Date().toISOString();
+    async function createPurchase(purchases: Purchase[]) {
 
-        if (!account || !description || isNaN(amount) || !purchasedate) {
-            alert('Please fill in all fields correctly.');
-            return false;
-        }
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    account,
-                    description,
-                    amount,
-                    purchasedate
-                })
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        for (const purchase of purchases) {
+            const account = purchase.accountp;
+            const description = purchase.descriptionp;
+            const amount = Number(purchase.amountp);
+            const purchasedate = new Date(purchase.datep).toISOString();
+            console.log(account, description, amount, purchasedate);
+
+            if (!account || !description || isNaN(amount) || !purchasedate) {
+                alert('Please fill in all fields correctly.');
+                return false;
             }
-            await fetchPurchases();
-        }
-        catch (err: any) {
-            setError(err.message);
-            return false
-        }
-        finally {
-            setLoading(false);
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        account,
+                        description,
+                        amount,
+                        purchasedate
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                await fetchPurchases();
+            }
+            catch (err: any) {
+                setError(err.message);
+                return false
+            }
+            finally {
+                setLoading(false);
+            }
         }
     }
 

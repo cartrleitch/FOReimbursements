@@ -110,8 +110,9 @@ function CreateReimbursementPage() {
   const nav = useNavigate();
   const handleSubmit = async () => {
       const success = await createReimbursement();
-      //const successPur = await createPurchase(rowsPur);
-    if (success) {
+      const successPur = await createPurchase(rowsPur);
+      console.log(rowsPur);
+    if (success && successPur) {
       toast.success("Reimbursement created successfully!");
       nav("/");
     }
