@@ -16,12 +16,14 @@ import {
   InputFieldNumber,
 } from "./Components";
 import { ReimbursementTable } from "./ReimTableComponent";
-import { PurchaseTable } from "./PurTableComponent";
+import { PurchaseTable, Purchase } from "./PurTableComponent";
+import { usePurchaseFunctions } from "./purchaseFunctions";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import React from "react";
 
 function AboutPage() {
   return (
@@ -55,8 +57,8 @@ function MainPage() {
     useReimbursementFunctions();
   // eslint-disable-next-line
   useEffect(() => {
-      fetchReimbursements();
-      // eslint-disable-next-line
+    fetchReimbursements();
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -80,6 +82,7 @@ function BugReportPage() {
         If you find any bugs or have any feature suggestions, please submit them
         here.
       </p>
+      <br />
       <form className="normal-form">
         <InputSelect
           id="bugtype"
@@ -101,11 +104,22 @@ function BugReportPage() {
 }
 function CreateReimbursementPage() {
   const { createReimbursement } = useReimbursementFunctions();
+  const { createPurchase } = usePurchaseFunctions();
+  const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
 
   const nav = useNavigate();
   const handleSubmit = async () => {
-    const success = await createReimbursement();
-    if (success) {
+      const newReimId = await createReimbursement();
+      var successPur = false;
+      if (newReimId) {
+          const rowsPurWithId = rowsPur.map((purchase) => ({ ...purchase, reimId: newReimId.toString() }));
+          successPur = await createPurchase(rowsPurWithId);
+      }
+      if (rowsPur.length === 0) {
+            toast.error("Please add at least one purchase.");
+            return;
+      }
+      if (newReimId >= 0 && successPur) {
       toast.success("Reimbursement created successfully!");
       nav("/");
     }
@@ -114,6 +128,7 @@ function CreateReimbursementPage() {
   return (
     <div className="content">
       <Title content="Create Reimbursement" />
+
       <form
         className="normal-form"
         onSubmit={(e) => {
@@ -157,9 +172,9 @@ function CreateReimbursementPage() {
           id="paymentmethod"
           options={["Credit Card", "Cash", "Check", "Bank Transfer"]}
           label="Payment Method"
-              />
+        />
         <div className="pur-table-container">
-            <PurchaseTable />
+          <PurchaseTable rows={rowsPur} setRows={setRowsPur} />
         </div>
         <FileInput id="receipts" label="Receipts" />
         <SubmitButton content="Submit" />

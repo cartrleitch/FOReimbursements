@@ -7,7 +7,7 @@ import {
   InputFieldTextArea,
   InputSelect,
 } from "./Components";
-interface Purchase {
+export interface Purchase {
   id: number;
   accountp: string;
   descriptionp: string;
@@ -16,9 +16,10 @@ interface Purchase {
   reimId?: string;
 }
 
-/*interface TableProps {
+interface TableProps {
     rows: Purchase[];
-}*/
+    setRows: React.Dispatch<React.SetStateAction<Purchase[]>>;
+}
 
 const columnns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
@@ -41,8 +42,7 @@ const columnns: GridColDef[] = [
   },
 ];
 
-export function PurchaseTable() {
-  const [rows, setRows] = React.useState<Purchase[]>([]);
+export function PurchaseTable({ rows, setRows }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
@@ -53,7 +53,6 @@ export function PurchaseTable() {
   const [datep, setDate] = React.useState("");
 
   const addPurchase = () => {
-    console.log(accountp, descriptionp, amountp, datep);
     if (!accountp || !descriptionp || !amountp || !datep) {
       alert("Please fill in all fields.");
     } else {
@@ -69,7 +68,6 @@ export function PurchaseTable() {
       setDescription("");
       setAmount("");
       setDate("");
-      console.log(accountp, descriptionp, amountp, datep);
     }
   };
 
