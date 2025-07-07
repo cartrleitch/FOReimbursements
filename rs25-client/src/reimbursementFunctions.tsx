@@ -186,6 +186,34 @@ export function useReimbursementFunctions() {
     }
   }
 
+    async function uploadFiles(reimbursementId: number, files: File[]) {
+        const formData = new FormData();
+        files.forEach((file) => {
+            formData.append("files", file);
+        });
+
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await fetch(`${API_URL}/upload/${reimbursementId}`, {
+                method: "POST",
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            console.log("Files uploaded successfully");
+            return true;
+        }
+        catch (err: any) {
+            setError(err.message);
+            return false;
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
   // This hook is used to manage the state and functions related to reimbursements.
   // It includes fetching, creating, updating, and deleting reimbursements.
   return {
@@ -195,6 +223,7 @@ export function useReimbursementFunctions() {
     fetchReimbursements,
     createReimbursement,
     updateReimbursement,
-    deleteReimbursement,
+      deleteReimbursement,
+      uploadFiles
   };
 }

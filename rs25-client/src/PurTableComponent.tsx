@@ -52,9 +52,12 @@ export function PurchaseTable({ rows, setRows }: TableProps) {
   const [amountp, setAmount] = React.useState("");
   const [datep, setDate] = React.useState("");
 
-  const addPurchase = () => {
-    if (!accountp || !descriptionp || !amountp || !datep) {
-      alert("Please fill in all fields.");
+    const addPurchase = () => {
+        console.log(accountp + " " + descriptionp + " " + amountp + " " + datep);
+        if (!accountp || !descriptionp || !amountp || !datep) {
+            console.log(accountp + " " + descriptionp + " " + amountp + " " + datep);
+
+      alert("Please fill in all fields correctly.");
     } else {
       const newPurchase: Purchase = {
         id: rows.length + 1,

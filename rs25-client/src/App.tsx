@@ -103,25 +103,35 @@ function BugReportPage() {
   );
 }
 function CreateReimbursementPage() {
-  const { createReimbursement } = useReimbursementFunctions();
+  const { createReimbursement, uploadFiles } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
+  const [files, setFiles] = React.useState<File[]>([]);
 
   const nav = useNavigate();
   const handleSubmit = async () => {
-      const newReimId = await createReimbursement();
-      var successPur = false;
-      if (newReimId) {
-          const rowsPurWithId = rowsPur.map((purchase) => ({ ...purchase, reimId: newReimId.toString() }));
-          successPur = await createPurchase(rowsPurWithId);
-      }
-      if (rowsPur.length === 0) {
-            toast.error("Please add at least one purchase.");
-            return;
-      }
-      if (newReimId >= 0 && successPur) {
-      toast.success("Reimbursement created successfully!");
-      nav("/");
+    const newReimId = await createReimbursement();
+    if (newReimId) {
+      const rowsPurWithId = rowsPur.map((purchase) => ({
+        ...purchase,
+        reimId: newReimId.toString(),
+      }));
+        const successPur = await createPurchase(rowsPurWithId);
+        const successFile = await uploadFiles(newReimId, files);
+        if (successPur && successFile) {
+            toast.success("Reimbursement created successfully!");
+            nav("/");
+        }
+    }
+    else {
+      toast.error("Please add at least one purchase.");
+      return;
+    }
+    
+  };
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFiles(Array.from(event.target.files));
     }
   };
 
@@ -176,7 +186,7 @@ function CreateReimbursementPage() {
         <div className="pur-table-container">
           <PurchaseTable rows={rowsPur} setRows={setRowsPur} />
         </div>
-        <FileInput id="receipts" label="Receipts" />
+        <FileInput id="receipts" label="Receipts" onChange={handleFileChange} />
         <SubmitButton content="Submit" />
       </form>
     </div>

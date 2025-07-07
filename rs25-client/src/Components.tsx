@@ -157,7 +157,6 @@ export function InputSelect({
         id={id}
         className="normal-input"
         onChange={onChange}
-        defaultValue=""
         value={value}
       >
         <option disabled value="">
@@ -173,7 +172,15 @@ export function InputSelect({
   );
 }
 
-export function FileInput({ id, label }: { id: string; label: string }) {
+export function FileInput({
+  id,
+  label,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  onChange?: (e: any) => void;
+}) {
   return (
     <div>
       <label htmlFor={id}>{label}</label>
@@ -184,6 +191,7 @@ export function FileInput({ id, label }: { id: string; label: string }) {
           multiple
           accept=".jpg,.jpeg,.png,.pdf"
           className="file-input"
+          onChange={onChange}
         />
       </div>
     </div>
