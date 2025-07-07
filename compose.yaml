@@ -12,6 +12,8 @@ services:
       dockerfile: RS25/Dockerfile  
     ports:
       - "5000:8080"
+    volumes:
+      - ./RS25/Uploads:/app/Uploads
     depends_on:
       db:
         condition: service_healthy
@@ -38,3 +40,4 @@ services:
 
 volumes:
   postgres_data:
+  uploads:
