@@ -1,7 +1,7 @@
 import { useState } from "react";
-
 export function useReimbursementFunctions() {
   const API_URL = "http://localhost:5000/api/Reimbursement";
+  const API_URL_PURCHASE = "http://localhost:5000/api/Purchase";
   // eslint-disable-next-line
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -96,6 +96,20 @@ export function useReimbursementFunctions() {
   // DELETE a reimbursement by ID
   async function deleteReimbursement(id: number) {
     try {
+      setLoading(true);
+      setError(null);
+      const relatedPurchases = await fetch(`${API_URL_PURCHASE}/${id}`);
+      if (!relatedPurchases.ok) {
+        throw new Error(`HTTP error! status: ${relatedPurchases.status}`);
+      }
+      for (const purchase of await relatedPurchases.json()) {
+        const response = await fetch(`${API_URL_PURCHASE}/${purchase.id}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      }
       const response = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
       });

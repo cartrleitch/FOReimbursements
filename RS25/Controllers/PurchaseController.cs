@@ -24,6 +24,21 @@ namespace RS25.Controllers
 
             return Ok(purchases);
         }
+        // GET: api/purchase/{id}
+        [HttpGet("{reimId}", Name = "GetPurchaseByReimId")]
+        public async Task<IActionResult> GetPurchaseByReimId(int reimId)
+        {
+            if (reimId <= 0)
+            {
+                return BadRequest("Invalid Purchase ID");
+            }
+            var purchases = await _context.Purchase.Where(p => p.ReimId == reimId).ToListAsync();
+            if (purchases == null)
+            {
+                return NotFound("Purchase not found");
+            }
+            return Ok(purchases);
+        }
 
         // POST: api/purchase
         [HttpPost(Name = "CreatePurchase")]
