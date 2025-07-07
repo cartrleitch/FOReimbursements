@@ -66,6 +66,7 @@ export function usePurchaseFunctions() {
                 setLoading(false);
             }
         }
+        return true;
     }
 
     async function deletePurchase(id: number) {
