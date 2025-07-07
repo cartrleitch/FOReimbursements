@@ -50,6 +50,31 @@ namespace RS25.Migrations
                     b.ToTable("Purchase");
                 });
 
+            modelBuilder.Entity("RS25.Models.Receipt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ReimId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Receipt");
+                });
+
             modelBuilder.Entity("RS25.Models.Reimbursement", b =>
                 {
                     b.Property<int>("Id")

@@ -107,13 +107,22 @@ namespace RS25.Controllers
             }
             var filePaths = new List<string>();
             foreach (var file in files) {
-                using (var stream = new FileStream(Path.Combine("Uploads", $"{Guid.NewGuid()}_{file.FileName}"), FileMode.Create))
+                var fileNameWithGuid = $"{Guid.NewGuid()}_{file.FileName}";
+                using (var stream = new FileStream(Path.Combine("Uploads", $"{fileNameWithGuid}"), FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                     filePaths.Add(file.FileName);
                 }
-
+                var fileReceiptMetaData = new Receipt
+                {
+                    FileName = fileNameWithGuid,
+                    FilePath = Path.Combine(uploadDir, fileNameWithGuid),
+                    UploadDate = DateTime.Now.ToUniversalTime(),
+                    ReimId = id
+                };
+                _context.Receipt.Add(fileReceiptMetaData);
             }
+
             await _context.SaveChangesAsync();
             return Ok(new { Message = "Files uploaded successfully", FilePaths = filePaths });
         }
