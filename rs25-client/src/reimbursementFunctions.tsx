@@ -60,7 +60,7 @@ export function useReimbursementFunctions() {
       !dateSubmitted
     ) {
       alert("Please fill in all fields correctly. ");
-      return;
+      return -1;
     }
     setLoading(true);
     setError(null);
@@ -82,11 +82,12 @@ export function useReimbursementFunctions() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const result = await response.json();
       await fetchReimbursements();
-      return true;
+      return Number(result.id);
     } catch (err: any) {
       setError(err.message);
-      return false;
+      return -1;
     } finally {
       setLoading(false);
     }

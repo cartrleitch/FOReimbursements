@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import React from "react";
+import { isNumber } from "@mui/x-data-grid/internals";
 
 function AboutPage() {
   return (
@@ -109,10 +110,17 @@ function CreateReimbursementPage() {
 
   const nav = useNavigate();
   const handleSubmit = async () => {
-      const success = await createReimbursement();
-      const successPur = await createPurchase(rowsPur);
-      console.log(rowsPur);
-    if (success && successPur) {
+      const newReimId = await createReimbursement();
+      var successPur = false;
+      if (newReimId) {
+          const rowsPurWithId = rowsPur.map((purchase) => ({ ...purchase, reimId: newReimId.toString() }));
+          var successPur = await createPurchase(rowsPurWithId);
+      }
+      if (rowsPur.length === 0) {
+            toast.error("Please add at least one purchase.");
+            return;
+      }
+      if (newReimId >= 0 && successPur) {
       toast.success("Reimbursement created successfully!");
       nav("/");
     }

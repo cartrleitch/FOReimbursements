@@ -28,6 +28,7 @@ export function usePurchaseFunctions() {
     async function createPurchase(purchases: Purchase[]) {
 
         for (const purchase of purchases) {
+            const reimId = purchase.reimId ? purchase.reimId : '';
             const account = purchase.accountp;
             const description = purchase.descriptionp;
             const amount = Number(purchase.amountp);
@@ -50,7 +51,8 @@ export function usePurchaseFunctions() {
                         account,
                         description,
                         amount,
-                        purchasedate
+                        purchasedate,
+                        reimId
                     })
                 });
                 if (!response.ok) {
