@@ -265,7 +265,7 @@ body {
   width: 100%;
   height: 215px;
   margin: auto;
-  overflow: auto; /* Enable scrolling for the table */
+  overflow: visible; /* Enable scrolling for the table */
 }
 
 .pur-table-container {

@@ -108,9 +108,17 @@ function CreateReimbursementPage() {
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
 
   const nav = useNavigate();
+
   const handleSubmit = async () => {
+    if (rowsPur.length === 0) {
+      toast.error(
+        "Please fill in all field correctly and add at least one purchase."
+      );
+      return;
+    }
     const newReimId = await createReimbursement();
-    if (newReimId) {
+    console.log("New Reimbursement ID:", newReimId);
+    if (newReimId >= 0) {
       const rowsPurWithId = rowsPur.map((purchase) => ({
         ...purchase,
         reimId: newReimId.toString(),
@@ -119,9 +127,11 @@ function CreateReimbursementPage() {
       if (successPur) {
         toast.success("Reimbursement created successfully!");
         nav("/");
+      } else {
+        toast.error("Please add at least one purchase.");
+        return;
       }
     } else {
-      toast.error("Please add at least one purchase.");
       return;
     }
   };
@@ -175,10 +185,7 @@ function CreateReimbursementPage() {
           label="Payment Method"
         />
         <div className="pur-table-container">
-          <PurchaseTable
-            rows={rowsPur}
-            setRows={setRowsPur}
-          />
+          <PurchaseTable rows={rowsPur} setRows={setRowsPur} />
         </div>
         <br />
         <SubmitButton content="Submit" />

@@ -56,12 +56,8 @@ export function ReimbursementTable({
   const { fetchPurchaseByReimId } = usePurchaseFunctions();
   const getRelatedPurchases = async (reimId: number) => {
     const purchases = await fetchPurchaseByReimId(reimId);
-    console.log("Related purchases:", purchases);
     setSelectedRowPurchases(purchases);
   };
-  React.useEffect(() => {
-    console.log("Updated selectedRowPurchases:", selectedRowPurchases);
-  }, [selectedRowPurchases]);
 
   return (
     <div className="reim-table">

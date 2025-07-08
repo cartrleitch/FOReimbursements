@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 export function useReimbursementFunctions() {
   const API_URL = "http://localhost:5000/api/Reimbursement";
   const API_URL_PURCHASE = "http://localhost:5000/api/Purchase";
@@ -51,7 +52,7 @@ export function useReimbursementFunctions() {
     if (dateSubmittedIn !== "") {
       dateSubmitted = new Date(dateSubmittedIn).toISOString();
     } else {
-      dateSubmitted = new Date().toISOString();
+      dateSubmitted = "";
     }
     if (
       !vendor ||
@@ -60,7 +61,9 @@ export function useReimbursementFunctions() {
       isNaN(totalAmount) ||
       !dateSubmitted
     ) {
-      alert("Please fill in all fields correctly. ");
+      console.log(dateSubmitted);
+      // If any field is empty or invalid, show an error message
+      toast.error("Please fill in all fields correctly.");
       return -1;
     }
     setLoading(true);

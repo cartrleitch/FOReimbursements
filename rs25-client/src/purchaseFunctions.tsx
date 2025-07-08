@@ -12,7 +12,6 @@ export function usePurchaseFunctions() {
   async function fetchPurchases() {
     setLoading(true);
     setError(null);
-    console.log("fetchPurchases triggered");
     try {
       const response = await fetch(API_URL);
       if (!response.ok) {
@@ -33,7 +32,6 @@ export function usePurchaseFunctions() {
       const amount = Number(purchase.amountp);
       const purchasedate = new Date(purchase.datep).toISOString();
       const file = purchase.file;
-      console.log(account, description, amount, purchasedate, file);
 
       if (!account || !description || isNaN(amount) || !purchasedate || !file) {
         alert("Please fill in all fields correctly.");
@@ -105,61 +103,61 @@ export function usePurchaseFunctions() {
   }
 
   async function updatePurchase() {
-        const id = 0;
-        const account = "";
-        const description = "";
-        const amount = 1;
-        const purchasedate = new Date().toISOString();
+    const id = 0;
+    const account = "";
+    const description = "";
+    const amount = 1;
+    const purchasedate = new Date().toISOString();
 
-        if (!account || !description || isNaN(amount) || !purchasedate) {
-          alert("Please fill in all fields correctly.");
-          return false;
-        }
-        setLoading(true);
-        setError(null);
-        try {
-          const response = await fetch(API_URL, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              id: Number(id),
-              account,
-              description,
-              amount,
-              purchasedate,
-            }),
-          });
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          await fetchPurchases();
-        } catch (err: any) {
-          setError(err.message);
-          return false;
-        } finally {
-          setLoading(false);
-        }
+    if (!account || !description || isNaN(amount) || !purchasedate) {
+      alert("Please fill in all fields correctly.");
+      return false;
     }
-
-    async function fetchPurchaseByReimId(reimId: number) {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${API_URL}/${reimId}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-          return data;
-      } catch (err: any) {
-          setError(err.message);
-          return [];
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(API_URL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: Number(id),
+          account,
+          description,
+          amount,
+          purchasedate,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      await fetchPurchases();
+    } catch (err: any) {
+      setError(err.message);
+      return false;
+    } finally {
+      setLoading(false);
     }
+  }
+
+  async function fetchPurchaseByReimId(reimId: number) {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_URL}/${reimId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (err: any) {
+      setError(err.message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return {
     data,
@@ -168,7 +166,7 @@ export function usePurchaseFunctions() {
     fetchPurchases,
     createPurchase,
     deletePurchase,
-      updatePurchase,
-      fetchPurchaseByReimId
+    updatePurchase,
+    fetchPurchaseByReimId,
   };
 }
