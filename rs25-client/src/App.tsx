@@ -179,8 +179,6 @@ function CreateReimbursementPage() {
           <PurchaseTable
             rows={rowsPur}
             setRows={setRowsPur}
-            files={files}
-            setFiles={setFiles}
           />
         </div>
         <br />

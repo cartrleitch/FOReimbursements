@@ -22,12 +22,6 @@ export interface Purchase {
 interface TableProps {
   rows: Purchase[];
   setRows: React.Dispatch<React.SetStateAction<Purchase[]>>;
-  display?: boolean;
-}
-
-interface DispalyOnlyTableProps {
-    fetchPurchasesByReimId: (id: number) => Purchase[];
-    rowsId: number;
 }
 
 const columnns: GridColDef[] = [
@@ -72,7 +66,6 @@ const columnns: GridColDef[] = [
 export function PurchaseTable({
   rows,
   setRows,
-  display,
 }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
@@ -199,18 +192,4 @@ export function PurchaseTable({
       </div>
     </div>
   );
-}
-
-export function DisplayOnlyPurchaseTable({ fetchPurchasesByReimId, rowsId }: DispalyOnlyTableProps) {
-    const rows = fetchPurchasesByReimId(rowsId);
-    return (
-        <DataGrid
-            rows={rows}
-            columns={columnns}
-            checkboxSelection
-            disableMultipleRowSelection
-            autoPageSize
-            columnVisibilityModel={{ id: false }}
-        />
-    );
 }
