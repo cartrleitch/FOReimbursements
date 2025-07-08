@@ -106,8 +106,25 @@ function CreateReimbursementPage() {
   const { createReimbursement } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
+  const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
   const nav = useNavigate();
+
+  const updateTotalAmount = (updatedRows?: Purchase[]) => {
+    const rowsToUse = updatedRows || rowsPur;
+    console.log("Updating total amount with rows:", rowsToUse);
+    var total = 0;
+    for (const purchase of rowsPur) {
+      console.log("Calculating total amount for purchase:", purchase);
+      try {
+        total += Number(purchase.amountp);
+        console.log("Current total after adding purchase:", total);
+      } catch (e) {
+        console.error("Error calculating total amount:", e);
+      }
+    }
+    setTotalAmount(total);
+  };
 
   const handleSubmit = async () => {
     if (rowsPur.length === 0) {
@@ -172,6 +189,8 @@ function CreateReimbursementPage() {
           label="Total Amount"
           step="0.01"
           min="0"
+          value={totalAmount.toString()}
+          readonly={true}
         />
         <InputField
           id="datesubmitted"
@@ -185,7 +204,11 @@ function CreateReimbursementPage() {
           label="Payment Method"
         />
         <div className="pur-table-container">
-          <PurchaseTable rows={rowsPur} setRows={setRowsPur} />
+          <PurchaseTable
+            rows={rowsPur}
+            setRows={setRowsPur}
+            updateTotalAmount={updateTotalAmount}
+          />
         </div>
         <br />
         <SubmitButton content="Submit" />

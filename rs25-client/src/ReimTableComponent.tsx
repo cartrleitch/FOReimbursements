@@ -3,6 +3,7 @@ import React from "react";
 import { RedirectButton, Button } from "./Components";
 import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
 import { usePurchaseFunctions } from "./purchaseFunctions";
+import { toast } from "react-toastify";
 interface Reimbursement {
   id: number;
   vendor: string;
@@ -73,7 +74,7 @@ export function ReimbursementTable({
             if (selectedRowId !== null) {
               deleteReimbursement(selectedRowId);
             } else {
-              alert("No row selected!");
+              toast.error("No row selected!");
             }
           }}
           content="Delete"

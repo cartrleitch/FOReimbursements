@@ -84,6 +84,7 @@ export function InputFieldNumber({
   min,
   onChange,
   value,
+  readonly = false,
 }: {
   id: string;
   placeholder: string;
@@ -93,6 +94,7 @@ export function InputFieldNumber({
   min: string;
   onChange?: (e: any) => void;
   value?: string;
+  readonly?: boolean;
 }) {
   return (
     <div>
@@ -106,6 +108,7 @@ export function InputFieldNumber({
         className="normal-input"
         onChange={onChange}
         value={value}
+        readOnly={readonly}
       />
     </div>
   );

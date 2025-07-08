@@ -23,6 +23,7 @@ export interface Purchase {
 interface TableProps {
   rows: Purchase[];
   setRows: React.Dispatch<React.SetStateAction<Purchase[]>>;
+  updateTotalAmount?: (rowsToUse: Purchase[]) => void;
 }
 
 const columnns: GridColDef[] = [
@@ -35,10 +36,13 @@ const columnns: GridColDef[] = [
     flex: 1,
     type: "number",
     headerAlign: "left",
-      align: "left",
-      renderCell: (params) => {
-          return `${Number(params.row.amountp).toLocaleString('en-US', {style:'currency', currency:'USD'})}`;
-      }
+    align: "left",
+    renderCell: (params) => {
+      return `${Number(params.row.amountp).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      })}`;
+    },
   },
   {
     field: "datep",
@@ -67,7 +71,11 @@ const columnns: GridColDef[] = [
   },
 ];
 
-export function PurchaseTable({ rows, setRows }: TableProps) {
+export function PurchaseTable({
+  rows,
+  setRows,
+  updateTotalAmount,
+}: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
@@ -91,7 +99,8 @@ export function PurchaseTable({ rows, setRows }: TableProps) {
         datep,
         file,
       };
-      setRows([...rows, newPurchase]);
+      const rowsToUse = [...rows, newPurchase];
+      setRows(rowsToUse);
       setAccount("");
       setDescription("");
       setAmount("");
@@ -100,6 +109,7 @@ export function PurchaseTable({ rows, setRows }: TableProps) {
       if (inputRef.current) {
         inputRef.current.value = ""; // Clear the file input
       }
+      updateTotalAmount?.(rowsToUse); // Update total amount if function is provided
     }
   };
 
@@ -212,10 +222,13 @@ const displayColumnns: GridColDef[] = [
     flex: 1,
     type: "number",
     headerAlign: "left",
-      align: "left",
-      renderCell: (params) => {
-          return params.row.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-      }
+    align: "left",
+    renderCell: (params) => {
+      return params.row.amount.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      });
+    },
   },
   {
     field: "purchaseDate",

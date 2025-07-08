@@ -108,7 +108,6 @@ export function useReimbursementFunctions() {
       }
       for (const purchase of await relatedPurchases.json()) {
         // Delete related receipts first
-        console.log(purchase.id);
         try {
           const relatedReceipt = await fetch(
             `${API_URL_RECEIPT}/${purchase.id}`
