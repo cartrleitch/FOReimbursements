@@ -6,6 +6,7 @@ import {
   InputFieldNumber,
   InputFieldTextArea,
   InputSelect,
+  FileInput,
 } from "./Components";
 export interface Purchase {
   id: number;
@@ -13,12 +14,15 @@ export interface Purchase {
   descriptionp: string;
   amountp: string;
   datep: string;
-  reimId?: string;
+    reimId?: string;
+    file?: File | null;
 }
 
 interface TableProps {
-    rows: Purchase[];
-    setRows: React.Dispatch<React.SetStateAction<Purchase[]>>;
+  rows: Purchase[];
+  setRows: React.Dispatch<React.SetStateAction<Purchase[]>>;
+  files: File[];
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }
 
 const columnns: GridColDef[] = [
@@ -42,7 +46,7 @@ const columnns: GridColDef[] = [
   },
 ];
 
-export function PurchaseTable({ rows, setRows }: TableProps) {
+export function PurchaseTable({ rows, setRows, files, setFiles }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
@@ -50,12 +54,13 @@ export function PurchaseTable({ rows, setRows }: TableProps) {
   const [accountp, setAccount] = React.useState("");
   const [descriptionp, setDescription] = React.useState("");
   const [amountp, setAmount] = React.useState("");
-  const [datep, setDate] = React.useState("");
+    const [datep, setDate] = React.useState("");
+    const [file, setFile] = React.useState<File | null>(null);
 
-    const addPurchase = () => {
-        console.log(accountp + " " + descriptionp + " " + amountp + " " + datep);
-        if (!accountp || !descriptionp || !amountp || !datep) {
-            console.log(accountp + " " + descriptionp + " " + amountp + " " + datep);
+  const addPurchase = () => {
+      console.log(accountp + " " + descriptionp + " " + amountp + " " + datep + " " + file);
+    if (!accountp || !descriptionp || !amountp || !datep) {
+        console.log(accountp + " " + descriptionp + " " + amountp + " " + datep + " " + file);
 
       alert("Please fill in all fields correctly.");
     } else {
@@ -64,13 +69,15 @@ export function PurchaseTable({ rows, setRows }: TableProps) {
         accountp,
         descriptionp,
         amountp,
-        datep,
+          datep,
+          file,
       };
       setRows([...rows, newPurchase]);
       setAccount("");
       setDescription("");
       setAmount("");
-      setDate("");
+        setDate("");
+        setFile(null);
     }
   };
 
@@ -81,6 +88,12 @@ export function PurchaseTable({ rows, setRows }: TableProps) {
     }
     setRows(rows.filter((row) => row.id !== selectedRowId));
     setSelectedRowId(null);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFile(event.target.files[0]);
+    }
   };
 
   return (
@@ -136,6 +149,7 @@ export function PurchaseTable({ rows, setRows }: TableProps) {
           onChange={(e) => setDate(e.target.value)}
           value={datep}
         />
+        <FileInput id="receipts" label="Receipts" onChange={handleFileChange} />
       </div>
       <div className="pur-table-button-div">
         <Button

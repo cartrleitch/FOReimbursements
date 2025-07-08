@@ -25,14 +25,14 @@ namespace RS25.Controllers {
             }
 
         // GET: api/receipt/{id}
-        [HttpGet("{reimId}", Name = "GetReceiptByReimId")]
-        public async Task<IActionResult> GetReceiptByReimId(int reimId)
+        [HttpGet("{purId}", Name = "GetReceiptByPurId")]
+        public async Task<IActionResult> GetReceiptByPurId(int purId)
         {
-            if (reimId <= 0)
+            if (purId <= 0)
             {
                 return BadRequest("Invalid Purchase ID");
             }
-            var receipts = await _context.Receipt.Where(p => p.ReimId == reimId).ToListAsync();
+            var receipts = await _context.Receipt.Where(p => p.PurId == purId).ToListAsync();
             if (receipts == null)
             {
                 return NotFound("Purchase not found");

@@ -99,23 +99,31 @@ export function useReimbursementFunctions() {
     try {
       setLoading(true);
       setError(null);
-      const relatedReceipts = await fetch(`${API_URL_RECEIPT}/${id}`);
-      if (!relatedReceipts.ok) {
-        throw new Error(`HTTP error! status: ${relatedReceipts.status}`);
-      }
-      for (const receipt of await relatedReceipts.json()) {
-        const response = await fetch(`${API_URL_RECEIPT}/${receipt.id}`, {
-          method: "DELETE",
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      }
       const relatedPurchases = await fetch(`${API_URL_PURCHASE}/${id}`);
       if (!relatedPurchases.ok) {
         throw new Error(`HTTP error! status: ${relatedPurchases.status}`);
       }
       for (const purchase of await relatedPurchases.json()) {
+          // Delete related receipts first
+          console.log(purchase.id);
+          try {
+              const relatedReceipt = await fetch(`${API_URL_RECEIPT}/${purchase.id}`);
+              if (!relatedReceipt.ok) {
+                  throw new Error(`HTTP error! status: ${relatedReceipt.status}`);
+              }
+              const relatedRecId = (await relatedReceipt.json())[0].id;
+              const responseRec = await fetch(`${API_URL_RECEIPT}/${relatedRecId}`, {
+                  method: "DELETE",
+              });
+              if (!responseRec.ok) {
+                  throw new Error(`HTTP error! status: ${responseRec.status}`);
+              }
+          }
+              catch (err: any) {
+                console.error(`Failed to delete receipt for purchase ${purchase.id}: ${err.message}`);
+          }
+        
+        // Then delete the purchase
         const response = await fetch(`${API_URL_PURCHASE}/${purchase.id}`, {
           method: "DELETE",
         });
@@ -123,6 +131,7 @@ export function useReimbursementFunctions() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       }
+        // Finally, delete the reimbursement
       const response = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
       });
@@ -199,32 +208,6 @@ export function useReimbursementFunctions() {
     }
   }
 
-  async function uploadFiles(reimbursementId: number, files: File[]) {
-    const formData = new FormData();
-    files.forEach((file) => {
-      formData.append("files", file);
-    });
-
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(`${API_URL}/upload/${reimbursementId}`, {
-        method: "POST",
-        body: formData,
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      console.log("Files uploaded successfully");
-      return true;
-    } catch (err: any) {
-      setError(err.message);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }
-
   // This hook is used to manage the state and functions related to reimbursements.
   // It includes fetching, creating, updating, and deleting reimbursements.
   return {
@@ -235,6 +218,5 @@ export function useReimbursementFunctions() {
     createReimbursement,
     updateReimbursement,
     deleteReimbursement,
-    uploadFiles,
   };
 }

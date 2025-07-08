@@ -103,7 +103,7 @@ function BugReportPage() {
   );
 }
 function CreateReimbursementPage() {
-  const { createReimbursement, uploadFiles } = useReimbursementFunctions();
+  const { createReimbursement } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
   const [files, setFiles] = React.useState<File[]>([]);
@@ -116,22 +116,14 @@ function CreateReimbursementPage() {
         ...purchase,
         reimId: newReimId.toString(),
       }));
-        const successPur = await createPurchase(rowsPurWithId);
-        const successFile = await uploadFiles(newReimId, files);
-        if (successPur && successFile) {
-            toast.success("Reimbursement created successfully!");
-            nav("/");
-        }
-    }
-    else {
+      const successPur = await createPurchase(rowsPurWithId);
+      if (successPur) {
+        toast.success("Reimbursement created successfully!");
+        nav("/");
+      }
+    } else {
       toast.error("Please add at least one purchase.");
       return;
-    }
-    
-  };
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setFiles(Array.from(event.target.files));
     }
   };
 
@@ -184,9 +176,14 @@ function CreateReimbursementPage() {
           label="Payment Method"
         />
         <div className="pur-table-container">
-          <PurchaseTable rows={rowsPur} setRows={setRowsPur} />
-        </div>
-        <FileInput id="receipts" label="Receipts" onChange={handleFileChange} />
+          <PurchaseTable
+            rows={rowsPur}
+            setRows={setRowsPur}
+            files={files}
+            setFiles={setFiles}
+          />
+              </div>
+        <br />
         <SubmitButton content="Submit" />
       </form>
     </div>

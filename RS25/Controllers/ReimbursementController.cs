@@ -90,41 +90,5 @@ namespace RS25.Controllers
 
             return NoContent();
         }
-
-        // POST: api/reimbursement/upload
-        [HttpPost("upload/{id}", Name = "UploadFile")]
-        public async Task<IActionResult> UploadFiles(int id, [FromForm] List<IFormFile> files)
-        {
-            if (files.Count == 0 || files == null)
-            {
-                return BadRequest("No files uploaded");
-            } 
-
-            var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-            if (!Directory.Exists("Uploads"))
-            {
-                Directory.CreateDirectory("Uploads");
-            }
-            var filePaths = new List<string>();
-            foreach (var file in files) {
-                var fileNameWithGuid = $"{Guid.NewGuid()}_{file.FileName}";
-                using (var stream = new FileStream(Path.Combine("Uploads", $"{fileNameWithGuid}"), FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                    filePaths.Add(file.FileName);
-                }
-                var fileReceiptMetaData = new Receipt
-                {
-                    FileName = fileNameWithGuid,
-                    FilePath = Path.Combine(uploadDir, fileNameWithGuid),
-                    UploadDate = DateTime.Now.ToUniversalTime(),
-                    ReimId = id
-                };
-                _context.Receipt.Add(fileReceiptMetaData);
-            }
-
-            await _context.SaveChangesAsync();
-            return Ok(new { Message = "Files uploaded successfully", FilePaths = filePaths });
-        }
     }
 }

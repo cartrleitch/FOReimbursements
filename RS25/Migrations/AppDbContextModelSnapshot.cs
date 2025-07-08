@@ -64,7 +64,7 @@ namespace RS25.Migrations
                     b.Property<string>("FilePath")
                         .HasColumnType("text");
 
-                    b.Property<int>("ReimId")
+                    b.Property<int>("PurId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UploadDate")

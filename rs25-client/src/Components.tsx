@@ -188,7 +188,6 @@ export function FileInput({
         <input
           type="file"
           id={id}
-          multiple
           accept=".jpg,.jpeg,.png,.pdf"
           className="file-input"
           onChange={onChange}

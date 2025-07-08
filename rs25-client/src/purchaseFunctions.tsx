@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Purchase } from "./PurTableComponent";
 export function usePurchaseFunctions() {
   const API_URL = "http://localhost:5000/api/Purchase";
+  const API_URL_RECEIPT = "http://localhost:5000/api/Receipt";
+
   // eslint-disable-next-line
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -29,10 +31,11 @@ export function usePurchaseFunctions() {
       const account = purchase.accountp;
       const description = purchase.descriptionp;
       const amount = Number(purchase.amountp);
-      const purchasedate = new Date(purchase.datep).toISOString();
-      console.log(account, description, amount, purchasedate);
+        const purchasedate = new Date(purchase.datep).toISOString();
+        const file = purchase.file;
+      console.log(account, description, amount, purchasedate, file);
 
-      if (!account || !description || isNaN(amount) || !purchasedate) {
+      if (!account || !description || isNaN(amount) || !purchasedate || !file) {
         alert("Please fill in all fields correctly.");
         return false;
       }
@@ -52,7 +55,15 @@ export function usePurchaseFunctions() {
             reimId,
           }),
         });
-        if (!response.ok) {
+          const formData = new FormData(); 
+          formData.append("file", file);
+        const purchaseId = (await response.json()).id;
+          const responseFile = await fetch(`${API_URL}/upload/${purchaseId}`, {
+            method: "POST",
+              body: formData,
+        });
+
+        if (!response.ok || !responseFile.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         await fetchPurchases();
@@ -68,6 +79,18 @@ export function usePurchaseFunctions() {
 
   async function deletePurchase(id: number) {
     try {
+      const relatedReceipts = await fetch(`${API_URL_RECEIPT}/${id}`);
+      if (!relatedReceipts.ok) {
+        throw new Error(`HTTP error! status: ${relatedReceipts.status}`);
+      }
+      for (const receipt of await relatedReceipts.json()) {
+        const response = await fetch(`${API_URL_RECEIPT}/${receipt.id}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      }
       const response = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
       });
