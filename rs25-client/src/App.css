@@ -263,8 +263,9 @@ body {
 
 .pur-table {
   width: 100%;
-  height: auto;
+  height: 215px;
   margin: auto;
+  overflow: auto; /* Enable scrolling for the table */
 }
 
 .pur-table-container {

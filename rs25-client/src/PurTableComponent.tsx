@@ -63,10 +63,7 @@ const columnns: GridColDef[] = [
   },
 ];
 
-export function PurchaseTable({
-  rows,
-  setRows,
-}: TableProps) {
+export function PurchaseTable({ rows, setRows }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
@@ -118,41 +115,44 @@ export function PurchaseTable({
   };
 
   return (
-    <div className="pur-table">
+    <div>
       <h3>Purchases</h3>
-      <DataGrid
-        rows={rows}
-        columns={columnns}
-        checkboxSelection
-        disableMultipleRowSelection
-        autoPageSize
-        columnVisibilityModel={{ id: false }}
-        getRowId={(row) => row.id}
-        onRowSelectionModelChange={(id) => {
-          setRowSelectionModel(id);
-          const selectedRowData = rows.find(
-            (row) => row.id === Array.from(id.ids)[0]
-          );
-          setSelectedRowId(selectedRowData?.id || null);
-        }}
-        rowSelectionModel={rowSelectionModel}
-      />
+      <div className="pur-table">
+        <DataGrid
+          rows={rows}
+          columns={columnns}
+          checkboxSelection
+          disableMultipleRowSelection
+          autoPageSize
+          columnVisibilityModel={{ id: false }}
+          getRowId={(row) => row.id}
+          onRowSelectionModelChange={(id) => {
+            setRowSelectionModel(id);
+            const selectedRowData = rows.find(
+              (row) => row.id === Array.from(id.ids)[0]
+            );
+            setSelectedRowId(selectedRowData?.id || null);
+          }}
+          rowSelectionModel={rowSelectionModel}
+        />
+      </div>
+      <div>
         <div className="pur-table-inputs">
-            <InputSelect
+          <InputSelect
             id="accountp"
             options={["Account 1", "Account 2", "Account 3"]}
             label="Account"
             onChange={(e) => setAccount(e.target.value)}
             value={accountp}
-            />
-            <InputFieldTextArea
+          />
+          <InputFieldTextArea
             id="descriptionp"
             placeholder="Description"
             label="Description"
             onChange={(e) => setDescription(e.target.value)}
             value={descriptionp}
-            />
-            <InputFieldNumber
+          />
+          <InputFieldNumber
             id="amountp"
             placeholder="Amount"
             type="number"
@@ -161,89 +161,90 @@ export function PurchaseTable({
             min="0"
             onChange={(e) => setAmount(e.target.value)}
             value={amountp}
-            />
-            <InputField
+          />
+          <InputField
             id="datep"
             placeholder="Date"
             type="date"
             label="Date"
             onChange={(e) => setDate(e.target.value)}
             value={datep}
-            />
-            <FileInput
+          />
+          <FileInput
             id="receipts"
             label="Receipts"
             onChange={handleFileChange}
             ref={inputRef}
-              />
-              <div className="pur-table-button-div">
-                  <Button
-                      content="Add Purchase"
-                      className="pur-table-normal-button"
-                      onClick={addPurchase}
-                  />
-                  <Button
-                      content="Remove Purchase"
-                      className="pur-table-spooky-button"
-                      onClick={deletePurchase}
-                  />
-              </div>
+          />
+          <div className="pur-table-button-div">
+            <Button
+              content="Add Purchase"
+              className="pur-table-normal-button"
+              onClick={addPurchase}
+            />
+            <Button
+              content="Remove Purchase"
+              className="pur-table-spooky-button"
+              onClick={deletePurchase}
+            />
+          </div>
         </div>
+      </div>
     </div>
   );
 }
 
 interface DisplayOnlyProps {
-    rows: Purchase[];
-};
+  rows: Purchase[];
+}
 
 const displayColumnns: GridColDef[] = [
-    { field: "id", headerName: "ID", flex: 1, hideable: false },
-    { field: "account", headerName: "Account", flex: 1 },
-    { field: "description", headerName: "Description", flex: 1 },
-    {
-        field: "amount",
-        headerName: "Amount",
-        flex: 1,
-        type: "number",
-        headerAlign: "left",
-        align: "left",
+  { field: "id", headerName: "ID", flex: 1, hideable: false },
+  { field: "account", headerName: "Account", flex: 1 },
+  { field: "description", headerName: "Description", flex: 1 },
+  {
+    field: "amount",
+    headerName: "Amount",
+    flex: 1,
+    type: "number",
+    headerAlign: "left",
+    align: "left",
+  },
+  {
+    field: "purchaseDate",
+    headerName: "Date",
+    flex: 1,
+    type: "date",
+    valueGetter: (value: any) => new Date(value),
+  },
+  {
+    field: "file",
+    headerName: "Receipt",
+    flex: 1,
+    hideable: true,
+    renderCell: (params) => {
+      const fileName = params.row.fileName;
+      const downloadUrl = `http://localhost:5000/api/receipt/download/${fileName}`;
+      if (fileName) {
+        return (
+          <a href={downloadUrl} download={fileName}>
+            Download
+          </a>
+        );
+      }
+      return <span>No file</span>;
     },
-    {
-        field: "purchaseDate",
-        headerName: "Date",
-        flex: 1,
-        type: "date",
-        valueGetter: (value: any) => new Date(value),
-    },
-    {
-        field: "file",
-        headerName: "Receipt",
-        flex: 1,
-        hideable: true,
-        renderCell: (params) => {
-            const fileName = params.row.fileName;
-            const downloadUrl = `http://localhost:5000/api/receipt/download/${fileName}`;
-            if (fileName) {
-                return (
-                    <a href={downloadUrl} download={fileName}>
-                        Download
-                    </a>
-                );
-            }
-            return <span>No file</span>;
-        },
-    },
+  },
 ];
 export function DisplayOnlyPurchaseTable({ rows }: DisplayOnlyProps) {
-    return (
-        <div className="pur-table">
-        <DataGrid
-            rows={rows}
-                columns={displayColumnns}
-            autoPageSize
-            columnVisibilityModel={{ id: false }}
-        />
-        </div>
-    );
+  return (
+    <div className="pur-table">
+      <DataGrid
+        rows={rows}
+        columns={displayColumnns}
+        autoPageSize
+        columnVisibilityModel={{ id: false }}
+      />
+    </div>
+  );
 }
