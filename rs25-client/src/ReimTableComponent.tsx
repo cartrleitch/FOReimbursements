@@ -87,7 +87,7 @@ export function ReimbursementTable({
         rowSelectionModel={rowSelectionModel}
       />
       <DisplayOnlyPurchaseTable rows={selectedRowPurchases} />
-      <br />
+          <br />
       <div className="table-button-div">
         <Button onClick={fetchReimbursements} content="Refresh" />
         <RedirectButton to="/create" content="New" />

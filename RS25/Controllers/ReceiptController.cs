@@ -40,6 +40,24 @@ namespace RS25.Controllers {
             return Ok(receipts);
         }
 
+        // GET: api/receipt/download/{fileName}
+        [HttpGet("download/{fileName}", Name = "GetFileByName")]
+        public IActionResult GetFileByName(string fileName)
+        {
+            var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            var filePath = Path.Combine(uploadDir, fileName);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("File not found");
+            }
+
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            var contentType =  "application/octet-stream";
+
+            return File(fileStream, contentType, fileName);
+        }
+
         // POST api/receipt
         [HttpPost(Name = "CreateReceipt")]
         public async Task<IActionResult> CreateReceipt([FromBody] Receipt receipt)

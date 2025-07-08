@@ -222,11 +222,11 @@ const displayColumnns: GridColDef[] = [
         flex: 1,
         hideable: true,
         renderCell: (params) => {
-            const filePath = params.row.filePath;
             const fileName = params.row.fileName;
-            if (filePath) {
+            const downloadUrl = `http://localhost:5000/api/receipt/download/${fileName}`;
+            if (fileName) {
                 return (
-                    <a href={filePath} download={fileName}>
+                    <a href={downloadUrl} download={fileName}>
                         Download
                     </a>
                 );
