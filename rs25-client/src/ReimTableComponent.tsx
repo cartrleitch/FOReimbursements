@@ -55,43 +55,20 @@ export function ReimbursementTable({
   >([]);
   const { fetchPurchaseByReimId } = usePurchaseFunctions();
   const getRelatedPurchases = async (reimId: number) => {
-      const purchases = await fetchPurchaseByReimId(reimId);
-      console.log("Related purchases:", purchases);
-      setSelectedRowPurchases(purchases);
-    };
-    React.useEffect(() => {
-        console.log("Updated selectedRowPurchases:", selectedRowPurchases);
-    }, [selectedRowPurchases]);
+    const purchases = await fetchPurchaseByReimId(reimId);
+    console.log("Related purchases:", purchases);
+    setSelectedRowPurchases(purchases);
+  };
+  React.useEffect(() => {
+    console.log("Updated selectedRowPurchases:", selectedRowPurchases);
+  }, [selectedRowPurchases]);
 
   return (
     <div className="reim-table">
-      <DataGrid
-        rows={rows}
-        columns={columnns}
-        checkboxSelection
-        disableMultipleRowSelection
-        autoPageSize
-        columnVisibilityModel={{ id: false }}
-        getRowId={(row) => row.id}
-              onRowSelectionModelChange={(id) => {
-                  setSelectedRowPurchases([]);
-          setRowSelectionModel(id);
-          const selectedRowData = rows.find(
-            (row) => row.id === Array.from(id.ids)[0]
-          );
-          setSelectedRowId(selectedRowData?.id || null);
-          if (selectedRowData) {
-              getRelatedPurchases(selectedRowData.id);
-          }
-        }}
-        rowSelectionModel={rowSelectionModel}
-      />
-      <DisplayOnlyPurchaseTable rows={selectedRowPurchases} />
-          <br />
       <div className="table-button-div">
-        <Button onClick={fetchReimbursements} content="Refresh" />
         <RedirectButton to="/create" content="New" />
-        <RedirectButton to="/update" content="Edit" />
+        <Button onClick={fetchReimbursements} content="Refresh" />
+        {/*<RedirectButton to="/update" content="Edit" />*/}
         <Button
           onClick={async () => {
             if (selectedRowId !== null) {
@@ -104,6 +81,29 @@ export function ReimbursementTable({
           className="spooky-button"
         />
       </div>
+      <DataGrid
+        rows={rows}
+        columns={columnns}
+        checkboxSelection
+        disableMultipleRowSelection
+        autoPageSize
+        columnVisibilityModel={{ id: false }}
+        getRowId={(row) => row.id}
+        onRowSelectionModelChange={(id) => {
+          setSelectedRowPurchases([]);
+          setRowSelectionModel(id);
+          const selectedRowData = rows.find(
+            (row) => row.id === Array.from(id.ids)[0]
+          );
+          setSelectedRowId(selectedRowData?.id || null);
+          if (selectedRowData) {
+            getRelatedPurchases(selectedRowData.id);
+          }
+        }}
+        rowSelectionModel={rowSelectionModel}
+      />
+      <DisplayOnlyPurchaseTable rows={selectedRowPurchases} />
+      <br />
     </div>
   );
 }
