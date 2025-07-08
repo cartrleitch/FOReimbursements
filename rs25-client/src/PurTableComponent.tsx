@@ -8,6 +8,7 @@ import {
   InputSelect,
   FileInput,
 } from "./Components";
+import { toast } from "react-toastify";
 
 export interface Purchase {
   id: number;
@@ -34,7 +35,10 @@ const columnns: GridColDef[] = [
     flex: 1,
     type: "number",
     headerAlign: "left",
-    align: "left",
+      align: "left",
+      renderCell: (params) => {
+          return `${Number(params.row.amountp).toLocaleString('en-US', {style:'currency', currency:'USD'})}`;
+      }
   },
   {
     field: "datep",
@@ -76,8 +80,8 @@ export function PurchaseTable({ rows, setRows }: TableProps) {
   const [file, setFile] = React.useState<File | null>(null);
 
   const addPurchase = () => {
-    if (!accountp || !descriptionp || !amountp || !datep) {
-      alert("Please fill in all fields correctly.");
+    if (!accountp || !descriptionp || !amountp || !datep || file == null) {
+      toast.error("Please fill in all purchase fields correctly.");
     } else {
       const newPurchase: Purchase = {
         id: rows.length + 1,
@@ -208,7 +212,10 @@ const displayColumnns: GridColDef[] = [
     flex: 1,
     type: "number",
     headerAlign: "left",
-    align: "left",
+      align: "left",
+      renderCell: (params) => {
+          return params.row.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+      }
   },
   {
     field: "purchaseDate",

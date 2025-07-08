@@ -112,7 +112,7 @@ function CreateReimbursementPage() {
   const handleSubmit = async () => {
     if (rowsPur.length === 0) {
       toast.error(
-        "Please fill in all field correctly and add at least one purchase."
+        "Please fill in all fields correctly and add at least one purchase."
       );
       return;
     }

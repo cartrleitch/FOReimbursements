@@ -30,7 +30,10 @@ const columnns: GridColDef[] = [
     flex: 1,
     type: "number",
     headerAlign: "left",
-    align: "left",
+      align: "left",
+        renderCell: (params) => {
+            return params.row.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        }
   },
   {
     field: "dateSubmitted",
