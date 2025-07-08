@@ -197,12 +197,50 @@ interface DisplayOnlyProps {
     rows: Purchase[];
 };
 
+const displayColumnns: GridColDef[] = [
+    { field: "id", headerName: "ID", flex: 1, hideable: false },
+    { field: "account", headerName: "Account", flex: 1 },
+    { field: "description", headerName: "Description", flex: 1 },
+    {
+        field: "amount",
+        headerName: "Amount",
+        flex: 1,
+        type: "number",
+        headerAlign: "left",
+        align: "left",
+    },
+    {
+        field: "purchaseDate",
+        headerName: "Date",
+        flex: 1,
+        type: "date",
+        valueGetter: (value: any) => new Date(value),
+    },
+    {
+        field: "file",
+        headerName: "Receipt",
+        flex: 1,
+        hideable: true,
+        renderCell: (params) => {
+            const filePath = params.row.filePath;
+            const fileName = params.row.fileName;
+            if (filePath) {
+                return (
+                    <a href={filePath} download={fileName}>
+                        Download
+                    </a>
+                );
+            }
+            return <span>No file</span>;
+        },
+    },
+];
 export function DisplayOnlyPurchaseTable({ rows }: DisplayOnlyProps) {
     return (
         <div className="pur-table">
         <DataGrid
             rows={rows}
-            columns={columnns}
+                columns={displayColumnns}
             autoPageSize
             columnVisibilityModel={{ id: false }}
         />

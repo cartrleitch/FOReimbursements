@@ -106,7 +106,6 @@ function CreateReimbursementPage() {
   const { createReimbursement } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
-  const [files, setFiles] = React.useState<File[]>([]);
 
   const nav = useNavigate();
   const handleSubmit = async () => {

@@ -1,6 +1,8 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import React from "react";
 import { RedirectButton, Button } from "./Components";
+import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
+import { usePurchaseFunctions } from "./purchaseFunctions";
 interface Reimbursement {
   id: number;
   vendor: string;
@@ -48,6 +50,18 @@ export function ReimbursementTable({
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
+  const [selectedRowPurchases, setSelectedRowPurchases] = React.useState<
+    Purchase[]
+  >([]);
+  const { fetchPurchaseByReimId } = usePurchaseFunctions();
+  const getRelatedPurchases = async (reimId: number) => {
+      const purchases = await fetchPurchaseByReimId(reimId);
+      console.log("Related purchases:", purchases);
+      setSelectedRowPurchases(purchases);
+    };
+    React.useEffect(() => {
+        console.log("Updated selectedRowPurchases:", selectedRowPurchases);
+    }, [selectedRowPurchases]);
 
   return (
     <div className="reim-table">
@@ -59,15 +73,20 @@ export function ReimbursementTable({
         autoPageSize
         columnVisibilityModel={{ id: false }}
         getRowId={(row) => row.id}
-        onRowSelectionModelChange={(id) => {
+              onRowSelectionModelChange={(id) => {
+                  setSelectedRowPurchases([]);
           setRowSelectionModel(id);
           const selectedRowData = rows.find(
             (row) => row.id === Array.from(id.ids)[0]
           );
           setSelectedRowId(selectedRowData?.id || null);
+          if (selectedRowData) {
+              getRelatedPurchases(selectedRowData.id);
+          }
         }}
         rowSelectionModel={rowSelectionModel}
       />
+      <DisplayOnlyPurchaseTable rows={selectedRowPurchases} />
       <br />
       <div className="table-button-div">
         <Button onClick={fetchReimbursements} content="Refresh" />
