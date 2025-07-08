@@ -104,7 +104,7 @@ namespace RS25.Controllers
 
         // POST: api/purchase/upload
         [HttpPost("upload/{id}", Name = "UploadFile")]
-        public async Task<IActionResult> UploadFiles(int id, [FromForm] IFormFile file)
+        public async Task<IActionResult> UploadFiles(int id, IFormFile file)
         {
             if (file == null)
             {
