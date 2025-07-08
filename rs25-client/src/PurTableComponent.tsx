@@ -1,5 +1,5 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
-import React from "react";
+import React, { useRef } from "react";
 import {
   Button,
   InputField,
@@ -8,14 +8,15 @@ import {
   InputSelect,
   FileInput,
 } from "./Components";
+
 export interface Purchase {
   id: number;
   accountp: string;
   descriptionp: string;
   amountp: string;
   datep: string;
-    reimId?: string;
-    file?: File | null;
+  reimId?: string;
+  file?: File | null;
 }
 
 interface TableProps {
@@ -50,18 +51,16 @@ export function PurchaseTable({ rows, setRows, files, setFiles }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
 
   const [accountp, setAccount] = React.useState("");
   const [descriptionp, setDescription] = React.useState("");
   const [amountp, setAmount] = React.useState("");
-    const [datep, setDate] = React.useState("");
-    const [file, setFile] = React.useState<File | null>(null);
+  const [datep, setDate] = React.useState("");
+  const [file, setFile] = React.useState<File | null>(null);
 
   const addPurchase = () => {
-      console.log(accountp + " " + descriptionp + " " + amountp + " " + datep + " " + file);
     if (!accountp || !descriptionp || !amountp || !datep) {
-        console.log(accountp + " " + descriptionp + " " + amountp + " " + datep + " " + file);
-
       alert("Please fill in all fields correctly.");
     } else {
       const newPurchase: Purchase = {
@@ -69,15 +68,18 @@ export function PurchaseTable({ rows, setRows, files, setFiles }: TableProps) {
         accountp,
         descriptionp,
         amountp,
-          datep,
-          file,
+        datep,
+        file,
       };
       setRows([...rows, newPurchase]);
       setAccount("");
       setDescription("");
       setAmount("");
-        setDate("");
-        setFile(null);
+      setDate("");
+      setFile(null);
+      if (inputRef.current) {
+        inputRef.current.value = ""; // Clear the file input
+      }
     }
   };
 
@@ -149,7 +151,12 @@ export function PurchaseTable({ rows, setRows, files, setFiles }: TableProps) {
           onChange={(e) => setDate(e.target.value)}
           value={datep}
         />
-        <FileInput id="receipts" label="Receipts" onChange={handleFileChange} />
+        <FileInput
+          id="receipts"
+          label="Receipts"
+          onChange={handleFileChange}
+          ref={inputRef}
+        />
       </div>
       <div className="pur-table-button-div">
         <Button

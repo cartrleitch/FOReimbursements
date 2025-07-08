@@ -31,8 +31,8 @@ export function usePurchaseFunctions() {
       const account = purchase.accountp;
       const description = purchase.descriptionp;
       const amount = Number(purchase.amountp);
-        const purchasedate = new Date(purchase.datep).toISOString();
-        const file = purchase.file;
+      const purchasedate = new Date(purchase.datep).toISOString();
+      const file = purchase.file;
       console.log(account, description, amount, purchasedate, file);
 
       if (!account || !description || isNaN(amount) || !purchasedate || !file) {
@@ -55,12 +55,12 @@ export function usePurchaseFunctions() {
             reimId,
           }),
         });
-          const formData = new FormData(); 
-          formData.append("file", file);
+        const formData = new FormData();
+        formData.append("file", file);
         const purchaseId = (await response.json()).id;
-          const responseFile = await fetch(`${API_URL}/upload/${purchaseId}`, {
-            method: "POST",
-              body: formData,
+        const responseFile = await fetch(`${API_URL}/upload/${purchaseId}`, {
+          method: "POST",
+          body: formData,
         });
 
         if (!response.ok || !responseFile.ok) {

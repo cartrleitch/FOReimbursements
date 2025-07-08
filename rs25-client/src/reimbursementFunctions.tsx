@@ -104,25 +104,31 @@ export function useReimbursementFunctions() {
         throw new Error(`HTTP error! status: ${relatedPurchases.status}`);
       }
       for (const purchase of await relatedPurchases.json()) {
-          // Delete related receipts first
-          console.log(purchase.id);
-          try {
-              const relatedReceipt = await fetch(`${API_URL_RECEIPT}/${purchase.id}`);
-              if (!relatedReceipt.ok) {
-                  throw new Error(`HTTP error! status: ${relatedReceipt.status}`);
-              }
-              const relatedRecId = (await relatedReceipt.json())[0].id;
-              const responseRec = await fetch(`${API_URL_RECEIPT}/${relatedRecId}`, {
-                  method: "DELETE",
-              });
-              if (!responseRec.ok) {
-                  throw new Error(`HTTP error! status: ${responseRec.status}`);
-              }
+        // Delete related receipts first
+        console.log(purchase.id);
+        try {
+          const relatedReceipt = await fetch(
+            `${API_URL_RECEIPT}/${purchase.id}`
+          );
+          if (!relatedReceipt.ok) {
+            throw new Error(`HTTP error! status: ${relatedReceipt.status}`);
           }
-              catch (err: any) {
-                console.error(`Failed to delete receipt for purchase ${purchase.id}: ${err.message}`);
+          const relatedRecId = (await relatedReceipt.json())[0].id;
+          const responseRec = await fetch(
+            `${API_URL_RECEIPT}/${relatedRecId}`,
+            {
+              method: "DELETE",
+            }
+          );
+          if (!responseRec.ok) {
+            throw new Error(`HTTP error! status: ${responseRec.status}`);
           }
-        
+        } catch (err: any) {
+          console.error(
+            `Failed to delete receipt for purchase ${purchase.id}: ${err.message}`
+          );
+        }
+
         // Then delete the purchase
         const response = await fetch(`${API_URL_PURCHASE}/${purchase.id}`, {
           method: "DELETE",
@@ -131,7 +137,7 @@ export function useReimbursementFunctions() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       }
-        // Finally, delete the reimbursement
+      // Finally, delete the reimbursement
       const response = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
       });

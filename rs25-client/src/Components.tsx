@@ -176,10 +176,12 @@ export function FileInput({
   id,
   label,
   onChange,
+  ref,
 }: {
   id: string;
   label: string;
   onChange?: (e: any) => void;
+  ref?: React.RefObject<HTMLInputElement | null>;
 }) {
   return (
     <div>
@@ -191,6 +193,7 @@ export function FileInput({
           accept=".jpg,.jpeg,.png,.pdf"
           className="file-input"
           onChange={onChange}
+          ref={ref}
         />
       </div>
     </div>
