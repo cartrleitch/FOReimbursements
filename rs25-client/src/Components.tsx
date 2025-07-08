@@ -157,7 +157,6 @@ export function InputSelect({
         id={id}
         className="normal-input"
         onChange={onChange}
-        defaultValue=""
         value={value}
       >
         <option disabled value="">
@@ -173,7 +172,17 @@ export function InputSelect({
   );
 }
 
-export function FileInput({ id, label }: { id: string; label: string }) {
+export function FileInput({
+  id,
+  label,
+  onChange,
+  ref,
+}: {
+  id: string;
+  label: string;
+  onChange?: (e: any) => void;
+  ref?: React.RefObject<HTMLInputElement | null>;
+}) {
   return (
     <div>
       <label htmlFor={id}>{label}</label>
@@ -181,9 +190,10 @@ export function FileInput({ id, label }: { id: string; label: string }) {
         <input
           type="file"
           id={id}
-          multiple
           accept=".jpg,.jpeg,.png,.pdf"
           className="file-input"
+          onChange={onChange}
+          ref={ref}
         />
       </div>
     </div>

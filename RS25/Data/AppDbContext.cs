@@ -10,5 +10,6 @@ namespace RS25.Data
         }
         public DbSet<Reimbursement> Reimbursement { get; set; }
         public DbSet<Purchase> Purchase { get; set; }
+        public DbSet<Receipt> Receipt { get; set; }
     }
 }

@@ -101,5 +101,42 @@ namespace RS25.Controllers
 
             return NoContent();
         }
+
+        // POST: api/purchase/upload
+        [HttpPost("upload/{id}", Name = "UploadFile")]
+        public async Task<IActionResult> UploadFiles(int id, IFormFile file)
+        {
+            if (file == null)
+            {
+                return BadRequest("No files uploaded");
+            }
+
+            var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+            if (!Directory.Exists("Uploads"))
+            {
+                Directory.CreateDirectory("Uploads");
+            }
+            
+            var fileNameWithGuid = $"{Guid.NewGuid()}_{file.FileName}";
+            var filePath = Path.Combine(uploadDir, fileNameWithGuid);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var fileReceiptMetaData = new Receipt
+
+            {
+                FileName = fileNameWithGuid,
+                FilePath = Path.Combine(uploadDir, fileNameWithGuid),
+                UploadDate = DateTime.Now.ToUniversalTime(),
+                PurId = id
+            };
+            _context.Receipt.Add(fileReceiptMetaData);
+
+            await _context.SaveChangesAsync();
+            return Ok(new { Message = "Files uploaded successfully", FilePath = filePath });
+        }
     }
 }

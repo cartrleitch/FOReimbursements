@@ -106,22 +106,24 @@ function CreateReimbursementPage() {
   const { createReimbursement } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
+  const [files, setFiles] = React.useState<File[]>([]);
 
   const nav = useNavigate();
   const handleSubmit = async () => {
-      const newReimId = await createReimbursement();
-      var successPur = false;
-      if (newReimId) {
-          const rowsPurWithId = rowsPur.map((purchase) => ({ ...purchase, reimId: newReimId.toString() }));
-          successPur = await createPurchase(rowsPurWithId);
+    const newReimId = await createReimbursement();
+    if (newReimId) {
+      const rowsPurWithId = rowsPur.map((purchase) => ({
+        ...purchase,
+        reimId: newReimId.toString(),
+      }));
+      const successPur = await createPurchase(rowsPurWithId);
+      if (successPur) {
+        toast.success("Reimbursement created successfully!");
+        nav("/");
       }
-      if (rowsPur.length === 0) {
-            toast.error("Please add at least one purchase.");
-            return;
-      }
-      if (newReimId >= 0 && successPur) {
-      toast.success("Reimbursement created successfully!");
-      nav("/");
+    } else {
+      toast.error("Please add at least one purchase.");
+      return;
     }
   };
 
@@ -174,9 +176,14 @@ function CreateReimbursementPage() {
           label="Payment Method"
         />
         <div className="pur-table-container">
-          <PurchaseTable rows={rowsPur} setRows={setRowsPur} />
+          <PurchaseTable
+            rows={rowsPur}
+            setRows={setRowsPur}
+            files={files}
+            setFiles={setFiles}
+          />
         </div>
-        <FileInput id="receipts" label="Receipts" />
+        <br />
         <SubmitButton content="Submit" />
       </form>
     </div>
