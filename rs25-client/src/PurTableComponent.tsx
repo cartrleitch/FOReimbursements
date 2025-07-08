@@ -22,8 +22,12 @@ export interface Purchase {
 interface TableProps {
   rows: Purchase[];
   setRows: React.Dispatch<React.SetStateAction<Purchase[]>>;
-  files: File[];
-  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  display?: boolean;
+}
+
+interface DispalyOnlyTableProps {
+    fetchPurchasesByReimId: (id: number) => Purchase[];
+    rowsId: number;
 }
 
 const columnns: GridColDef[] = [
@@ -45,9 +49,31 @@ const columnns: GridColDef[] = [
     type: "date",
     valueGetter: (value: any) => new Date(value),
   },
+  {
+    field: "file",
+    headerName: "Receipt",
+    flex: 1,
+    hideable: true,
+    renderCell: (params) => {
+      const file = params.row.file;
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        return (
+          <a href={fileURL} download={file.name}>
+            Download
+          </a>
+        );
+      }
+      return <span>No file</span>;
+    },
+  },
 ];
 
-export function PurchaseTable({ rows, setRows, files, setFiles }: TableProps) {
+export function PurchaseTable({
+  rows,
+  setRows,
+  display,
+}: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
@@ -118,58 +144,73 @@ export function PurchaseTable({ rows, setRows, files, setFiles }: TableProps) {
         }}
         rowSelectionModel={rowSelectionModel}
       />
-      <div className="pur-table-inputs">
-        <InputSelect
-          id="accountp"
-          options={["Account 1", "Account 2", "Account 3"]}
-          label="Account"
-          onChange={(e) => setAccount(e.target.value)}
-          value={accountp}
-        />
-        <InputFieldTextArea
-          id="descriptionp"
-          placeholder="Description"
-          label="Description"
-          onChange={(e) => setDescription(e.target.value)}
-          value={descriptionp}
-        />
-        <InputFieldNumber
-          id="amountp"
-          placeholder="Amount"
-          type="number"
-          label="Amount"
-          step="0.01"
-          min="0"
-          onChange={(e) => setAmount(e.target.value)}
-          value={amountp}
-        />
-        <InputField
-          id="datep"
-          placeholder="Date"
-          type="date"
-          label="Date"
-          onChange={(e) => setDate(e.target.value)}
-          value={datep}
-        />
-        <FileInput
-          id="receipts"
-          label="Receipts"
-          onChange={handleFileChange}
-          ref={inputRef}
-        />
-      </div>
-      <div className="pur-table-button-div">
-        <Button
-          content="Add Purchase"
-          className="pur-table-normal-button"
-          onClick={addPurchase}
-        />
-        <Button
-          content="Remove Purchase"
-          className="pur-table-spooky-button"
-          onClick={deletePurchase}
-        />
+        <div className="pur-table-inputs">
+            <InputSelect
+            id="accountp"
+            options={["Account 1", "Account 2", "Account 3"]}
+            label="Account"
+            onChange={(e) => setAccount(e.target.value)}
+            value={accountp}
+            />
+            <InputFieldTextArea
+            id="descriptionp"
+            placeholder="Description"
+            label="Description"
+            onChange={(e) => setDescription(e.target.value)}
+            value={descriptionp}
+            />
+            <InputFieldNumber
+            id="amountp"
+            placeholder="Amount"
+            type="number"
+            label="Amount"
+            step="0.01"
+            min="0"
+            onChange={(e) => setAmount(e.target.value)}
+            value={amountp}
+            />
+            <InputField
+            id="datep"
+            placeholder="Date"
+            type="date"
+            label="Date"
+            onChange={(e) => setDate(e.target.value)}
+            value={datep}
+            />
+            <FileInput
+            id="receipts"
+            label="Receipts"
+            onChange={handleFileChange}
+            ref={inputRef}
+            />
+        </div>
+
+        <div className="pur-table-button-div">
+            <Button
+            content="Add Purchase"
+            className="pur-table-normal-button"
+            onClick={addPurchase}
+            />
+            <Button
+            content="Remove Purchase"
+            className="pur-table-spooky-button"
+            onClick={deletePurchase}
+            />
       </div>
     </div>
   );
+}
+
+export function DisplayOnlyPurchaseTable({ fetchPurchasesByReimId, rowsId }: DispalyOnlyTableProps) {
+    const rows = fetchPurchasesByReimId(rowsId);
+    return (
+        <DataGrid
+            rows={rows}
+            columns={columnns}
+            checkboxSelection
+            disableMultipleRowSelection
+            autoPageSize
+            columnVisibilityModel={{ id: false }}
+        />
+    );
 }
