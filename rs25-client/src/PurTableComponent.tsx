@@ -1,5 +1,5 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
-import React, { useRef } from "react";
+import React from "react";
 import {
   Button,
   InputField,
@@ -175,21 +175,37 @@ export function PurchaseTable({
             label="Receipts"
             onChange={handleFileChange}
             ref={inputRef}
-            />
+              />
+              <div className="pur-table-button-div">
+                  <Button
+                      content="Add Purchase"
+                      className="pur-table-normal-button"
+                      onClick={addPurchase}
+                  />
+                  <Button
+                      content="Remove Purchase"
+                      className="pur-table-spooky-button"
+                      onClick={deletePurchase}
+                  />
+              </div>
         </div>
-
-        <div className="pur-table-button-div">
-            <Button
-            content="Add Purchase"
-            className="pur-table-normal-button"
-            onClick={addPurchase}
-            />
-            <Button
-            content="Remove Purchase"
-            className="pur-table-spooky-button"
-            onClick={deletePurchase}
-            />
-      </div>
     </div>
   );
+}
+
+interface DisplayOnlyProps {
+    rows: Purchase[];
+};
+
+export function DisplayOnlyPurchaseTable({ rows }: DisplayOnlyProps) {
+    return (
+        <div className="pur-table">
+        <DataGrid
+            rows={rows}
+            columns={columnns}
+            autoPageSize
+            columnVisibilityModel={{ id: false }}
+        />
+        </div>
+    );
 }
