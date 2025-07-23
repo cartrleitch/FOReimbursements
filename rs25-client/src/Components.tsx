@@ -105,7 +105,8 @@ export function InputFieldNumber({
         placeholder={placeholder}
         step={step}
         min={min}
-        className="normal-input"
+        className={`normal-input ${readonly ? "no-spinner-input" : ""}`}
+        inert={readonly}
         onChange={onChange}
         value={value}
         readOnly={readonly}

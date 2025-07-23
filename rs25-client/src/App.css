@@ -134,6 +134,13 @@ body {
   font-family: "Roboto", sans-serif;
 }
 
+.no-spinner-input {
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+    appearance: textfield;
+    background-color: #ccc;
+}
+
 /*Button styles*/
 .normal-button {
   display: inline-block;

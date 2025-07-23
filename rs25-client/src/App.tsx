@@ -114,8 +114,10 @@ function CreateReimbursementPage() {
     const rowsToUse = updatedRows || rowsPur;
     console.log("Updating total amount with rows:", rowsToUse);
     var total = 0;
-    for (const purchase of rowsPur) {
+
+    for (const purchase of rowsToUse) {
       console.log("Calculating total amount for purchase:", purchase);
+
       try {
         total += Number(purchase.amountp);
         console.log("Current total after adding purchase:", total);
