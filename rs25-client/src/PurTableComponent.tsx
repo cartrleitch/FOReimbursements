@@ -117,9 +117,11 @@ export function PurchaseTable({
     if (selectedRowId === null) {
       alert("Please select a purchase to delete.");
       return;
-    }
-    setRows(rows.filter((row) => row.id !== selectedRowId));
-    setSelectedRowId(null);
+      }
+      const newRowsList = rows.filter((row) => row.id !== selectedRowId)
+      setRows(newRowsList);
+      setSelectedRowId(null);
+      updateTotalAmount?.(newRowsList);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
