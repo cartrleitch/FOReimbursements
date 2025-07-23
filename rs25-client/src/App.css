@@ -140,7 +140,7 @@ body {
     -moz-appearance: textfield;
     -webkit-appearance: none;
     appearance: textfield;
-    background-color: #ccc;
+    background-color: #eaeaea;
 }
 
 /*Button styles*/

@@ -75,6 +75,25 @@ function MainPage() {
   );
 }
 function BugReportPage() {
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const bugType = (document.getElementById("bugtype") as HTMLSelectElement)
+        .value;
+        const description = (
+        document.getElementById("description") as HTMLTextAreaElement
+        ).value;
+    
+        if (!description) {
+        toast.error("Please fill in the description field.");
+        return;
+        }
+    
+        // Send the bug report to your server
+        console.log("Bug Report Submitted:", { bugType, description });
+        toast.success("Bug report submitted successfully!");
+    };
+
   return (
     <div className="content">
       <Title content="Bug Report" />
@@ -83,7 +102,7 @@ function BugReportPage() {
         here.
       </p>
       <br />
-      <form className="normal-form">
+          <form className="normal-form" onSubmit={handleSubmit}>
         <InputSelect
           id="bugtype"
           options={["Bug", "Feature Request", "Other"]}
@@ -95,7 +114,6 @@ function BugReportPage() {
           label="Description"
         />
         <SubmitButton
-          onClick={() => alert("Report submitted!")}
           content="Submit Report"
         />
       </form>
