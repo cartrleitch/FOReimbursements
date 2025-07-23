@@ -75,24 +75,51 @@ function MainPage() {
   );
 }
 function BugReportPage() {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const bugType = (document.getElementById("bugtype") as HTMLSelectElement)
+      .value;
+    const description = (
+      document.getElementById("description") as HTMLTextAreaElement
+    ).value;
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const bugType = (document.getElementById("bugtype") as HTMLSelectElement)
-        .value;
-        const description = (
-        document.getElementById("description") as HTMLTextAreaElement
-        ).value;
-    
-        if (!description) {
-        toast.error("Please fill in the description field.");
-        return;
+    console.log("Bug Type:", bugType);
+    console.log("Description:", description);
+
+    if (!description) {
+      toast.error("Please fill in the description field.");
+      return;
+    }
+
+    await fetch("http://localhost:5000/api/Email/Send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        type: `Bug Report - ${bugType}`,
+        content: description,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-    
-        // Send the bug report to your server
-        console.log("Bug Report Submitted:", { bugType, description });
-        toast.success("Bug report submitted successfully!");
-    };
+        return response.text();
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+        console.error(
+          JSON.stringify({
+            type: `Bug Report - ${bugType}`,
+            content: description,
+          })
+        );
+        toast.error("Failed to submit bug report. Please try again later.");
+      });
+
+    toast.success("Bug report submitted successfully!");
+  };
 
   return (
     <div className="content">
@@ -102,7 +129,7 @@ function BugReportPage() {
         here.
       </p>
       <br />
-          <form className="normal-form" onSubmit={handleSubmit}>
+      <form className="normal-form" onSubmit={handleSubmit}>
         <InputSelect
           id="bugtype"
           options={["Bug", "Feature Request", "Other"]}
@@ -113,9 +140,7 @@ function BugReportPage() {
           placeholder="Describe the issue or suggestion"
           label="Description"
         />
-        <SubmitButton
-          content="Submit Report"
-        />
+        <SubmitButton content="Submit Report" />
       </form>
     </div>
   );
