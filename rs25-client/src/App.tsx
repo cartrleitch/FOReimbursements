@@ -131,6 +131,7 @@ function BugReportPage() {
 function CreateReimbursementPage() {
   const { createReimbursement } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
+  const { sendEmail } = useEmailFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
@@ -161,7 +162,8 @@ function CreateReimbursementPage() {
       );
       return;
     }
-    const newReimId = await createReimbursement();
+    const newReimResponse = await createReimbursement();
+    const newReimId = newReimResponse.id;
     console.log("New Reimbursement ID:", newReimId);
     if (newReimId >= 0) {
       const rowsPurWithId = rowsPur.map((purchase) => ({
@@ -170,6 +172,38 @@ function CreateReimbursementPage() {
       }));
       const successPur = await createPurchase(rowsPurWithId);
       if (successPur) {
+        var purchaseInfo = `Reimbursement Info\nVendor: ${
+          newReimResponse.vendor
+        }\nVendor Address: ${newReimResponse.vendorAddress}\nVendor Website: ${
+          newReimResponse.vendorWebsite
+        }\nTotal: ${newReimResponse.totalAmount.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        })}\nDate Submitted: ${
+          newReimResponse.dateSubmitted.split("T")[0]
+        }\nPayment Method: ${newReimResponse.paymentMethod}\n\nPurchase Info\n`;
+
+        var purCounter = 0;
+
+        for (const purchase of rowsPurWithId) {
+          purCounter++;
+
+          purchaseInfo += `\nPurchase ${purCounter}\nAccount: ${
+            purchase.accountp
+          }\nDescription: ${purchase.descriptionp}\nAmount: ${Number(
+            purchase.amountp
+          ).toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })}\nDate: ${purchase.datep}\n`;
+        }
+
+        const data = {
+          to: "carterleitch@gmail.com",
+          subject: `New Reimbursement Created!`,
+          content: purchaseInfo,
+        };
+        sendEmail(data);
         toast.success("Reimbursement created successfully!");
         nav("/");
       } else {

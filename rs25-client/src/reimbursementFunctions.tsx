@@ -86,9 +86,10 @@ export function useReimbursementFunctions() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const result = await response.json();
+        const result = await response.json();
+        console.log(result);
       await fetchReimbursements();
-      return Number(result.id);
+      return result;
     } catch (err: any) {
       setError(err.message);
       return -1;
