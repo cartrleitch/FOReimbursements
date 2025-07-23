@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import React from "react";
+import { useEmailFunctions } from "./emailFunctions";
 
 function AboutPage() {
   return (
@@ -75,6 +76,7 @@ function MainPage() {
   );
 }
 function BugReportPage() {
+  const { sendEmail } = useEmailFunctions();
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const bugType = (document.getElementById("bugtype") as HTMLSelectElement)
@@ -91,33 +93,14 @@ function BugReportPage() {
       return;
     }
 
-    await fetch("http://localhost:5000/api/Email/Send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        type: `Bug Report - ${bugType}`,
-        content: description,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.text();
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-        console.error(
-          JSON.stringify({
-            type: `Bug Report - ${bugType}`,
-            content: description,
-          })
-        );
-        toast.error("Failed to submit bug report. Please try again later.");
-      });
-
+    const data = {
+      to: "carterleitch@gmail.com",
+      subject: `Bug Report - ${bugType}`,
+      content: description,
+    };
+    sendEmail(data);
+    (document.getElementById("bugtype")! as HTMLSelectElement).value = "Bug";
+    (document.getElementById("description")! as HTMLTextAreaElement).value = "";
     toast.success("Bug report submitted successfully!");
   };
 

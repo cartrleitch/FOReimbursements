@@ -22,7 +22,7 @@ namespace RS25.Controllers
         public async Task<IActionResult> SendEmail([FromBody] Email email)
         {
             var smtpSettings = _config.GetSection("SmtpSettings");
-            if (email == null || string.IsNullOrEmpty(email.Type) || string.IsNullOrEmpty(email.Content))
+            if (email == null || string.IsNullOrEmpty(email.Subject) || string.IsNullOrEmpty(email.Content))
             {
                 return BadRequest("Invalid email data");
             }
@@ -30,7 +30,6 @@ namespace RS25.Controllers
                 string.IsNullOrEmpty(smtpSettings["Port"]) || 
                 string.IsNullOrEmpty(smtpSettings["Username"]) || 
                 string.IsNullOrEmpty(smtpSettings["Password"]) || 
-                string.IsNullOrEmpty(smtpSettings["To"]) ||
                 string.IsNullOrEmpty(smtpSettings["EnableSsl"]))
             {
                 return BadRequest("SMTP settings are not configured properly");
@@ -39,7 +38,7 @@ namespace RS25.Controllers
             var port = smtpSettings["Port"]!;
             var username = smtpSettings["Username"]!;
             var password = smtpSettings["Password"]!;
-            var to = smtpSettings["To"]!;
+            var to = email.To;
             var enableSsl = smtpSettings["EnableSsl"]!;
 
             using var client = new SmtpClient(host, int.Parse(port))
@@ -50,7 +49,7 @@ namespace RS25.Controllers
 
             var mail = new MailMessage             {
                 From = new MailAddress(username),
-                Subject = email.Type,
+                Subject = email.Subject,
                 Body = email.Content,
                 IsBodyHtml = false
             };
