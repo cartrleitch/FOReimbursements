@@ -139,15 +139,12 @@ function CreateReimbursementPage() {
 
   const updateTotalAmount = (updatedRows?: Purchase[]) => {
     const rowsToUse = updatedRows || rowsPur;
-    console.log("Updating total amount with rows:", rowsToUse);
     var total = 0;
 
     for (const purchase of rowsToUse) {
-      console.log("Calculating total amount for purchase:", purchase);
 
       try {
         total += Number(purchase.amountp);
-        console.log("Current total after adding purchase:", total);
       } catch (e) {
         console.error("Error calculating total amount:", e);
       }
@@ -325,6 +322,36 @@ function UpdateReimbursementPage() {
     </div>
   );
 }
+
+function LoginPage() {
+    return (
+        <div className="content">
+        <Title content="Login" />
+        <p className="center-p">This page is under construction.</p>
+        <br />
+        </div>
+    );
+}
+
+function LogoutPage() {
+    return (
+        <div className="content">
+        <Title content="Logout" />
+        <p className="center-p">This page is under construction.</p>
+        <br />
+        </div>
+    );
+}
+
+function LoginDeniedPage() {
+    return (
+        <div className="content">
+        <Title content="Login Denied" />
+        <p className="center-p">You do not have permission to access this page.</p>
+        <br />
+        </div>
+    );
+}
 function App() {
   return (
     <div>
@@ -357,7 +384,10 @@ function App() {
           <Route path="/update" element={<UpdateReimbursementPage />} />
           <Route path="/bugreport" element={<BugReportPage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="*" element={<ErrorPage />} />
+                  <Route path="*" element={<ErrorPage />} />
+                  <Route path="/Account/login" element={<LoginPage />} />
+                  <Route path="/Account/logout" element={<LogoutPage />} />
+                  <Route path="/Account/logindenied" element={<LoginDeniedPage />} />
         </Routes>
       </Router>
       <ToastContainer position="bottom-left" autoClose={3000} />
