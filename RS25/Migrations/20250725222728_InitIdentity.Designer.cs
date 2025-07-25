@@ -12,7 +12,7 @@ using RS25.Data;
 namespace RS25.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250724001809_InitIdentity")]
+    [Migration("20250725222728_InitIdentity")]
     partial class InitIdentity
     {
         /// <inheritdoc />
@@ -41,6 +41,10 @@ namespace RS25.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DummyProperty")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
