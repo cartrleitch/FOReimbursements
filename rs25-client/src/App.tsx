@@ -142,7 +142,6 @@ function CreateReimbursementPage() {
     var total = 0;
 
     for (const purchase of rowsToUse) {
-
       try {
         total += Number(purchase.amountp);
       } catch (e) {
@@ -324,33 +323,48 @@ function UpdateReimbursementPage() {
 }
 
 function LoginPage() {
-    return (
-        <div className="content">
-        <Title content="Login" />
-        <p className="center-p">This page is under construction.</p>
-        <br />
-        </div>
-    );
+  return (
+    <div className="content">
+      <Title content="Login" />
+      <form className="normal-form">
+        <InputField
+          id="username"
+          placeholder="Username"
+          type="text"
+          label="Username"
+        />
+        <InputField
+          id="password"
+          placeholder="Password"
+          type="password"
+          label="Password"
+        />
+        <SubmitButton content="Login" />
+      </form>
+    </div>
+  );
 }
 
 function LogoutPage() {
-    return (
-        <div className="content">
-        <Title content="Logout" />
-        <p className="center-p">This page is under construction.</p>
-        <br />
-        </div>
-    );
+  return (
+    <div className="content">
+      <Title content="Successfully Logged Out" />
+      <p className="center-p">You can now close this tab.</p>
+      <br />
+    </div>
+  );
 }
 
 function LoginDeniedPage() {
-    return (
-        <div className="content">
-        <Title content="Login Denied" />
-        <p className="center-p">You do not have permission to access this page.</p>
-        <br />
-        </div>
-    );
+  return (
+    <div className="content">
+      <Title content="Login Denied" />
+      <p className="center-p">
+        You do not have permission to access this page.
+      </p>
+      <br />
+    </div>
+  );
 }
 function App() {
   return (
@@ -384,10 +398,10 @@ function App() {
           <Route path="/update" element={<UpdateReimbursementPage />} />
           <Route path="/bugreport" element={<BugReportPage />} />
           <Route path="/about" element={<AboutPage />} />
-                  <Route path="*" element={<ErrorPage />} />
-                  <Route path="/Account/login" element={<LoginPage />} />
-                  <Route path="/Account/logout" element={<LogoutPage />} />
-                  <Route path="/Account/logindenied" element={<LoginDeniedPage />} />
+          <Route path="*" element={<ErrorPage />} />
+          <Route path="/Account/login" element={<LoginPage />} />
+          <Route path="/Account/logout" element={<LogoutPage />} />
+          <Route path="/Account/logindenied" element={<LoginDeniedPage />} />
         </Routes>
       </Router>
       <ToastContainer position="bottom-left" autoClose={3000} />
