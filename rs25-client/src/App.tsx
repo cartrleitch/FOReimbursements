@@ -250,12 +250,6 @@ function CreateReimbursementPage() {
           value={totalAmount.toString()}
           readonly={true}
         />
-        <InputField
-          id="datesubmitted"
-          placeholder="Date Submitted"
-          type="date"
-          label="Date Submitted"
-        />
         <InputSelect
           id="paymentmethod"
           options={["Credit Card", "Cash", "Check", "Bank Transfer"]}

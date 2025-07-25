@@ -42,18 +42,11 @@ export function useReimbursementFunctions() {
     const totalAmount = parseFloat(
       (document.getElementById("totalamount") as HTMLInputElement).value
     );
-    const dateSubmittedIn = (
-      document.getElementById("datesubmitted") as HTMLInputElement
-    ).value;
     const paymentMethod = (
       document.getElementById("paymentmethod") as HTMLSelectElement
     ).value;
-    var dateSubmitted: string;
-    if (dateSubmittedIn !== "") {
-      dateSubmitted = new Date(dateSubmittedIn).toISOString();
-    } else {
-      dateSubmitted = "";
-    }
+    const dateSubmitted : string  = new Date().toISOString();
+    
     if (
       !vendor ||
       !vendorAddress ||
