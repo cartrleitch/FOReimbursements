@@ -1,5 +1,5 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
-import React, { useRef } from "react";
+import React from "react";
 import {
   Button,
   InputField,
@@ -8,6 +8,7 @@ import {
   InputSelect,
   FileInput,
 } from "./Components";
+import { toast } from "react-toastify";
 
 export interface Purchase {
   id: number;
@@ -22,12 +23,7 @@ export interface Purchase {
 interface TableProps {
   rows: Purchase[];
   setRows: React.Dispatch<React.SetStateAction<Purchase[]>>;
-  display?: boolean;
-}
-
-interface DispalyOnlyTableProps {
-    fetchPurchasesByReimId: (id: number) => Purchase[];
-    rowsId: number;
+  updateTotalAmount?: (rowsToUse: Purchase[]) => void;
 }
 
 const columnns: GridColDef[] = [
@@ -41,6 +37,12 @@ const columnns: GridColDef[] = [
     type: "number",
     headerAlign: "left",
     align: "left",
+    renderCell: (params) => {
+      return `${Number(params.row.amountp).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      })}`;
+    },
   },
   {
     field: "datep",
@@ -72,7 +74,7 @@ const columnns: GridColDef[] = [
 export function PurchaseTable({
   rows,
   setRows,
-  display,
+  updateTotalAmount,
 }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
@@ -86,8 +88,8 @@ export function PurchaseTable({
   const [file, setFile] = React.useState<File | null>(null);
 
   const addPurchase = () => {
-    if (!accountp || !descriptionp || !amountp || !datep) {
-      alert("Please fill in all fields correctly.");
+    if (!accountp || !descriptionp || !amountp || !datep || file == null) {
+      toast.error("Please fill in all purchase fields correctly.");
     } else {
       const newPurchase: Purchase = {
         id: rows.length + 1,
@@ -97,7 +99,8 @@ export function PurchaseTable({
         datep,
         file,
       };
-      setRows([...rows, newPurchase]);
+      const rowsToUse = [...rows, newPurchase];
+      setRows(rowsToUse);
       setAccount("");
       setDescription("");
       setAmount("");
@@ -106,6 +109,7 @@ export function PurchaseTable({
       if (inputRef.current) {
         inputRef.current.value = ""; // Clear the file input
       }
+      updateTotalAmount?.(rowsToUse); // Update total amount if function is provided
     }
   };
 
@@ -113,9 +117,11 @@ export function PurchaseTable({
     if (selectedRowId === null) {
       alert("Please select a purchase to delete.");
       return;
-    }
-    setRows(rows.filter((row) => row.id !== selectedRowId));
-    setSelectedRowId(null);
+      }
+      const newRowsList = rows.filter((row) => row.id !== selectedRowId)
+      setRows(newRowsList);
+      setSelectedRowId(null);
+      updateTotalAmount?.(newRowsList);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,41 +131,44 @@ export function PurchaseTable({
   };
 
   return (
-    <div className="pur-table">
+    <div>
       <h3>Purchases</h3>
-      <DataGrid
-        rows={rows}
-        columns={columnns}
-        checkboxSelection
-        disableMultipleRowSelection
-        autoPageSize
-        columnVisibilityModel={{ id: false }}
-        getRowId={(row) => row.id}
-        onRowSelectionModelChange={(id) => {
-          setRowSelectionModel(id);
-          const selectedRowData = rows.find(
-            (row) => row.id === Array.from(id.ids)[0]
-          );
-          setSelectedRowId(selectedRowData?.id || null);
-        }}
-        rowSelectionModel={rowSelectionModel}
-      />
+      <div className="pur-table">
+        <DataGrid
+          rows={rows}
+          columns={columnns}
+          checkboxSelection
+          disableMultipleRowSelection
+          autoPageSize
+          columnVisibilityModel={{ id: false }}
+          getRowId={(row) => row.id}
+          onRowSelectionModelChange={(id) => {
+            setRowSelectionModel(id);
+            const selectedRowData = rows.find(
+              (row) => row.id === Array.from(id.ids)[0]
+            );
+            setSelectedRowId(selectedRowData?.id || null);
+          }}
+          rowSelectionModel={rowSelectionModel}
+        />
+      </div>
+      <div>
         <div className="pur-table-inputs">
-            <InputSelect
+          <InputSelect
             id="accountp"
             options={["Account 1", "Account 2", "Account 3"]}
             label="Account"
             onChange={(e) => setAccount(e.target.value)}
             value={accountp}
-            />
-            <InputFieldTextArea
+          />
+          <InputFieldTextArea
             id="descriptionp"
             placeholder="Description"
             label="Description"
             onChange={(e) => setDescription(e.target.value)}
             value={descriptionp}
-            />
-            <InputFieldNumber
+          />
+          <InputFieldNumber
             id="amountp"
             placeholder="Amount"
             type="number"
@@ -168,49 +177,96 @@ export function PurchaseTable({
             min="0"
             onChange={(e) => setAmount(e.target.value)}
             value={amountp}
-            />
-            <InputField
+          />
+          <InputField
             id="datep"
             placeholder="Date"
             type="date"
             label="Date"
             onChange={(e) => setDate(e.target.value)}
             value={datep}
-            />
-            <FileInput
+          />
+          <FileInput
             id="receipts"
             label="Receipts"
             onChange={handleFileChange}
             ref={inputRef}
+          />
+          <div className="pur-table-button-div">
+            <Button
+              content="Add Purchase"
+              className="pur-table-normal-button"
+              onClick={addPurchase}
             />
+            <Button
+              content="Remove Purchase"
+              className="pur-table-spooky-button"
+              onClick={deletePurchase}
+            />
+          </div>
         </div>
-
-        <div className="pur-table-button-div">
-            <Button
-            content="Add Purchase"
-            className="pur-table-normal-button"
-            onClick={addPurchase}
-            />
-            <Button
-            content="Remove Purchase"
-            className="pur-table-spooky-button"
-            onClick={deletePurchase}
-            />
       </div>
     </div>
   );
 }
 
-export function DisplayOnlyPurchaseTable({ fetchPurchasesByReimId, rowsId }: DispalyOnlyTableProps) {
-    const rows = fetchPurchasesByReimId(rowsId);
-    return (
-        <DataGrid
-            rows={rows}
-            columns={columnns}
-            checkboxSelection
-            disableMultipleRowSelection
-            autoPageSize
-            columnVisibilityModel={{ id: false }}
-        />
-    );
+interface DisplayOnlyProps {
+  rows: Purchase[];
+}
+
+const displayColumnns: GridColDef[] = [
+  { field: "id", headerName: "ID", flex: 1, hideable: false },
+  { field: "account", headerName: "Account", flex: 1 },
+  { field: "description", headerName: "Description", flex: 1 },
+  {
+    field: "amount",
+    headerName: "Amount",
+    flex: 1,
+    type: "number",
+    headerAlign: "left",
+    align: "left",
+    renderCell: (params) => {
+      return params.row.amount.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      });
+    },
+  },
+  {
+    field: "purchaseDate",
+    headerName: "Date",
+    flex: 1,
+    type: "date",
+    valueGetter: (value: any) => new Date(value),
+  },
+  {
+    field: "file",
+    headerName: "Receipt",
+    flex: 1,
+    hideable: true,
+    renderCell: (params) => {
+      const fileName = params.row.fileName;
+      const downloadUrl = `http://localhost:5000/api/receipt/download/${fileName}`;
+      if (fileName) {
+        return (
+          <a href={downloadUrl} download={fileName}>
+            Download
+          </a>
+        );
+      }
+      return <span>No file</span>;
+    },
+  },
+];
+export function DisplayOnlyPurchaseTable({ rows }: DisplayOnlyProps) {
+  return (
+    <div className="pur-table">
+      <DataGrid
+        rows={rows}
+        columns={displayColumnns}
+        autoPageSize
+        columnVisibilityModel={{ id: false }}
+      />
+    </div>
+  );
 }

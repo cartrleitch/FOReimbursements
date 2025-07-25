@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import React from "react";
 export function Button({
   onClick,
   content,
@@ -84,6 +84,7 @@ export function InputFieldNumber({
   min,
   onChange,
   value,
+  readonly = false,
 }: {
   id: string;
   placeholder: string;
@@ -93,6 +94,7 @@ export function InputFieldNumber({
   min: string;
   onChange?: (e: any) => void;
   value?: string;
+  readonly?: boolean;
 }) {
   return (
     <div>
@@ -103,9 +105,11 @@ export function InputFieldNumber({
         placeholder={placeholder}
         step={step}
         min={min}
-        className="normal-input"
+        className={`normal-input ${readonly ? "no-spinner-input" : ""}`}
+        inert={readonly}
         onChange={onChange}
         value={value}
+        readOnly={readonly}
       />
     </div>
   );

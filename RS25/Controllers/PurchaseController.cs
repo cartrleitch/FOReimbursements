@@ -32,7 +32,23 @@ namespace RS25.Controllers
             {
                 return BadRequest("Invalid Purchase ID");
             }
-            var purchases = await _context.Purchase.Where(p => p.ReimId == reimId).ToListAsync();
+            var purchases = await _context.Purchase
+                .Where(p => p.ReimId == reimId)
+                .Join(
+                _context.Receipt, 
+                purchase => purchase.Id, 
+                receipt => receipt.PurId, 
+                (purchase, receipt) => new { 
+                purchase.Id,
+                purchase.Account,
+                purchase.Description,
+                purchase.Amount,
+                purchase.PurchaseDate,
+                purchase.ReimId,
+                receipt.FileName,
+                receipt.FilePath
+                }
+                ).ToListAsync();
             if (purchases == null)
             {
                 return NotFound("Purchase not found");

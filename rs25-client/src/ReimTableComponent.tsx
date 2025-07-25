@@ -1,6 +1,9 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import React from "react";
 import { RedirectButton, Button } from "./Components";
+import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
+import { usePurchaseFunctions } from "./purchaseFunctions";
+import { toast } from "react-toastify";
 interface Reimbursement {
   id: number;
   vendor: string;
@@ -28,7 +31,10 @@ const columnns: GridColDef[] = [
     flex: 1,
     type: "number",
     headerAlign: "left",
-    align: "left",
+      align: "left",
+        renderCell: (params) => {
+            return params.row.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        }
   },
   {
     field: "dateSubmitted",
@@ -48,9 +54,33 @@ export function ReimbursementTable({
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<number | null>(null);
+  const [selectedRowPurchases, setSelectedRowPurchases] = React.useState<
+    Purchase[]
+  >([]);
+  const { fetchPurchaseByReimId } = usePurchaseFunctions();
+  const getRelatedPurchases = async (reimId: number) => {
+    const purchases = await fetchPurchaseByReimId(reimId);
+    setSelectedRowPurchases(purchases);
+  };
 
   return (
     <div className="reim-table">
+      <div className="table-button-div">
+        <RedirectButton to="/create" content="New" />
+        <Button onClick={fetchReimbursements} content="Refresh" />
+        {/*<RedirectButton to="/update" content="Edit" />*/}
+        <Button
+          onClick={async () => {
+            if (selectedRowId !== null) {
+              deleteReimbursement(selectedRowId);
+            } else {
+              toast.error("No row selected!");
+            }
+          }}
+          content="Delete"
+          className="spooky-button"
+        />
+      </div>
       <DataGrid
         rows={rows}
         columns={columnns}
@@ -60,31 +90,20 @@ export function ReimbursementTable({
         columnVisibilityModel={{ id: false }}
         getRowId={(row) => row.id}
         onRowSelectionModelChange={(id) => {
+          setSelectedRowPurchases([]);
           setRowSelectionModel(id);
           const selectedRowData = rows.find(
             (row) => row.id === Array.from(id.ids)[0]
           );
           setSelectedRowId(selectedRowData?.id || null);
+          if (selectedRowData) {
+            getRelatedPurchases(selectedRowData.id);
+          }
         }}
         rowSelectionModel={rowSelectionModel}
       />
+      <DisplayOnlyPurchaseTable rows={selectedRowPurchases} />
       <br />
-      <div className="table-button-div">
-        <Button onClick={fetchReimbursements} content="Refresh" />
-        <RedirectButton to="/create" content="New" />
-        <RedirectButton to="/update" content="Edit" />
-        <Button
-          onClick={async () => {
-            if (selectedRowId !== null) {
-              deleteReimbursement(selectedRowId);
-            } else {
-              alert("No row selected!");
-            }
-          }}
-          content="Delete"
-          className="spooky-button"
-        />
-      </div>
     </div>
   );
 }

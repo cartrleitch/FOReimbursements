@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import React from "react";
+import { useEmailFunctions } from "./emailFunctions";
 
 function AboutPage() {
   return (
@@ -75,6 +76,34 @@ function MainPage() {
   );
 }
 function BugReportPage() {
+  const { sendEmail } = useEmailFunctions();
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const bugType = (document.getElementById("bugtype") as HTMLSelectElement)
+      .value;
+    const description = (
+      document.getElementById("description") as HTMLTextAreaElement
+    ).value;
+
+    console.log("Bug Type:", bugType);
+    console.log("Description:", description);
+
+    if (!description) {
+      toast.error("Please fill in the description field.");
+      return;
+    }
+
+    const data = {
+      to: "carterleitch@gmail.com",
+      subject: `Bug Report - ${bugType}`,
+      content: description,
+    };
+    sendEmail(data);
+    (document.getElementById("bugtype")! as HTMLSelectElement).value = "Bug";
+    (document.getElementById("description")! as HTMLTextAreaElement).value = "";
+    toast.success("Bug report submitted successfully!");
+  };
+
   return (
     <div className="content">
       <Title content="Bug Report" />
@@ -83,7 +112,7 @@ function BugReportPage() {
         here.
       </p>
       <br />
-      <form className="normal-form">
+      <form className="normal-form" onSubmit={handleSubmit}>
         <InputSelect
           id="bugtype"
           options={["Bug", "Feature Request", "Other"]}
@@ -94,10 +123,7 @@ function BugReportPage() {
           placeholder="Describe the issue or suggestion"
           label="Description"
         />
-        <SubmitButton
-          onClick={() => alert("Report submitted!")}
-          content="Submit Report"
-        />
+        <SubmitButton content="Submit Report" />
       </form>
     </div>
   );
@@ -105,24 +131,82 @@ function BugReportPage() {
 function CreateReimbursementPage() {
   const { createReimbursement } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
+  const { sendEmail } = useEmailFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
-  const [files, setFiles] = React.useState<File[]>([]);
+  const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
   const nav = useNavigate();
+
+  const updateTotalAmount = (updatedRows?: Purchase[]) => {
+    const rowsToUse = updatedRows || rowsPur;
+    var total = 0;
+
+    for (const purchase of rowsToUse) {
+      try {
+        total += Number(purchase.amountp);
+      } catch (e) {
+        console.error("Error calculating total amount:", e);
+      }
+    }
+    setTotalAmount(total);
+  };
+
   const handleSubmit = async () => {
-    const newReimId = await createReimbursement();
-    if (newReimId) {
+    if (rowsPur.length === 0) {
+      toast.error(
+        "Please fill in all fields correctly and add at least one purchase."
+      );
+      return;
+    }
+    const newReimResponse = await createReimbursement();
+    const newReimId = newReimResponse.id;
+    console.log("New Reimbursement ID:", newReimId);
+    if (newReimId >= 0) {
       const rowsPurWithId = rowsPur.map((purchase) => ({
         ...purchase,
         reimId: newReimId.toString(),
       }));
       const successPur = await createPurchase(rowsPurWithId);
       if (successPur) {
+        var purchaseInfo = `Reimbursement Info\nVendor: ${
+          newReimResponse.vendor
+        }\nVendor Address: ${newReimResponse.vendorAddress}\nVendor Website: ${
+          newReimResponse.vendorWebsite
+        }\nTotal: ${newReimResponse.totalAmount.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        })}\nDate Submitted: ${
+          newReimResponse.dateSubmitted.split("T")[0]
+        }\nPayment Method: ${newReimResponse.paymentMethod}\n\nPurchase Info\n`;
+
+        var purCounter = 0;
+
+        for (const purchase of rowsPurWithId) {
+          purCounter++;
+
+          purchaseInfo += `\nPurchase ${purCounter}\nAccount: ${
+            purchase.accountp
+          }\nDescription: ${purchase.descriptionp}\nAmount: ${Number(
+            purchase.amountp
+          ).toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })}\nDate: ${purchase.datep}\n`;
+        }
+
+        const data = {
+          to: "carterleitch@gmail.com",
+          subject: `New Reimbursement Created!`,
+          content: purchaseInfo,
+        };
+        sendEmail(data);
         toast.success("Reimbursement created successfully!");
         nav("/");
+      } else {
+        toast.error("Please add at least one purchase.");
+        return;
       }
     } else {
-      toast.error("Please add at least one purchase.");
       return;
     }
   };
@@ -163,12 +247,8 @@ function CreateReimbursementPage() {
           label="Total Amount"
           step="0.01"
           min="0"
-        />
-        <InputField
-          id="datesubmitted"
-          placeholder="Date Submitted"
-          type="date"
-          label="Date Submitted"
+          value={totalAmount.toString()}
+          readonly={true}
         />
         <InputSelect
           id="paymentmethod"
@@ -179,8 +259,7 @@ function CreateReimbursementPage() {
           <PurchaseTable
             rows={rowsPur}
             setRows={setRowsPur}
-            files={files}
-            setFiles={setFiles}
+            updateTotalAmount={updateTotalAmount}
           />
         </div>
         <br />
@@ -236,6 +315,51 @@ function UpdateReimbursementPage() {
     </div>
   );
 }
+
+function LoginPage() {
+  return (
+    <div className="content">
+      <Title content="Login" />
+      <form className="normal-form">
+        <InputField
+          id="username"
+          placeholder="Username"
+          type="text"
+          label="Username"
+        />
+        <InputField
+          id="password"
+          placeholder="Password"
+          type="password"
+          label="Password"
+        />
+        <SubmitButton content="Login" />
+      </form>
+    </div>
+  );
+}
+
+function LogoutPage() {
+  return (
+    <div className="content">
+      <Title content="Successfully Logged Out" />
+      <p className="center-p">You can now close this tab.</p>
+      <br />
+    </div>
+  );
+}
+
+function LoginDeniedPage() {
+  return (
+    <div className="content">
+      <Title content="Login Denied" />
+      <p className="center-p">
+        You do not have permission to access this page.
+      </p>
+      <br />
+    </div>
+  );
+}
 function App() {
   return (
     <div>
@@ -269,6 +393,9 @@ function App() {
           <Route path="/bugreport" element={<BugReportPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="*" element={<ErrorPage />} />
+          <Route path="/Account/login" element={<LoginPage />} />
+          <Route path="/Account/logout" element={<LogoutPage />} />
+          <Route path="/Account/logindenied" element={<LoginDeniedPage />} />
         </Routes>
       </Router>
       <ToastContainer position="bottom-left" autoClose={3000} />

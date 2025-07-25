@@ -12,7 +12,6 @@ export function usePurchaseFunctions() {
   async function fetchPurchases() {
     setLoading(true);
     setError(null);
-    console.log("fetchPurchases triggered");
     try {
       const response = await fetch(API_URL);
       if (!response.ok) {
@@ -33,7 +32,6 @@ export function usePurchaseFunctions() {
       const amount = Number(purchase.amountp);
       const purchasedate = new Date(purchase.datep).toISOString();
       const file = purchase.file;
-      console.log(account, description, amount, purchasedate, file);
 
       if (!account || !description || isNaN(amount) || !purchasedate || !file) {
         alert("Please fill in all fields correctly.");
@@ -143,6 +141,24 @@ export function usePurchaseFunctions() {
     }
   }
 
+  async function fetchPurchaseByReimId(reimId: number) {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_URL}/${reimId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (err: any) {
+      setError(err.message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     data,
     loading,
@@ -151,5 +167,6 @@ export function usePurchaseFunctions() {
     createPurchase,
     deletePurchase,
     updatePurchase,
+    fetchPurchaseByReimId,
   };
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 export function useReimbursementFunctions() {
   const API_URL = "http://localhost:5000/api/Reimbursement";
   const API_URL_PURCHASE = "http://localhost:5000/api/Purchase";
@@ -41,18 +42,11 @@ export function useReimbursementFunctions() {
     const totalAmount = parseFloat(
       (document.getElementById("totalamount") as HTMLInputElement).value
     );
-    const dateSubmittedIn = (
-      document.getElementById("datesubmitted") as HTMLInputElement
-    ).value;
     const paymentMethod = (
       document.getElementById("paymentmethod") as HTMLSelectElement
     ).value;
-    var dateSubmitted: string;
-    if (dateSubmittedIn !== "") {
-      dateSubmitted = new Date(dateSubmittedIn).toISOString();
-    } else {
-      dateSubmitted = new Date().toISOString();
-    }
+    const dateSubmitted : string  = new Date().toISOString();
+    
     if (
       !vendor ||
       !vendorAddress ||
@@ -60,7 +54,9 @@ export function useReimbursementFunctions() {
       isNaN(totalAmount) ||
       !dateSubmitted
     ) {
-      alert("Please fill in all fields correctly. ");
+      console.log(dateSubmitted);
+      // If any field is empty or invalid, show an error message
+      toast.error("Please fill in all fields correctly.");
       return -1;
     }
     setLoading(true);
@@ -83,9 +79,10 @@ export function useReimbursementFunctions() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const result = await response.json();
+        const result = await response.json();
+        console.log(result);
       await fetchReimbursements();
-      return Number(result.id);
+      return result;
     } catch (err: any) {
       setError(err.message);
       return -1;
@@ -105,7 +102,6 @@ export function useReimbursementFunctions() {
       }
       for (const purchase of await relatedPurchases.json()) {
         // Delete related receipts first
-        console.log(purchase.id);
         try {
           const relatedReceipt = await fetch(
             `${API_URL_RECEIPT}/${purchase.id}`
