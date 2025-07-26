@@ -79,6 +79,7 @@ function MainPage() {
   );
 }
 function BugReportPage() {
+  const auth = useAuth();
   const { sendEmail } = useEmailFunctions();
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -88,7 +89,7 @@ function BugReportPage() {
       document.getElementById("description") as HTMLTextAreaElement
     ).value;
 
-    const username = localStorage.getItem("username");
+    const username = auth?.user?.username;
     var bodyContent = "";
     if (username) {
       bodyContent =
@@ -404,8 +405,6 @@ function LoginDeniedPage() {
   );
 }
 function AccountPage() {
-  const username = localStorage.getItem("username");
-  const role = localStorage.getItem("role");
   const nav = useNavigate();
   const auth = useAuth();
 
