@@ -14,6 +14,7 @@ import {
   Title,
   InputFieldTextArea,
   InputFieldNumber,
+  SpookyButton,
 } from "./Components";
 import { ReimbursementTable } from "./ReimTableComponent";
 import { PurchaseTable, Purchase } from "./PurTableComponent";
@@ -26,6 +27,8 @@ import "./App.css";
 import React from "react";
 import { useEmailFunctions } from "./emailFunctions";
 import { jwtDecode } from "jwt-decode";
+import { useAuth } from "./AuthContext";
+
 function AboutPage() {
   return (
     <div className="content">
@@ -88,7 +91,8 @@ function BugReportPage() {
     const username = localStorage.getItem("username");
     var bodyContent = "";
     if (username) {
-      bodyContent = "Submitted by: " + username + "\nInformation provided:\n" + description;
+      bodyContent =
+        "Submitted by: " + username + "\nInformation provided:\n" + description;
     }
 
     if (!bodyContent || bodyContent == "") {
@@ -318,9 +322,9 @@ function UpdateReimbursementPage() {
     </div>
   );
 }
-
 function LoginPage() {
   const nav = useNavigate();
+  const auth = useAuth();
 
   const login = async (e: any) => {
     e.preventDefault();
@@ -346,17 +350,9 @@ function LoginPage() {
       console.log("Login request sent:", response);
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("token", data.token);
-        const decodedToken: any = jwtDecode(data.token);
-        localStorage.setItem("username", decodedToken.username);
-        localStorage.setItem("role", decodedToken.role);
+        auth?.login(data.token);
         toast.success("Login successful!");
         nav("/");
-
-        console.log("Token:", data.token);
-        console.log("Decoded Token:", decodedToken);
-        console.log("Username:", decodedToken.username);
-        console.log("Role:", decodedToken.role);
       } else {
         toast.error("Invalid username or password.");
       }
@@ -387,7 +383,6 @@ function LoginPage() {
     </div>
   );
 }
-
 function LogoutPage() {
   return (
     <div className="content">
@@ -397,7 +392,6 @@ function LogoutPage() {
     </div>
   );
 }
-
 function LoginDeniedPage() {
   return (
     <div className="content">
@@ -409,21 +403,33 @@ function LoginDeniedPage() {
     </div>
   );
 }
-
 function AccountPage() {
   const username = localStorage.getItem("username");
   const role = localStorage.getItem("role");
+  const nav = useNavigate();
+  const auth = useAuth();
+
+  const handleLogout = () => {
+    auth?.logout();
+    nav("/Account/login");
+    toast.success("Successfully logged out!");
+  };
 
   return (
     <div className="content">
       <Title content="Account Information" />
-      <p className="center-p">Username: {username}</p>
-      <p className="center-p">Role: {role}</p>
+      <p className="center-p">Username: {auth?.user?.username}</p>
+      <p className="center-p">Role: {auth?.user?.role}</p>
       <br />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <SpookyButton onClick={handleLogout} content="Logout" />
+      </div>
     </div>
   );
 }
 function App() {
+  const auth = useAuth();
+
   return (
     <div>
       <Router>
@@ -442,14 +448,24 @@ function App() {
               </Link>
             </li>
             <li>
-              <Link className="link-list-item" to="/bugreport">
-                Bug Report
-              </Link>
+              {auth?.user?.username !== undefined ? (
+                <Link className="link-list-item" to="/bugreport">
+                  Bug Report
+                </Link>
+              ) : (
+                ""
+              )}
             </li>
             <li>
-              <Link className="link-list-item" to="/Account">
-                {localStorage.getItem("username")}
-              </Link>
+              {auth?.user?.username !== undefined ? (
+                <Link className="link-list-item" to="/Account">
+                  {auth?.user?.username}
+                </Link>
+              ) : (
+                <Link className="link-list-item" to="/Account/login">
+                  {"Login"}
+                </Link>
+              )}
             </li>
           </ul>
         </nav>
