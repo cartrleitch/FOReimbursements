@@ -17,19 +17,19 @@ export function Button({
   );
 }
 export function SpookyButton({
-    onClick,
-    content,
-    className = "spooky-button",
+  onClick,
+  content,
+  className = "spooky-button",
 }: {
-    onClick: () => void;
-    content: string;
-    className?: string;
+  onClick: () => void;
+  content: string;
+  className?: string;
 }) {
-    return (
-        <button className={className} onClick={onClick} type="button">
-            {content}
-        </button>
-    );
+  return (
+    <button className={className} onClick={onClick} type="button">
+      {content}
+    </button>
+  );
 }
 export function RedirectButton({
   to,

@@ -393,10 +393,10 @@ function LogoutPage() {
     </div>
   );
 }
-function LoginDeniedPage() {
+function AccessDeniedPage() {
   return (
     <div className="content">
-      <Title content="Login Denied" />
+      <Title content="Access Denied" />
       <p className="center-p">
         You do not have permission to access this page.
       </p>
@@ -410,7 +410,9 @@ function AccountPage() {
 
   const handleLogout = () => {
     auth?.logout();
-    nav("/Account/login");
+    setTimeout(() => {
+      nav("/Account/logout");
+    }, 0);
     toast.success("Successfully logged out!");
   };
 
@@ -478,15 +480,35 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/create" element={<CreateReimbursementPage />} />
-          <Route path="/update" element={<UpdateReimbursementPage />} />
-          <Route path="/bugreport" element={<BugReportPage />} />
+          <Route
+            path="/create"
+            element=<PrivateRoute allowedRoles={["Admin", "User"]}>
+              <CreateReimbursementPage />
+            </PrivateRoute>
+          />
+          {/*          <Route path="/update" element={<UpdateReimbursementPage />} />
+           */}
+          <Route
+            path="/bugreport"
+            element={
+              <PrivateRoute allowedRoles={["Admin", "User"]}>
+                <BugReportPage />
+              </PrivateRoute>
+            }
+          />
           <Route path="/about" element={<AboutPage />} />
           <Route path="*" element={<ErrorPage />} />
           <Route path="/Account/login" element={<LoginPage />} />
           <Route path="/Account/logout" element={<LogoutPage />} />
-          <Route path="/Account/logindenied" element={<LoginDeniedPage />} />
-          <Route path="/Account" element={<AccountPage />} />
+          <Route path="/Account/accessdenied" element={<AccessDeniedPage />} />
+          <Route
+            path="/Account"
+            element={
+              <PrivateRoute allowedRoles={["Admin", "User"]}>
+                <AccountPage />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Router>
       <ToastContainer position="bottom-left" autoClose={3000} />
