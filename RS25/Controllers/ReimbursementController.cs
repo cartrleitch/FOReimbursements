@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RS25.Data;
@@ -42,6 +43,7 @@ namespace RS25.Controllers
 
         // PUT: api/reimbursement/{id}
         [HttpPut("{id}", Name = "UpdateReimbursement")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> UpdateReimbursement(int id, [FromBody] Reimbursement Reimbursement)
         {
             if (Reimbursement == null || id != Reimbursement.Id)

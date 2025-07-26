@@ -38,6 +38,7 @@ namespace RS25.Data
                     FirstName = "Carter",
                     LastName = "Leitch",
                     EmailAddress = adminEmailDefault,
+                    Email = adminEmailDefault,
                     UserName = adminEmailDefault
                 };
                 var result = await userManager.CreateAsync(adminUser, adminPasswordDefault);

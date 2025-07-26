@@ -14,6 +14,7 @@ import {
   Title,
   InputFieldTextArea,
   InputFieldNumber,
+  SpookyButton,
 } from "./Components";
 import { ReimbursementTable } from "./ReimTableComponent";
 import { PurchaseTable, Purchase } from "./PurTableComponent";
@@ -25,6 +26,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import React from "react";
 import { useEmailFunctions } from "./emailFunctions";
+import { useAuth } from "./AuthContext";
+import { PrivateRoute } from "./PrivateRoute";
 
 function AboutPage() {
   return (
@@ -76,6 +79,7 @@ function MainPage() {
   );
 }
 function BugReportPage() {
+  const auth = useAuth();
   const { sendEmail } = useEmailFunctions();
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -85,10 +89,14 @@ function BugReportPage() {
       document.getElementById("description") as HTMLTextAreaElement
     ).value;
 
-    console.log("Bug Type:", bugType);
-    console.log("Description:", description);
+    const username = auth?.user?.username;
+    var bodyContent = "";
+    if (username) {
+      bodyContent =
+        "Submitted by: " + username + "\nInformation provided:\n" + description;
+    }
 
-    if (!description) {
+    if (!bodyContent || bodyContent == "") {
       toast.error("Please fill in the description field.");
       return;
     }
@@ -96,7 +104,7 @@ function BugReportPage() {
     const data = {
       to: "carterleitch@gmail.com",
       subject: `Bug Report - ${bugType}`,
-      content: description,
+      content: bodyContent,
     };
     sendEmail(data);
     (document.getElementById("bugtype")! as HTMLSelectElement).value = "Bug";
@@ -315,12 +323,50 @@ function UpdateReimbursementPage() {
     </div>
   );
 }
-
 function LoginPage() {
+  const nav = useNavigate();
+  const auth = useAuth();
+
+  const login = async (e: any) => {
+    e.preventDefault();
+    const emailaddress = (
+      document.getElementById("username") as HTMLInputElement
+    ).value;
+    const password = (document.getElementById("password") as HTMLInputElement)
+      .value;
+    if (!emailaddress || !password) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+    console.log("Login attempt with username:", emailaddress);
+    console.log("Login attempt with password:", password);
+    try {
+      const response = await fetch("http://localhost:5000/api/Auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ emailaddress, password }),
+      });
+      console.log("Login request sent:", response);
+      if (response.ok) {
+        const data = await response.json();
+        auth?.login(data.token);
+        toast.success("Login successful!");
+        nav("/");
+      } else {
+        toast.error("Invalid username or password.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("An error occurred during login. Please try again.");
+    }
+  };
+
   return (
     <div className="content">
       <Title content="Login" />
-      <form className="normal-form">
+      <form className="normal-form" onSubmit={login}>
         <InputField
           id="username"
           placeholder="Username"
@@ -338,7 +384,6 @@ function LoginPage() {
     </div>
   );
 }
-
 function LogoutPage() {
   return (
     <div className="content">
@@ -348,11 +393,10 @@ function LogoutPage() {
     </div>
   );
 }
-
-function LoginDeniedPage() {
+function AccessDeniedPage() {
   return (
     <div className="content">
-      <Title content="Login Denied" />
+      <Title content="Access Denied" />
       <p className="center-p">
         You do not have permission to access this page.
       </p>
@@ -360,7 +404,33 @@ function LoginDeniedPage() {
     </div>
   );
 }
+function AccountPage() {
+  const nav = useNavigate();
+  const auth = useAuth();
+
+  const handleLogout = () => {
+    auth?.logout();
+    setTimeout(() => {
+      nav("/Account/logout");
+    }, 0);
+    toast.success("Successfully logged out!");
+  };
+
+  return (
+    <div className="content">
+      <Title content="Account Information" />
+      <p className="center-p">Username: {auth?.user?.username}</p>
+      <p className="center-p">Role: {auth?.user?.role}</p>
+      <br />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <SpookyButton onClick={handleLogout} content="Logout" />
+      </div>
+    </div>
+  );
+}
 function App() {
+  const auth = useAuth();
+
   return (
     <div>
       <Router>
@@ -379,23 +449,66 @@ function App() {
               </Link>
             </li>
             <li>
-              <Link className="link-list-item" to="/bugreport">
-                Bug Report
-              </Link>
+              {auth?.user?.username !== undefined ? (
+                <Link className="link-list-item" to="/bugreport">
+                  Bug Report
+                </Link>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
+              {auth?.user?.username !== undefined ? (
+                <Link className="link-list-item" to="/Account">
+                  {auth?.user?.username}
+                </Link>
+              ) : (
+                <Link className="link-list-item" to="/Account/login">
+                  {"Login"}
+                </Link>
+              )}
             </li>
           </ul>
         </nav>
 
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/create" element={<CreateReimbursementPage />} />
-          <Route path="/update" element={<UpdateReimbursementPage />} />
-          <Route path="/bugreport" element={<BugReportPage />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute allowedRoles={["Admin", "User"]}>
+                <MainPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/create"
+            element=<PrivateRoute allowedRoles={["Admin", "User"]}>
+              <CreateReimbursementPage />
+            </PrivateRoute>
+          />
+          {/*          <Route path="/update" element={<UpdateReimbursementPage />} />
+           */}
+          <Route
+            path="/bugreport"
+            element={
+              <PrivateRoute allowedRoles={["Admin", "User"]}>
+                <BugReportPage />
+              </PrivateRoute>
+            }
+          />
           <Route path="/about" element={<AboutPage />} />
           <Route path="*" element={<ErrorPage />} />
           <Route path="/Account/login" element={<LoginPage />} />
           <Route path="/Account/logout" element={<LogoutPage />} />
-          <Route path="/Account/logindenied" element={<LoginDeniedPage />} />
+          <Route path="/Account/accessdenied" element={<AccessDeniedPage />} />
+          <Route
+            path="/Account"
+            element={
+              <PrivateRoute allowedRoles={["Admin", "User"]}>
+                <AccountPage />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Router>
       <ToastContainer position="bottom-left" autoClose={3000} />
