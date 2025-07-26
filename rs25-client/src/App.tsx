@@ -317,53 +317,56 @@ function UpdateReimbursementPage() {
 }
 
 function LoginPage() {
-    const nav = useNavigate();
+  const nav = useNavigate();
 
-    const login = async (e: any) => {
-        e.preventDefault();
-        const emailaddress = (document.getElementById("username") as HTMLInputElement).value;
-        const password = (document.getElementById("password") as HTMLInputElement).value;
-        if (!emailaddress || !password) {
-            toast.error("Please fill in all fields.");
-            return;
-        }
-        console.log("Login attempt with username:", emailaddress);
-        console.log("Login attempt with password:", password);
-        try {
-            const response = await fetch("http://localhost:5000/api/Auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ emailaddress, password }),
-            });
-            console.log("Login request sent:", response);
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem("token", data.token);
-                const decodedToken: any = jwtDecode(data.token);
-                localStorage.setItem("username", decodedToken.username);
-                localStorage.setItem("role", decodedToken.role);
-                toast.success("Login successful!");
-                nav("/");
-
-                console.log("Token:", data.token);
-                console.log("Decoded Token:", decodedToken);
-                console.log("Username:", decodedToken.username);
-                console.log("Role:", decodedToken.role);
-            } else {
-                toast.error("Invalid username or password.");
-            }
-        } catch (error) {
-            console.error("Login error:", error);
-            toast.error("An error occurred during login. Please try again.");
-        }
+  const login = async (e: any) => {
+    e.preventDefault();
+    const emailaddress = (
+      document.getElementById("username") as HTMLInputElement
+    ).value;
+    const password = (document.getElementById("password") as HTMLInputElement)
+      .value;
+    if (!emailaddress || !password) {
+      toast.error("Please fill in all fields.");
+      return;
     }
+    console.log("Login attempt with username:", emailaddress);
+    console.log("Login attempt with password:", password);
+    try {
+      const response = await fetch("http://localhost:5000/api/Auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ emailaddress, password }),
+      });
+      console.log("Login request sent:", response);
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        const decodedToken: any = jwtDecode(data.token);
+        localStorage.setItem("username", decodedToken.username);
+        localStorage.setItem("role", decodedToken.role);
+        toast.success("Login successful!");
+        nav("/");
+
+        console.log("Token:", data.token);
+        console.log("Decoded Token:", decodedToken);
+        console.log("Username:", decodedToken.username);
+        console.log("Role:", decodedToken.role);
+      } else {
+        toast.error("Invalid username or password.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("An error occurred during login. Please try again.");
+    }
+  };
 
   return (
     <div className="content">
       <Title content="Login" />
-          <form className="normal-form" onSubmit={login}>
+      <form className="normal-form" onSubmit={login}>
         <InputField
           id="username"
           placeholder="Username"
@@ -403,6 +406,20 @@ function LoginDeniedPage() {
     </div>
   );
 }
+
+function AccountPage() {
+  const username = localStorage.getItem("username");
+  const role = localStorage.getItem("role");
+
+  return (
+    <div className="content">
+      <Title content="Account Information" />
+      <p className="center-p">Username: {username}</p>
+      <p className="center-p">Role: {role}</p>
+      <br />
+    </div>
+  );
+}
 function App() {
   return (
     <div>
@@ -425,10 +442,12 @@ function App() {
               <Link className="link-list-item" to="/bugreport">
                 Bug Report
               </Link>
-                      </li>
-                      <li>
-                          {localStorage.getItem("username")}
-                      </li>
+            </li>
+            <li>
+              <Link className="link-list-item" to="/Account">
+                {localStorage.getItem("username")}
+              </Link>
+            </li>
           </ul>
         </nav>
 
@@ -442,6 +461,7 @@ function App() {
           <Route path="/Account/login" element={<LoginPage />} />
           <Route path="/Account/logout" element={<LogoutPage />} />
           <Route path="/Account/logindenied" element={<LoginDeniedPage />} />
+          <Route path="/Account" element={<AccountPage />} />
         </Routes>
       </Router>
       <ToastContainer position="bottom-left" autoClose={3000} />
