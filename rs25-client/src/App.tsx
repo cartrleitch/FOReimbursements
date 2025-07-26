@@ -85,10 +85,13 @@ function BugReportPage() {
       document.getElementById("description") as HTMLTextAreaElement
     ).value;
 
-    console.log("Bug Type:", bugType);
-    console.log("Description:", description);
+    const username = localStorage.getItem("username");
+    var bodyContent = "";
+    if (username) {
+      bodyContent = "Submitted by: " + username + "\nInformation provided:\n" + description;
+    }
 
-    if (!description) {
+    if (!bodyContent || bodyContent == "") {
       toast.error("Please fill in the description field.");
       return;
     }
@@ -96,7 +99,7 @@ function BugReportPage() {
     const data = {
       to: "carterleitch@gmail.com",
       subject: `Bug Report - ${bugType}`,
-      content: description,
+      content: bodyContent,
     };
     sendEmail(data);
     (document.getElementById("bugtype")! as HTMLSelectElement).value = "Bug";
