@@ -25,7 +25,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import React from "react";
 import { useEmailFunctions } from "./emailFunctions";
-
+import { jwtDecode } from "jwt-decode";
 function AboutPage() {
   return (
     <div className="content">
@@ -317,10 +317,49 @@ function UpdateReimbursementPage() {
 }
 
 function LoginPage() {
+
+    const login = async (e: any) => {
+        e.preventDefault();
+        const emailaddress = (document.getElementById("username") as HTMLInputElement).value;
+        const password = (document.getElementById("password") as HTMLInputElement).value;
+        if (!emailaddress || !password) {
+            toast.error("Please fill in all fields.");
+            return;
+        }
+        console.log("Login attempt with username:", emailaddress);
+        console.log("Login attempt with password:", password);
+        try {
+            const response = await fetch("http://localhost:5000/api/Auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ emailaddress, password }),
+            });
+            console.log("Login request sent:", response);
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Login successful:", data);
+                console.log("Token:", data.token);
+                localStorage.setItem("token", data.token);
+                const decodedToken: any = jwtDecode(data.token);
+                console.log("Decoded Token:", decodedToken);
+                localStorage.setItem("username", decodedToken.username);
+                window.location.href = "/";
+                toast.success("Login successful!");
+            } else {
+                toast.error("Invalid username or password.");
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            toast.error("An error occurred during login. Please try again.");
+        }
+    }
+
   return (
     <div className="content">
       <Title content="Login" />
-      <form className="normal-form">
+          <form className="normal-form" onSubmit={login}>
         <InputField
           id="username"
           placeholder="Username"

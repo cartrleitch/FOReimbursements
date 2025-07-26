@@ -35,6 +35,8 @@ namespace RS25.Controllers
         public async Task<IActionResult> Login([FromBody] Login login)
         {
             var user = await _userManager.FindByEmailAsync(login.EmailAddress);
+            Console.WriteLine($"<---- User Email: {login.EmailAddress}");
+            Console.WriteLine($"<---- User Password: {login.Password}");
             Console.WriteLine($"<---- User: {user}");
 
             if (user == null)
