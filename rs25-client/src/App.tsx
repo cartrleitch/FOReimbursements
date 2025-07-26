@@ -421,7 +421,8 @@ function AccountPage() {
       <p className="center-p">Role: {auth?.user?.role}</p>
       <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <SpookyButton onClick={handleLogout} content="Logout" />
+              <SpookyButton onClick={handleLogout} content="Logout" />
+              <SpookyButton onClick={() => { console.log(auth?.user); }} content="Log Token" />
       </div>
     </div>
   );
