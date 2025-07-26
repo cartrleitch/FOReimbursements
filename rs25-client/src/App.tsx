@@ -26,8 +26,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import React from "react";
 import { useEmailFunctions } from "./emailFunctions";
-import { jwtDecode } from "jwt-decode";
 import { useAuth } from "./AuthContext";
+import { PrivateRoute } from "./PrivateRoute";
 
 function AboutPage() {
   return (
@@ -421,7 +421,7 @@ function AccountPage() {
       <p className="center-p">Role: {auth?.user?.role}</p>
       <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
-              <SpookyButton onClick={handleLogout} content="Logout" />
+        <SpookyButton onClick={handleLogout} content="Logout" />
       </div>
     </div>
   );
@@ -470,7 +470,14 @@ function App() {
         </nav>
 
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute allowedRoles={["Admin", "User"]}>
+                <MainPage />
+              </PrivateRoute>
+            }
+          />
           <Route path="/create" element={<CreateReimbursementPage />} />
           <Route path="/update" element={<UpdateReimbursementPage />} />
           <Route path="/bugreport" element={<BugReportPage />} />
