@@ -35,8 +35,6 @@ namespace RS25.Controllers
         public async Task<IActionResult> Login([FromBody] Login login)
         {
             var user = await _userManager.FindByEmailAsync(login.EmailAddress);
-            Console.WriteLine($"<---- User Email: {login.EmailAddress}");
-            Console.WriteLine($"<---- User Password: {login.Password}");
             Console.WriteLine($"<---- User: {user}");
 
             if (user == null)
@@ -57,14 +55,14 @@ namespace RS25.Controllers
 
             var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.UserName ?? ""),
-            new Claim(ClaimTypes.Email, user.EmailAddress ?? "")
+            new Claim("id", user.Id),
+            new Claim("username", user.UserName ?? ""),
+            new Claim("email", user.EmailAddress ?? "")
         };
 
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim("role", role));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));

@@ -317,6 +317,7 @@ function UpdateReimbursementPage() {
 }
 
 function LoginPage() {
+    const nav = useNavigate();
 
     const login = async (e: any) => {
         e.preventDefault();
@@ -339,14 +340,17 @@ function LoginPage() {
             console.log("Login request sent:", response);
             if (response.ok) {
                 const data = await response.json();
-                console.log("Login successful:", data);
-                console.log("Token:", data.token);
                 localStorage.setItem("token", data.token);
                 const decodedToken: any = jwtDecode(data.token);
-                console.log("Decoded Token:", decodedToken);
                 localStorage.setItem("username", decodedToken.username);
-                window.location.href = "/";
+                localStorage.setItem("role", decodedToken.role);
                 toast.success("Login successful!");
+                nav("/");
+
+                console.log("Token:", data.token);
+                console.log("Decoded Token:", decodedToken);
+                console.log("Username:", decodedToken.username);
+                console.log("Role:", decodedToken.role);
             } else {
                 toast.error("Invalid username or password.");
             }
@@ -421,7 +425,10 @@ function App() {
               <Link className="link-list-item" to="/bugreport">
                 Bug Report
               </Link>
-            </li>
+                      </li>
+                      <li>
+                          {localStorage.getItem("username")}
+                      </li>
           </ul>
         </nav>
 
