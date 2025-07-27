@@ -117,7 +117,14 @@ export function useReimbursementFunctions() {
         // Delete related receipts first
         try {
           const relatedReceipt = await fetch(
-            `${API_URL_RECEIPT}/${purchase.id}`
+              `${API_URL_RECEIPT}/${purchase.id}`
+              , {
+                  method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+              }
           );
           if (!relatedReceipt.ok) {
             throw new Error(`HTTP error! status: ${relatedReceipt.status}`);
