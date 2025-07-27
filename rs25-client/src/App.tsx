@@ -10,7 +10,6 @@ import {
   SubmitButton,
   InputField,
   InputSelect,
-  FileInput,
   Title,
   InputFieldTextArea,
   InputFieldNumber,
@@ -96,7 +95,7 @@ function BugReportPage() {
         "Submitted by: " + username + "\nInformation provided:\n" + description;
     }
 
-    if (!bodyContent || bodyContent == "") {
+    if (!bodyContent || bodyContent === "") {
       toast.error("Please fill in the description field.");
       return;
     }
@@ -276,70 +275,24 @@ function CreateReimbursementPage() {
     </div>
   );
 }
-function UpdateReimbursementPage() {
-  const { updateReimbursement } = useReimbursementFunctions();
-  return (
-    <div className="content">
-      <Title content="Update Reimbursement" />
-      <form className="normal-form">
-        <InputField
-          id="vendoru"
-          placeholder="Vendor"
-          type="text"
-          label="Vendor"
-        />
-        <InputField
-          id="vendoraddressu"
-          placeholder="Vendor Address"
-          type="text"
-          label="Vendor Address"
-        />
-        <InputField
-          id="vendorwebsiteu"
-          placeholder="Vendor Website"
-          type="text"
-          label="Vendor Website"
-        />
-        <InputField
-          id="totalamountu"
-          placeholder="Total Amount"
-          type="number"
-          label="Total Amount"
-        />
-        <InputField
-          id="datesubmittedu"
-          placeholder="Date Submitted"
-          type="date"
-          label="Date Submitted"
-        />
-        <InputSelect
-          id="paymentmethodu"
-          options={["Credit Card", "Cash", "Check", "Bank Transfer"]}
-          label="Payment Method"
-        />
-        <FileInput id="receiptsu" label="Receipts" />
-        <SubmitButton onClick={updateReimbursement} content="Submit" />
-      </form>
-    </div>
-  );
-}
 function LoginPage() {
   const nav = useNavigate();
   const auth = useAuth();
 
   const login = async (e: any) => {
     e.preventDefault();
+
     const emailaddress = (
       document.getElementById("username") as HTMLInputElement
     ).value;
     const password = (document.getElementById("password") as HTMLInputElement)
       .value;
+
     if (!emailaddress || !password) {
       toast.error("Please fill in all fields.");
       return;
     }
-    console.log("Login attempt with username:", emailaddress);
-    console.log("Login attempt with password:", password);
+
     try {
       const response = await fetch("http://localhost:5000/api/Auth/login", {
         method: "POST",
