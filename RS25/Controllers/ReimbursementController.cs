@@ -19,6 +19,7 @@ namespace RS25.Controllers
 
         // GET: api/reimbursement
         [HttpGet(Name = "GetReimbursement")]
+        [Authorize]
         public async Task<IActionResult> GetReimbursements()
         {
             var reimbursements = await _context.Reimbursement.ToListAsync();
@@ -28,6 +29,7 @@ namespace RS25.Controllers
 
         // POST: api/reimbursement
         [HttpPost(Name = "CreateReimbursement")]
+        [Authorize]
         public async Task<IActionResult> CreateReimbursement([FromBody] Reimbursement reimbursement)
         {
             if (reimbursement == null)
@@ -73,6 +75,7 @@ namespace RS25.Controllers
 
         // DELETE: api/reimbursement/{id}
         [HttpDelete("{id}", Name = "DeleteReimbursement")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteReimbursement(int id)
         {
             if (id <= 0)

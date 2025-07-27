@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RS25.Data;
+using Microsoft.AspNetCore.Authorization;
 using RS25.Models;
 using System.Net;
 using System.Net.Mail;
@@ -19,6 +18,7 @@ namespace RS25.Controllers
         }
 
         [HttpPost("send", Name = "SendEmail")]
+        [Authorize]
         public async Task<IActionResult> SendEmail([FromBody] Email email)
         {
             var smtpSettings = _config.GetSection("SmtpSettings");

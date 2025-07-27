@@ -13,7 +13,13 @@ export function usePurchaseFunctions() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(API_URL);
+        const response = await fetch(API_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -43,7 +49,8 @@ export function usePurchaseFunctions() {
         const response = await fetch(API_URL, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`
           },
           body: JSON.stringify({
             account,
@@ -58,7 +65,10 @@ export function usePurchaseFunctions() {
         const purchaseId = (await response.json()).id;
         const responseFile = await fetch(`${API_URL}/upload/${purchaseId}`, {
           method: "POST",
-          body: formData,
+            body: formData,
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
         });
 
         if (!response.ok || !responseFile.ok) {
@@ -77,20 +87,34 @@ export function usePurchaseFunctions() {
 
   async function deletePurchase(id: number) {
     try {
-      const relatedReceipts = await fetch(`${API_URL_RECEIPT}/${id}`);
+        const relatedReceipts = await fetch(`${API_URL_RECEIPT}/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
       if (!relatedReceipts.ok) {
         throw new Error(`HTTP error! status: ${relatedReceipts.status}`);
       }
       for (const receipt of await relatedReceipts.json()) {
         const response = await fetch(`${API_URL_RECEIPT}/${receipt.id}`, {
-          method: "DELETE",
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
         });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       }
       const response = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
+          method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,7 +143,8 @@ export function usePurchaseFunctions() {
       const response = await fetch(API_URL, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           id: Number(id),
@@ -145,7 +170,13 @@ export function usePurchaseFunctions() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_URL}/${reimId}`);
+        const response = await fetch(`${API_URL}/${reimId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

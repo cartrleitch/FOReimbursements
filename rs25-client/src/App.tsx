@@ -13,7 +13,8 @@ import {
   Title,
   InputFieldTextArea,
   InputFieldNumber,
-  SpookyButton,
+    SpookyButton,
+    Button
 } from "./Components";
 import { ReimbursementTable } from "./ReimTableComponent";
 import { PurchaseTable, Purchase } from "./PurTableComponent";
@@ -338,11 +339,15 @@ function LoginPage() {
   );
 }
 function LogoutPage() {
+    const nav = useNavigate();
   return (
     <div className="content">
       <Title content="Successfully Logged Out" />
-      <p className="center-p">You can now close this tab.</p>
-      <br />
+          <p className="center-p">You can now close this tab or return to login page to login again.</p>
+          <br />
+          <div style={{ display: "flex", justifyContent: "center" }}>
+              <Button onClick={() => nav("/Account/login")} content="Login" />
+          </div>
     </div>
   );
 }
@@ -376,7 +381,8 @@ function AccountPage() {
       <p className="center-p">Role: {auth?.user?.role}</p>
       <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <SpookyButton onClick={handleLogout} content="Logout" />
+              <SpookyButton onClick={handleLogout} content="Logout" />
+              <SpookyButton onClick={() => { console.log(auth?.user); console.log(localStorage.getItem("token")); }} content="Debug" />
       </div>
     </div>
   );

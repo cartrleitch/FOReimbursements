@@ -10,12 +10,18 @@ export function useReimbursementFunctions() {
   // eslint-disable-next-line
   const [error, setError] = useState<string | null>(null);
 
-  async function fetchReimbursements() {
+    async function fetchReimbursements() {
     setLoading(true);
     setError(null);
     console.log("fetchReimbursements triggered");
     try {
-      const response = await fetch(API_URL);
+        const response = await fetch(API_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            },
+        });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -65,7 +71,8 @@ export function useReimbursementFunctions() {
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
           vendor,
@@ -96,7 +103,13 @@ export function useReimbursementFunctions() {
     try {
       setLoading(true);
       setError(null);
-      const relatedPurchases = await fetch(`${API_URL_PURCHASE}/${id}`);
+        const relatedPurchases = await fetch(`${API_URL_PURCHASE}/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            },
+        });
       if (!relatedPurchases.ok) {
         throw new Error(`HTTP error! status: ${relatedPurchases.status}`);
       }
@@ -113,7 +126,11 @@ export function useReimbursementFunctions() {
           const responseRec = await fetch(
             `${API_URL_RECEIPT}/${relatedRecId}`,
             {
-              method: "DELETE",
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
             }
           );
           if (!responseRec.ok) {
@@ -127,7 +144,11 @@ export function useReimbursementFunctions() {
 
         // Then delete the purchase
         const response = await fetch(`${API_URL_PURCHASE}/${purchase.id}`, {
-          method: "DELETE",
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
         });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -135,7 +156,11 @@ export function useReimbursementFunctions() {
       }
       // Finally, delete the reimbursement
       const response = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
+          method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -186,7 +211,8 @@ export function useReimbursementFunctions() {
       const response = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
           id: Number(id),

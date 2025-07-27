@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using RS25.Data;
 using RS25.Models;
 
@@ -18,6 +19,7 @@ namespace RS25.Controllers
 
         // GET: api/purchase
         [HttpGet(Name = "GetPurchase")]
+        [Authorize]
         public async Task<IActionResult> GetPurchases()
         {
             var purchases = await _context.Purchase.ToListAsync();
@@ -26,6 +28,7 @@ namespace RS25.Controllers
         }
         // GET: api/purchase/{id}
         [HttpGet("{reimId}", Name = "GetPurchaseByReimId")]
+        [Authorize]
         public async Task<IActionResult> GetPurchaseByReimId(int reimId)
         {
             if (reimId <= 0)
@@ -58,6 +61,7 @@ namespace RS25.Controllers
 
         // POST: api/purchase
         [HttpPost(Name = "CreatePurchase")]
+        [Authorize]
         public async Task<IActionResult> CreatePurchase([FromBody] Purchase purchase)
         {
             if (purchase == null)
@@ -73,6 +77,7 @@ namespace RS25.Controllers
 
         // PUT: api/purchase/{id}
         [HttpPut("{id}", Name = "UpdatePurchase")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdatePurchase(int id, [FromBody] Purchase purchase)
         {
             if (purchase == null || id != purchase.Id)
@@ -98,6 +103,7 @@ namespace RS25.Controllers
 
         // DELETE: api/purchase/{id}
         [HttpDelete("{id}", Name = "DeletePurchase")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePurchase(int id)
         {
             if (id <= 0)
@@ -120,6 +126,7 @@ namespace RS25.Controllers
 
         // POST: api/purchase/upload
         [HttpPost("upload/{id}", Name = "UploadFile")]
+        [Authorize]
         public async Task<IActionResult> UploadFiles(int id, IFormFile file)
         {
             if (file == null)

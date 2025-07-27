@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using RS25.Data;
 using RS25.Models;
 
@@ -17,7 +18,8 @@ namespace RS25.Controllers {
             }
         // GET: api/receipt
         [HttpGet(Name = "GetReceipt")]
-            public async Task<IActionResult> GetReceipts()
+        [Authorize]
+        public async Task<IActionResult> GetReceipts()
             {
                 var receipts = await _context.Receipt.ToListAsync();
 
@@ -26,6 +28,7 @@ namespace RS25.Controllers {
 
         // GET: api/receipt/{id}
         [HttpGet("{purId}", Name = "GetReceiptByPurId")]
+        [Authorize]
         public async Task<IActionResult> GetReceiptByPurId(int purId)
         {
             if (purId <= 0)
@@ -42,6 +45,7 @@ namespace RS25.Controllers {
 
         // GET: api/receipt/download/{fileName}
         [HttpGet("download/{fileName}", Name = "GetFileByName")]
+        [Authorize]
         public IActionResult GetFileByName(string fileName)
         {
             var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
@@ -60,6 +64,7 @@ namespace RS25.Controllers {
 
         // POST api/receipt
         [HttpPost(Name = "CreateReceipt")]
+        [Authorize]
         public async Task<IActionResult> CreateReceipt([FromBody] Receipt receipt)
         {
             if (receipt == null)
@@ -75,11 +80,13 @@ namespace RS25.Controllers {
 
         // PUT api/receipt
         [HttpPut("{id}")]
-            public void Put(int id, [FromBody] string value)
+        [Authorize (Roles = "Admin")]
+        public void Put(int id, [FromBody] string value)
             {
             }
 
         [HttpDelete("{id}", Name = "DeleteReceipt")]
+        [Authorize]
         public async Task<IActionResult> DeleteReceipt(int id)
         {
             if (id <= 0)
