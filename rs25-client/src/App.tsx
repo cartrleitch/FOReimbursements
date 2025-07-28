@@ -299,7 +299,7 @@ function CreateReimbursementPage() {
         >
           <InputRadio
             id="reimbursement"
-            value="reimbursement"
+            value="Reimbursement"
             name="actionrequested"
             label="Reimbursement"
             checked={true}
@@ -307,7 +307,7 @@ function CreateReimbursementPage() {
           />
           <InputRadio
             id="notification"
-            value="notification"
+            value="Notification"
             name="actionrequested"
             label="Notification of purchase"
             onChange={(e) => setActionRequested(e.target.value)}

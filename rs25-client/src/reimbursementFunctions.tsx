@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
+import { createVendor } from "./vendorFunctions";
 export function useReimbursementFunctions() {
   const API_URL = "http://localhost:5000/api/Reimbursement";
   const API_URL_PURCHASE = "http://localhost:5000/api/Purchase";
@@ -9,24 +10,25 @@ export function useReimbursementFunctions() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   // eslint-disable-next-line
-    const [error, setError] = useState<string | null>(null);
-    const [userOrVendor, setUserOrVendor] = useState<string>("user");
-    const [actionRequested, setActionRequested] = useState<string>("reimbursement");
+  const [error, setError] = useState<string | null>(null);
+  const [userOrVendor, setUserOrVendor] = useState<string>("user");
+  const [actionRequested, setActionRequested] =
+    useState<string>("Reimbursement");
 
-    const auth = useAuth();
+  const auth = useAuth();
 
-    async function fetchReimbursements() {
+  async function fetchReimbursements() {
     setLoading(true);
     setError(null);
     console.log("fetchReimbursements triggered");
     try {
-        const response = await fetch(API_URL, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            },
-        });
+      const response = await fetch(API_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -41,34 +43,79 @@ export function useReimbursementFunctions() {
   }
 
   // POST a new reimbursement to the API
-    async function createReimbursement() {
-        var userOrVendor;
-        if (userOrVendor === "user") {
-            userOrVendor = auth?.user?.id;
-        }
-        else if (userOrVendor === "vendor") {
-            // create vendor using data from the form then get the id and assign it to userOrVendor
-            const vendorName = (document.getElementById("vendorName") as HTMLInputElement).value;
-            const vendorAddress = (document.getElementById("vendorAddress") as HTMLInputElement).value;
-            const vendorWebsite = (document.getElementById("vendorWebsite") as HTMLInputElement).value;
-            const vendorCity = (document.getElementById("vendorCity") as HTMLInputElement).value;
-            const vendorState = (document.getElementById("vendorState") as HTMLInputElement).value;
-            const vendorZip = (document.getElementById("vendorZipCode") as HTMLInputElement).value;
-        }
-        else {
-            return -1;
-        }
-        const actionReq = actionRequested;
+  async function createReimbursement() {
     const totalAmount = parseFloat(
       (document.getElementById("totalamount") as HTMLInputElement).value
     );
-    
-    const dateSubmitted : string  = new Date().toISOString();
-    
-    if (
-      isNaN(totalAmount) ||
-      !dateSubmitted
-    ) {
+
+    const dateSubmitted: string = new Date().toISOString();
+
+    var reimData: any;
+
+    if (userOrVendor === "user") {
+      const userId = auth?.user?.id;
+      reimData = {
+        userId: userId,
+        actionRequested: actionRequested,
+        totalAmount: totalAmount,
+        dateSubmitted: dateSubmitted,
+        status: "Pending",
+      };
+    } else if (userOrVendor === "vendor") {
+      const vendorName = (
+        document.getElementById("vendorName") as HTMLInputElement
+      ).value;
+      const vendorAddress = (
+        document.getElementById("vendorAddress") as HTMLInputElement
+      ).value;
+      const vendorWebsite = (
+        document.getElementById("vendorWebsite") as HTMLInputElement
+      ).value;
+      const vendorCity = (
+        document.getElementById("vendorCity") as HTMLInputElement
+      ).value;
+      const vendorState = (
+        document.getElementById("vendorState") as HTMLInputElement
+      ).value;
+      const vendorZip = (
+        document.getElementById("vendorZipCode") as HTMLInputElement
+      ).value;
+      if (!vendorName && (!vendorAddress || !vendorWebsite)) {
+        toast.error("Please fill in all vendor fields correctly.");
+        return -1;
+      }
+      const vendorData = {
+        name: vendorName,
+        address: vendorAddress,
+        website: vendorWebsite,
+        city: vendorCity,
+        state: vendorState,
+        zip: vendorZip,
+      };
+      const vendorResponse = await createVendor(vendorData);
+      if (vendorResponse && vendorResponse.id) {
+        const vendorId = vendorResponse.id;
+        reimData = {
+          vendorId: vendorId,
+          actionRequested: actionRequested,
+          totalAmount: totalAmount,
+          dateSubmitted: dateSubmitted,
+          status: "Pending",
+        };
+      } else {
+        toast.error("Failed to create vendor.");
+        return -1;
+      }
+    } else {
+      return -1;
+    }
+
+    if (reimData === undefined) {
+      console.error("Reimdata empty.");
+      return -1;
+    }
+
+    if (isNaN(totalAmount) || !dateSubmitted) {
       console.log(dateSubmitted);
       // If any field is empty or invalid, show an error message
       toast.error("Please fill in all fields correctly.");
@@ -76,24 +123,21 @@ export function useReimbursementFunctions() {
     }
     setLoading(true);
     setError(null);
+
     try {
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-          body: JSON.stringify({
-          actionRequested,
-          totalAmount,
-          dateSubmitted,
-        }),
+        body: JSON.stringify(reimData),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-        const result = await response.json();
-        console.log(result);
+      const result = await response.json();
+      console.log(result);
       await fetchReimbursements();
       return result;
     } catch (err: any) {
@@ -109,13 +153,13 @@ export function useReimbursementFunctions() {
     try {
       setLoading(true);
       setError(null);
-        const relatedPurchases = await fetch(`${API_URL_PURCHASE}/${id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            },
-        });
+      const relatedPurchases = await fetch(`${API_URL_PURCHASE}/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (!relatedPurchases.ok) {
         throw new Error(`HTTP error! status: ${relatedPurchases.status}`);
       }
@@ -123,14 +167,14 @@ export function useReimbursementFunctions() {
         // Delete related receipts first
         try {
           const relatedReceipt = await fetch(
-              `${API_URL_RECEIPT}/${purchase.id}`
-              , {
-                  method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
-              }
+            `${API_URL_RECEIPT}/${purchase.id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
           );
           if (!relatedReceipt.ok) {
             throw new Error(`HTTP error! status: ${relatedReceipt.status}`);
@@ -139,11 +183,11 @@ export function useReimbursementFunctions() {
           const responseRec = await fetch(
             `${API_URL_RECEIPT}/${relatedRecId}`,
             {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`
-                }
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
             }
           );
           if (!responseRec.ok) {
@@ -157,11 +201,11 @@ export function useReimbursementFunctions() {
 
         // Then delete the purchase
         const response = await fetch(`${API_URL_PURCHASE}/${purchase.id}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -169,11 +213,11 @@ export function useReimbursementFunctions() {
       }
       // Finally, delete the reimbursement
       const response = await fetch(`${API_URL}/${id}`, {
-          method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -224,8 +268,8 @@ export function useReimbursementFunctions() {
       const response = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           id: Number(id),
@@ -258,10 +302,10 @@ export function useReimbursementFunctions() {
     fetchReimbursements,
     createReimbursement,
     updateReimbursement,
-      deleteReimbursement,
-      userOrVendor,
-      setUserOrVendor,
-      actionRequested,
-      setActionRequested,
+    deleteReimbursement,
+    userOrVendor,
+    setUserOrVendor,
+    actionRequested,
+    setActionRequested,
   };
 }
