@@ -117,7 +117,25 @@ namespace RS25.Controllers
             _context.Reimbursement.Add(reimbursement);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetReimbursements), new { id = reimbursement.Id }, reimbursement);
+            var reimbursementToReturn = await _context.Reimbursement
+                .Where(r => r.Id == reimbursement.Id)
+                .Select(r => new 
+                {
+                    r.Id,
+                    r.VendorId,
+                    r.UserId,
+                    r.TotalAmount,
+                    r.DateSubmitted,
+                    r.PaymentMethod,
+                    r.Status,
+                    r.DateApproved,
+                    r.ActionRequested,
+                    VendorName = _context.Vendor.Where(v => v.Id.ToString() == r.VendorId).Select(v => v.Name).FirstOrDefault(),
+                    UserName = _context.Users.Where(u => u.Id == r.UserId).Select(u => u.UserName).FirstOrDefault()
+                })
+                .FirstOrDefaultAsync();
+
+            return CreatedAtAction(nameof(GetReimbursements), new { id = reimbursement.Id }, reimbursementToReturn);
         }
 
         // PUT: api/reimbursement/{id}

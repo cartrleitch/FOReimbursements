@@ -165,6 +165,7 @@ function CreateReimbursementPage() {
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
   const nav = useNavigate();
+  const auth = useAuth();
 
   const updateTotalAmount = (updatedRows?: Purchase[]) => {
     const rowsToUse = updatedRows || rowsPur;
@@ -197,16 +198,21 @@ function CreateReimbursementPage() {
       }));
       const successPur = await createPurchase(rowsPurWithId);
       if (successPur) {
-        var purchaseInfo = `Reimbursement Info\nVendor: ${
-          newReimResponse.vendor
-        }\nVendor Address: ${newReimResponse.vendorAddress}\nVendor Website: ${
-          newReimResponse.vendorWebsite
-        }\nTotal: ${newReimResponse.totalAmount.toLocaleString("en-US", {
+        var reimbursee: string | undefined = "";
+        if (newReimResponse.vendorName) {
+          reimbursee = newReimResponse.vendorName;
+        } else {
+          reimbursee = auth?.user?.username;
+        }
+        var purchaseInfo = `Reimbursement Info\nSubmitted by: ${
+          auth?.user?.username
+        }\nReimbursee: ${reimbursee}\nAction Requested: ${
+          newReimResponse.actionRequested
+        }
+        \nTotal: ${newReimResponse.totalAmount.toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
-        })}\nDate Submitted: ${
-          newReimResponse.dateSubmitted.split("T")[0]
-        }\nPayment Method: ${newReimResponse.paymentMethod}\n\nPurchase Info\n`;
+        })}\nDate Submitted: ${newReimResponse.dateSubmitted.split("T")[0]}`;
 
         var purCounter = 0;
 
@@ -223,8 +229,9 @@ function CreateReimbursementPage() {
           })}\nDate: ${purchase.datep}\n`;
         }
 
+        // to should be email address of admin
         const data = {
-          to: "carterleitch@gmail.com",
+          to: `carterleitch@gmail.com`,
           subject: `New Reimbursement Created!`,
           content: purchaseInfo,
         };
