@@ -300,6 +300,9 @@ namespace RS25.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ActionRequested")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("DateApproved")
                         .HasColumnType("timestamp with time zone");
 
@@ -315,18 +318,46 @@ namespace RS25.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("Vendor")
+                    b.Property<string>("UserId")
                         .HasColumnType("text");
 
-                    b.Property<string>("VendorAddress")
-                        .HasColumnType("text");
-
-                    b.Property<string>("VendorWebsite")
+                    b.Property<string>("VendorId")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Reimbursement");
+                });
+
+            modelBuilder.Entity("RS25.Models.Vendor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ZipCode")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Vendor");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

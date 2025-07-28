@@ -19,15 +19,94 @@ namespace RS25.Controllers
 
         // GET: api/reimbursement
         [HttpGet(Name = "GetReimbursement")]
+        [Authorize]
         public async Task<IActionResult> GetReimbursements()
         {
-            var reimbursements = await _context.Reimbursement.ToListAsync();
+            var reimbursements = await _context.Reimbursement.Select(r => new
+            {
+                r.Id,
+                r.TotalAmount,
+                r.DateSubmitted,
+                r.PaymentMethod,
+                r.Status,
+                r.DateApproved,
+                r.ActionRequested,
+                VendorName = _context.Vendor.Where(v => v.Id.ToString() == r.VendorId).Select(v => v.Name).FirstOrDefault(),
+                UserName = _context.Users.Where(u => u.Id == r.UserId).Select(u => u.UserName).FirstOrDefault()
+            }).ToListAsync();
 
             return Ok(reimbursements);
         }
 
+        // GET: api/reimbursement/{id}
+        // returns all reimbursements for a specific user and includes the
+        //vendor name if vendorid is provided and UserName of user
+        [HttpGet("{id}", Name = "GetReimbursementByUserId")]
+        [Authorize]
+        public async Task<IActionResult> GetReimbursementByUserId(string id)
+        {
+            if (id == "")
+            {
+                return BadRequest("Invalid User ID");
+            }
+            var reimbursements = await _context.Reimbursement
+                .Where(r => r.UserId == id)
+                .Select(r => new 
+                {
+                    r.Id,
+                    r.TotalAmount,
+                    r.DateSubmitted,
+                    r.PaymentMethod,
+                    r.Status,
+                    r.DateApproved,
+                    r.ActionRequested,
+                    VendorName = _context.Vendor.Where(v => v.Id.ToString() == r.VendorId).Select(v => v.Name).FirstOrDefault(),
+                    UserName = _context.Users.Where(u => u.Id == r.UserId).Select(u => u.UserName).FirstOrDefault()
+                })
+                .ToListAsync();
+            if (reimbursements == null || !reimbursements.Any())
+            {
+                return NotFound("No reimbursements found for this user");
+            }
+            return Ok(reimbursements);
+        }
+
+        // GET: api/reimbursement/get/{id}
+        [HttpGet("/get/{id}", Name = "GetReimbursementById")]
+        [Authorize]
+        public async Task<IActionResult> GetReimbursementById(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid Reimbursement ID");
+            }
+            var reimbursement = await _context.Reimbursement
+                .Where(r => r.Id == id)
+                .Select(r => new 
+                {
+                    r.Id,
+                    r.VendorId,
+                    r.UserId,
+                    r.TotalAmount,
+                    r.DateSubmitted,
+                    r.PaymentMethod,
+                    r.Status,
+                    r.DateApproved,
+                    r.ActionRequested,
+                    VendorName = _context.Vendor.Where(v => v.Id.ToString() == r.VendorId).Select(v => v.Name).FirstOrDefault(),
+                    UserName = _context.Users.Where(u => u.Id == r.UserId).Select(u => u.UserName).FirstOrDefault()
+                })
+                .FirstOrDefaultAsync();
+            if (reimbursement == null)
+            {
+                return NotFound("Reimbursement not found");
+            }
+            return Ok(reimbursement);
+        }
+
         // POST: api/reimbursement
         [HttpPost(Name = "CreateReimbursement")]
+        [Authorize]
         public async Task<IActionResult> CreateReimbursement([FromBody] Reimbursement reimbursement)
         {
             if (reimbursement == null)
@@ -53,13 +132,15 @@ namespace RS25.Controllers
 
             var currReim = await _context.Reimbursement.FindAsync(id);
 
+            Console.WriteLine($"<---- Current Reimbursement: {currReim}");
+
             if (currReim == null)
             {
                 return NotFound("Reimbursement not found");
             }
-            currReim.Vendor = Reimbursement.Vendor;
-            currReim.VendorAddress = Reimbursement.VendorAddress;
-            currReim.VendorWebsite = Reimbursement.VendorWebsite;
+            currReim.VendorId = Reimbursement.VendorId;
+            currReim.UserId = Reimbursement.UserId;
+            currReim.ActionRequested = Reimbursement.ActionRequested;
             currReim.TotalAmount = Reimbursement.TotalAmount;
             currReim.DateSubmitted = Reimbursement.DateSubmitted;
             currReim.PaymentMethod = Reimbursement.PaymentMethod;
@@ -73,6 +154,7 @@ namespace RS25.Controllers
 
         // DELETE: api/reimbursement/{id}
         [HttpDelete("{id}", Name = "DeleteReimbursement")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteReimbursement(int id)
         {
             if (id <= 0)

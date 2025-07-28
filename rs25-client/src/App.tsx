@@ -10,11 +10,12 @@ import {
   SubmitButton,
   InputField,
   InputSelect,
-  FileInput,
   Title,
   InputFieldTextArea,
   InputFieldNumber,
   SpookyButton,
+  Button,
+  InputRadio,
 } from "./Components";
 import { ReimbursementTable } from "./ReimTableComponent";
 import { PurchaseTable, Purchase } from "./PurTableComponent";
@@ -57,11 +58,22 @@ function ErrorPage() {
   );
 }
 function MainPage() {
-  const { data, fetchReimbursements, deleteReimbursement } =
-    useReimbursementFunctions();
+  const auth = useAuth();
+  const {
+    data,
+    fetchReimbursements,
+    fetchReimbursementByUserId,
+    deleteReimbursement,
+    updateReimbursement,
+    fetchReimbursementById,
+  } = useReimbursementFunctions();
   // eslint-disable-next-line
   useEffect(() => {
-    fetchReimbursements();
+    if (auth?.user?.role === "Admin") {
+      fetchReimbursements();
+    } else {
+      fetchReimbursementByUserId(auth?.user?.id);
+    }
     // eslint-disable-next-line
   }, []);
 
@@ -73,6 +85,9 @@ function MainPage() {
           rows={data}
           deleteReimbursement={deleteReimbursement}
           fetchReimbursements={fetchReimbursements}
+          fetchReimbursementByUserId={fetchReimbursementByUserId}
+          updateReimbursement={updateReimbursement}
+          fetchReimbursementById={fetchReimbursementById}
         />
       </div>
     </div>
@@ -96,7 +111,7 @@ function BugReportPage() {
         "Submitted by: " + username + "\nInformation provided:\n" + description;
     }
 
-    if (!bodyContent || bodyContent == "") {
+    if (!bodyContent || bodyContent === "") {
       toast.error("Please fill in the description field.");
       return;
     }
@@ -137,7 +152,12 @@ function BugReportPage() {
   );
 }
 function CreateReimbursementPage() {
-  const { createReimbursement } = useReimbursementFunctions();
+  const {
+    createReimbursement,
+    userOrVendor,
+    setActionRequested,
+    setUserOrVendor,
+  } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
   const { sendEmail } = useEmailFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
@@ -230,24 +250,86 @@ function CreateReimbursementPage() {
           handleSubmit();
         }}
       >
-        <InputField
-          id="vendor"
-          placeholder="Vendor"
-          type="text"
-          label="Vendor"
-        />
-        <InputField
-          id="vendoraddress"
-          placeholder="Vendor Address"
-          type="text"
-          label="Vendor Address"
-        />
-        <InputField
-          id="vendorwebsite"
-          placeholder="Vendor Website"
-          type="text"
-          label="Vendor Website"
-        />
+        <label htmlFor="radio-container-reimbursee">
+          Select who to reimburse.
+        </label>
+        <div className="radio-input-container" id="radio-container-reimbursee">
+          <InputRadio
+            id="user"
+            value="user"
+            name="userorvendor"
+            label="Me"
+            checked={true}
+            onChange={(e) => setUserOrVendor(e.target.value)}
+          />
+          <InputRadio
+            id="vendor"
+            value="vendor"
+            name="userorvendor"
+            label="Other person or company"
+            onChange={(e) => setUserOrVendor(e.target.value)}
+          />
+        </div>
+
+        {userOrVendor === "vendor" ? (
+          <div>
+            <label htmlFor="vendor-div">
+              Other person or company's information
+            </label>
+
+            <div id="vendor-div" style={{ marginTop: "4px" }}>
+              <InputField id="vendorName" type="text" label="Name"></InputField>
+              <InputField
+                id="vendorWebsite"
+                type="text"
+                label="Website (if applicable)"
+              ></InputField>
+              <InputField
+                id="vendorAddress"
+                type="text"
+                label="Street"
+              ></InputField>
+              <InputField id="vendorCity" type="text" label="City"></InputField>
+              <InputField
+                id="vendorState"
+                type="text"
+                label="State"
+              ></InputField>
+              <InputField
+                id="vendorZipCode"
+                type="text"
+                label="Zip Code"
+              ></InputField>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
+
+        <label htmlFor="radio-container-action-requested">
+          Select purpose of request.
+        </label>
+        <div
+          className="radio-input-container"
+          id="radio-container-action-requestedcontainer"
+        >
+          <InputRadio
+            id="reimbursement"
+            value="Reimbursement"
+            name="actionrequested"
+            label="Reimbursement"
+            checked={true}
+            onChange={(e) => setActionRequested(e.target.value)}
+          />
+          <InputRadio
+            id="notification"
+            value="Notification"
+            name="actionrequested"
+            label="Notification of purchase"
+            onChange={(e) => setActionRequested(e.target.value)}
+          />
+        </div>
+
         <InputFieldNumber
           id="totalamount"
           placeholder="Total Amount $"
@@ -257,11 +339,6 @@ function CreateReimbursementPage() {
           min="0"
           value={totalAmount.toString()}
           readonly={true}
-        />
-        <InputSelect
-          id="paymentmethod"
-          options={["Credit Card", "Cash", "Check", "Bank Transfer"]}
-          label="Payment Method"
         />
         <div className="pur-table-container">
           <PurchaseTable
@@ -276,70 +353,24 @@ function CreateReimbursementPage() {
     </div>
   );
 }
-function UpdateReimbursementPage() {
-  const { updateReimbursement } = useReimbursementFunctions();
-  return (
-    <div className="content">
-      <Title content="Update Reimbursement" />
-      <form className="normal-form">
-        <InputField
-          id="vendoru"
-          placeholder="Vendor"
-          type="text"
-          label="Vendor"
-        />
-        <InputField
-          id="vendoraddressu"
-          placeholder="Vendor Address"
-          type="text"
-          label="Vendor Address"
-        />
-        <InputField
-          id="vendorwebsiteu"
-          placeholder="Vendor Website"
-          type="text"
-          label="Vendor Website"
-        />
-        <InputField
-          id="totalamountu"
-          placeholder="Total Amount"
-          type="number"
-          label="Total Amount"
-        />
-        <InputField
-          id="datesubmittedu"
-          placeholder="Date Submitted"
-          type="date"
-          label="Date Submitted"
-        />
-        <InputSelect
-          id="paymentmethodu"
-          options={["Credit Card", "Cash", "Check", "Bank Transfer"]}
-          label="Payment Method"
-        />
-        <FileInput id="receiptsu" label="Receipts" />
-        <SubmitButton onClick={updateReimbursement} content="Submit" />
-      </form>
-    </div>
-  );
-}
 function LoginPage() {
   const nav = useNavigate();
   const auth = useAuth();
 
   const login = async (e: any) => {
     e.preventDefault();
+
     const emailaddress = (
       document.getElementById("username") as HTMLInputElement
     ).value;
     const password = (document.getElementById("password") as HTMLInputElement)
       .value;
+
     if (!emailaddress || !password) {
       toast.error("Please fill in all fields.");
       return;
     }
-    console.log("Login attempt with username:", emailaddress);
-    console.log("Login attempt with password:", password);
+
     try {
       const response = await fetch("http://localhost:5000/api/Auth/login", {
         method: "POST",
@@ -385,11 +416,17 @@ function LoginPage() {
   );
 }
 function LogoutPage() {
+  const nav = useNavigate();
   return (
     <div className="content">
       <Title content="Successfully Logged Out" />
-      <p className="center-p">You can now close this tab.</p>
+      <p className="center-p">
+        You can now close this tab or return to login page to login again.
+      </p>
       <br />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Button onClick={() => nav("/Account/login")} content="Login" />
+      </div>
     </div>
   );
 }

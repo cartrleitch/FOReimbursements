@@ -1,40 +1,85 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import React from "react";
-import { RedirectButton, Button } from "./Components";
+import {
+  RedirectButton,
+  Button,
+  AdminOnlyWrapper,
+  SpookyButton,
+  InputSelect,
+} from "./Components";
 import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
 import { usePurchaseFunctions } from "./purchaseFunctions";
 import { toast } from "react-toastify";
-interface Reimbursement {
+import { useAuth } from "./AuthContext";
+
+export interface Reimbursement {
   id: number;
-  vendor: string;
-  vendorAddress: string;
-  vendorWebsite: string;
+  vendorId: string;
+  userId: string;
+  submittedBy: string;
+  userName: string;
+  vendorName?: string;
+  actionRequested: string;
   totalAmount: number;
   dateSubmitted: string;
-  paymentMethod: string;
+  status: string;
+  dateApproved?: string;
+  paymentMethod?: string;
 }
 
 interface TableProps {
   rows: Reimbursement[];
   deleteReimbursement: (id: number) => Promise<void>;
   fetchReimbursements: () => Promise<void>;
+  fetchReimbursementByUserId: (userId: string | undefined) => Promise<void>;
+  updateReimbursement: (
+    id: number,
+    totalAmount?: number,
+    dateSubmitted?: Date,
+    paymentMethod?: string,
+    status?: string,
+    dateApproved?: Date,
+    actionRequested?: string,
+    userId?: string,
+    vendorId?: string
+  ) => Promise<void>;
+  fetchReimbursementById: (id: number) => Promise<Reimbursement>;
 }
 
 const columnns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
-  { field: "vendor", headerName: "Vendor", flex: 1 },
-  { field: "vendorAddress", headerName: "Vendor Address", flex: 1 },
-  { field: "vendorWebsite", headerName: "Vendor Website", flex: 1 },
+  { field: "vendorId", headerName: "VendorId", flex: 1, hideable: false },
+  { field: "userId", headerName: "UserId", flex: 1, hideable: false },
+  {
+    field: "userName",
+    headerName: "Submitted By",
+    flex: 1,
+  },
+  {
+    field: "payTo",
+    headerName: "Pay To",
+    flex: 1,
+    renderCell: (params) => {
+      if (params.row.vendorName !== null) {
+        return params.row.vendorName;
+      }
+      return params.row.userName;
+    },
+  },
+  { field: "actionRequested", headerName: "Action Requested", flex: 1 },
   {
     field: "totalAmount",
     headerName: "Total Amount",
     flex: 1,
     type: "number",
     headerAlign: "left",
-      align: "left",
-        renderCell: (params) => {
-            return params.row.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-        }
+    align: "left",
+    renderCell: (params) => {
+      return params.row.totalAmount.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      });
+    },
   },
   {
     field: "dateSubmitted",
@@ -44,12 +89,28 @@ const columnns: GridColDef[] = [
     valueGetter: (value: any) => new Date(value),
   },
   { field: "paymentMethod", headerName: "Payment Method", flex: 1 },
+  { field: "status", headerName: "Status", flex: 1, type: "string" },
+  {
+    field: "dateApproved",
+    headerName: "Date Approved or Rejected",
+    flex: 1,
+    type: "date",
+    valueGetter: (value: any) => {
+      if (value === null || value === undefined) {
+        return null;
+      }
+      return new Date(value);
+    },
+  },
 ];
 
 export function ReimbursementTable({
   rows,
   deleteReimbursement,
   fetchReimbursements,
+  fetchReimbursementByUserId,
+  fetchReimbursementById,
+  updateReimbursement,
 }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
@@ -57,37 +118,128 @@ export function ReimbursementTable({
   const [selectedRowPurchases, setSelectedRowPurchases] = React.useState<
     Purchase[]
   >([]);
+  const [showApprovalForm, setShowApprovalForm] = React.useState(false);
   const { fetchPurchaseByReimId } = usePurchaseFunctions();
   const getRelatedPurchases = async (reimId: number) => {
     const purchases = await fetchPurchaseByReimId(reimId);
     setSelectedRowPurchases(purchases);
   };
+  const auth = useAuth();
 
   return (
     <div className="reim-table">
       <div className="table-button-div">
         <RedirectButton to="/create" content="New" />
-        <Button onClick={fetchReimbursements} content="Refresh" />
-        {/*<RedirectButton to="/update" content="Edit" />*/}
         <Button
-          onClick={async () => {
-            if (selectedRowId !== null) {
-              deleteReimbursement(selectedRowId);
+          onClick={() => {
+            if (auth?.user?.role === "Admin") {
+              fetchReimbursements();
             } else {
-              toast.error("No row selected!");
+              fetchReimbursementByUserId(auth?.user?.id);
             }
           }}
-          content="Delete"
-          className="spooky-button"
+          content="Refresh"
         />
+        {/*<RedirectButton to="/update" content="Edit" />*/}
+        <AdminOnlyWrapper>
+          <Button
+            onClick={() => {
+              if (selectedRowId === null) {
+                toast.error("No row selected!");
+                return;
+              }
+
+              setShowApprovalForm(true);
+            }}
+            content="Approve"
+          />
+        </AdminOnlyWrapper>
+        <AdminOnlyWrapper>
+          <SpookyButton
+            onClick={() => {
+              if (selectedRowId === null) {
+                toast.error("No row selected!");
+                return;
+              }
+              fetchReimbursementById(selectedRowId || 0).then(
+                (reimbursement) => {
+                  updateReimbursement(
+                    selectedRowId || 0,
+                    reimbursement.totalAmount,
+                    reimbursement.dateSubmitted
+                      ? new Date(reimbursement.dateSubmitted)
+                      : undefined,
+                    reimbursement.paymentMethod,
+                    "Rejected",
+                    new Date(),
+                    reimbursement.actionRequested,
+                    reimbursement.userId,
+                    reimbursement.vendorId
+                  );
+                }
+              );
+            }}
+            content="Reject"
+          />
+        </AdminOnlyWrapper>
+        <AdminOnlyWrapper>
+          <Button
+            onClick={async () => {
+              if (selectedRowId !== null) {
+                deleteReimbursement(selectedRowId);
+              } else {
+                toast.error("No row selected!");
+              }
+            }}
+            content="Delete"
+            className="spooky-button"
+          />
+        </AdminOnlyWrapper>
       </div>
+      {showApprovalForm && (
+        <div style={{ marginBottom: "8px" }}>
+          <InputSelect
+            id="paymentMethodSelect"
+            options={["Check", "Credit Card", "ACH/Direct Deposit"]}
+            label="Payment Method"
+          />
+          <Button
+            onClick={() => {
+              fetchReimbursementById(selectedRowId || 0).then(
+                (reimbursement) => {
+                  const paymentMethodSelected = (
+                    document.getElementById(
+                      "paymentMethodSelect"
+                    ) as HTMLSelectElement
+                  ).value;
+                  updateReimbursement(
+                    selectedRowId || 0,
+                    reimbursement.totalAmount,
+                    reimbursement.dateSubmitted
+                      ? new Date(reimbursement.dateSubmitted)
+                      : undefined,
+                    paymentMethodSelected,
+                    "Approved",
+                    new Date(),
+                    reimbursement.actionRequested,
+                    reimbursement.userId,
+                    reimbursement.vendorId
+                  );
+                  setShowApprovalForm(false);
+                }
+              );
+            }}
+            content="Approve Reimbursement"
+          />
+        </div>
+      )}
       <DataGrid
         rows={rows}
         columns={columnns}
         checkboxSelection
         disableMultipleRowSelection
         autoPageSize
-        columnVisibilityModel={{ id: false }}
+        columnVisibilityModel={{ id: false, vendorId: false, userId: false }}
         getRowId={(row) => row.id}
         onRowSelectionModelChange={(id) => {
           setSelectedRowPurchases([]);

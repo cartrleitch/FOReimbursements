@@ -26,8 +26,11 @@ namespace RS25.Data
             var adminEmailDefault = "carterleitch@gmail.com";
             var adminPasswordDefault = "Password123$";
 
+            var userEmailDefault = "csleitch@students.unwsp.edu";
+            var userPasswordDefault = "Password123$";
+
             var adminUser = await userManager.FindByEmailAsync(adminEmailDefault);
-            Console.WriteLine($"<---- Checking for admin user: {adminUser}");
+            var defaultUser = await userManager.FindByEmailAsync(userEmailDefault);
 
             if (adminUser == null)
             {
@@ -48,6 +51,28 @@ namespace RS25.Data
                     // Assign the admin role to the user
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                     Console.WriteLine("<---- Admin user created and assigned to Admin role.");
+                }
+            }
+
+            if (defaultUser == null)
+            {
+                Console.WriteLine("<---- Default user not found, creating a new one...");
+                // Create the default user if it does not exist
+                defaultUser = new ApplicationUser
+                {
+                    FirstName = "Carter",
+                    LastName = "Leitch",
+                    EmailAddress = userEmailDefault,
+                    Email = userEmailDefault,
+                    UserName = userEmailDefault
+                };
+                var result = await userManager.CreateAsync(defaultUser, userPasswordDefault);
+                Console.WriteLine($"<---- Default user creation result: {result}");
+                if (result.Succeeded)
+                {
+                    // Assign the user role to the user
+                    await userManager.AddToRoleAsync(defaultUser, "User");
+                    Console.WriteLine("<---- Default user created and assigned to User role.");
                 }
             }
 
