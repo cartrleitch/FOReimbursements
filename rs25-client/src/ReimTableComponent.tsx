@@ -1,6 +1,11 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import React from "react";
-import { RedirectButton, Button, AdminOnlyWrapper } from "./Components";
+import {
+  RedirectButton,
+  Button,
+  AdminOnlyWrapper,
+  SpookyButton,
+} from "./Components";
 import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
 import { usePurchaseFunctions } from "./purchaseFunctions";
 import { toast } from "react-toastify";
@@ -71,7 +76,7 @@ const columnns: GridColDef[] = [
   },
   { field: "paymentMethod", headerName: "Payment Method", flex: 1 },
   { field: "status", headerName: "Status", flex: 1, type: "string" },
-  { field: "dateApproved", headerName: "Date Approved", flex: 1, type: "date" },
+  { field: "dateApproved", headerName: "Date Approved or Rejected", flex: 1, type: "date" },
 ];
 
 export function ReimbursementTable({
@@ -108,6 +113,12 @@ export function ReimbursementTable({
           content="Refresh"
         />
         {/*<RedirectButton to="/update" content="Edit" />*/}
+        <AdminOnlyWrapper>
+          <Button onClick={() => {}} content="Approve" />
+        </AdminOnlyWrapper>
+        <AdminOnlyWrapper>
+          <SpookyButton onClick={() => {}} content="Reject" />
+        </AdminOnlyWrapper>
         <AdminOnlyWrapper>
           <Button
             onClick={async () => {
