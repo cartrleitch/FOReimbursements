@@ -10,7 +10,8 @@ import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
 import { usePurchaseFunctions } from "./purchaseFunctions";
 import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
-interface Reimbursement {
+
+export interface Reimbursement {
   id: number;
   vendorid: string;
   userid: string;
@@ -30,6 +31,18 @@ interface TableProps {
   deleteReimbursement: (id: number) => Promise<void>;
   fetchReimbursements: () => Promise<void>;
   fetchReimbursementByUserId: (userId: string | undefined) => Promise<void>;
+  updateReimbursement: (
+    id: number,
+    totalAmount?: number,
+    dateSubmitted?: Date,
+    paymentMethod?: string,
+    status?: string,
+    dateApproved?: Date,
+    actionRequested?: string,
+    userId?: string,
+    vendorId?: string
+  ) => Promise<void>;
+  fetchReimbursementById: (id: number) => Promise<Reimbursement>;
 }
 
 const columnns: GridColDef[] = [
@@ -76,7 +89,18 @@ const columnns: GridColDef[] = [
   },
   { field: "paymentMethod", headerName: "Payment Method", flex: 1 },
   { field: "status", headerName: "Status", flex: 1, type: "string" },
-  { field: "dateApproved", headerName: "Date Approved or Rejected", flex: 1, type: "date" },
+  {
+    field: "dateApproved",
+    headerName: "Date Approved or Rejected",
+    flex: 1,
+    type: "date",
+    valueGetter: (value: any) => {
+      if (value === null || value === undefined) {
+        return null;
+      }
+      return new Date(value);
+    },
+  },
 ];
 
 export function ReimbursementTable({
@@ -84,6 +108,8 @@ export function ReimbursementTable({
   deleteReimbursement,
   fetchReimbursements,
   fetchReimbursementByUserId,
+  fetchReimbursementById,
+  updateReimbursement,
 }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
@@ -114,10 +140,52 @@ export function ReimbursementTable({
         />
         {/*<RedirectButton to="/update" content="Edit" />*/}
         <AdminOnlyWrapper>
-          <Button onClick={() => {}} content="Approve" />
+          <Button
+            onClick={() => {
+              fetchReimbursementById(selectedRowId || 0).then(
+                (reimbursement) => {
+                  updateReimbursement(
+                    selectedRowId || 0,
+                    reimbursement.totalAmount,
+                    reimbursement.dateSubmitted
+                      ? new Date(reimbursement.dateSubmitted)
+                      : undefined,
+                    reimbursement.paymentMethod,
+                    "Approved",
+                    new Date(),
+                    reimbursement.actionRequested,
+                    reimbursement.userid,
+                    reimbursement.vendorid
+                  );
+                }
+              );
+            }}
+            content="Approve"
+          />
         </AdminOnlyWrapper>
         <AdminOnlyWrapper>
-          <SpookyButton onClick={() => {}} content="Reject" />
+          <SpookyButton
+            onClick={() => {
+              fetchReimbursementById(selectedRowId || 0).then(
+                (reimbursement) => {
+                  updateReimbursement(
+                    selectedRowId || 0,
+                    reimbursement.totalAmount,
+                    reimbursement.dateSubmitted
+                      ? new Date(reimbursement.dateSubmitted)
+                      : undefined,
+                    reimbursement.paymentMethod,
+                    "Rejected",
+                    new Date(),
+                    reimbursement.actionRequested,
+                    reimbursement.userid,
+                    reimbursement.vendorid
+                  );
+                }
+              );
+            }}
+            content="Reject"
+          />
         </AdminOnlyWrapper>
         <AdminOnlyWrapper>
           <Button

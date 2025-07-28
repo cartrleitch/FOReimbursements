@@ -71,6 +71,37 @@ namespace RS25.Controllers
             return Ok(reimbursements);
         }
 
+        // GET: api/reimbursement/get/{id}
+        [HttpGet("/get/{id}", Name = "GetReimbursementById")]
+        [Authorize]
+        public async Task<IActionResult> GetReimbursementById(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid Reimbursement ID");
+            }
+            var reimbursement = await _context.Reimbursement
+                .Where(r => r.Id == id)
+                .Select(r => new 
+                {
+                    r.Id,
+                    r.TotalAmount,
+                    r.DateSubmitted,
+                    r.PaymentMethod,
+                    r.Status,
+                    r.DateApproved,
+                    r.ActionRequested,
+                    VendorName = _context.Vendor.Where(v => v.Id.ToString() == r.VendorId).Select(v => v.Name).FirstOrDefault(),
+                    UserName = _context.Users.Where(u => u.Id == r.UserId).Select(u => u.UserName).FirstOrDefault()
+                })
+                .FirstOrDefaultAsync();
+            if (reimbursement == null)
+            {
+                return NotFound("Reimbursement not found");
+            }
+            return Ok(reimbursement);
+        }
+
         // POST: api/reimbursement
         [HttpPost(Name = "CreateReimbursement")]
         [Authorize]
@@ -99,10 +130,15 @@ namespace RS25.Controllers
 
             var currReim = await _context.Reimbursement.FindAsync(id);
 
+            Console.WriteLine($"<---- Current Reimbursement: {currReim}");
+
             if (currReim == null)
             {
                 return NotFound("Reimbursement not found");
             }
+            currReim.VendorId = Reimbursement.VendorId;
+            currReim.UserId = Reimbursement.UserId;
+            currReim.ActionRequested = Reimbursement.ActionRequested;
             currReim.TotalAmount = Reimbursement.TotalAmount;
             currReim.DateSubmitted = Reimbursement.DateSubmitted;
             currReim.PaymentMethod = Reimbursement.PaymentMethod;

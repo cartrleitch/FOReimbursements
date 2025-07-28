@@ -64,6 +64,8 @@ function MainPage() {
     fetchReimbursements,
     fetchReimbursementByUserId,
     deleteReimbursement,
+    updateReimbursement,
+    fetchReimbursementById,
   } = useReimbursementFunctions();
   // eslint-disable-next-line
   useEffect(() => {
@@ -84,6 +86,8 @@ function MainPage() {
           deleteReimbursement={deleteReimbursement}
           fetchReimbursements={fetchReimbursements}
           fetchReimbursementByUserId={fetchReimbursementByUserId}
+          updateReimbursement={updateReimbursement}
+          fetchReimbursementById={fetchReimbursementById}
         />
       </div>
     </div>

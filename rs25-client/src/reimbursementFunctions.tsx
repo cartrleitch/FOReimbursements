@@ -2,10 +2,12 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import { createVendor } from "./vendorFunctions";
+import { Reimbursement } from "./ReimTableComponent";
 export function useReimbursementFunctions() {
   const API_URL = "http://localhost:5000/api/Reimbursement";
   const API_URL_PURCHASE = "http://localhost:5000/api/Purchase";
   const API_URL_RECEIPT = "http://localhost:5000/api/Receipt";
+  const API_URL_GETBYID = "http://localhost:5000/get";
   // eslint-disable-next-line
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -59,6 +61,31 @@ export function useReimbursementFunctions() {
       }
       const result = await response.json();
       setData(result);
+      return result;
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchReimbursementById(id: number) {
+    setLoading(true);
+    setError(null);
+    console.log("fetchReimbursementById triggered for id:", id);
+    try {
+      const response = await fetch(`${API_URL_GETBYID}/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Reimbursement fetched by ID:", result);
       return result;
     } catch (err: any) {
       setError(err.message);
@@ -261,66 +288,55 @@ export function useReimbursementFunctions() {
   }
 
   // PUT a new reimbursement to the API
-  async function updateReimbursement() {
-    const id = (document.getElementById("updateId") as HTMLInputElement).value;
-    const vendor = (document.getElementById("vendoru") as HTMLInputElement)
-      .value;
-    const vendorAddress = (
-      document.getElementById("vendoraddressu") as HTMLInputElement
-    ).value;
-    const vendorWebsite = (
-      document.getElementById("vendorwebsiteu") as HTMLInputElement
-    ).value;
-    const totalAmount = parseFloat(
-      (document.getElementById("totalamountu") as HTMLInputElement).value
-    );
-    const dateSubmittedIn = (
-      document.getElementById("datesubmittedu") as HTMLInputElement
-    ).value;
-    const paymentMethod = (
-      document.getElementById("paymentmethodu") as HTMLSelectElement
-    ).value;
-
-    const dateSubmitted = new Date(dateSubmittedIn).toISOString();
-
-    if (
-      !vendor ||
-      !vendorAddress ||
-      !vendorWebsite ||
-      isNaN(totalAmount) ||
-      !dateSubmitted
-    ) {
-      alert("Please fill in all fields correctly. " + dateSubmitted);
-      return;
-    }
-    setLoading(true);
-    setError(null);
+  async function updateReimbursement(
+    id: number,
+    totalAmount?: number,
+    dateSubmitted?: Date,
+    paymentMethod?: string,
+    status?: string,
+    dateApproved?: Date,
+    actionRequested?: string,
+    userId?: string,
+    vendorId?: string
+  ) {
     try {
+      setLoading(true);
+      setError(null);
+      const reimData: any = {
+        id: id,
+        totalAmount: totalAmount,
+        dateSubmitted: dateSubmitted?.toISOString(),
+        paymentMethod: paymentMethod,
+        status: status,
+        dateApproved: dateApproved?.toISOString(),
+        actionRequested: actionRequested,
+        userId: userId,
+        vendorId: vendorId,
+      };
+      // Filter out undefined properties
+      const filteredReimData = Object.fromEntries(
+        Object.entries(reimData).filter(([_, value]) => value !== undefined)
+      );
+      console.log("Updating reimbursement with data:", filteredReimData);
       const response = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          id: Number(id),
-          vendor,
-          vendorAddress,
-          vendorWebsite,
-          totalAmount,
-          dateSubmitted,
-          paymentMethod,
-        }),
+        body: JSON.stringify(filteredReimData),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const result = await response.json();
+      console.log("Reimbursement updated successfully:", result);
       await fetchReimbursements();
-      alert("Reimbursement updated successfully!");
+      return result;
     } catch (err: any) {
       setError(err.message);
-    } finally {
-      setLoading(false);
+      console.error("Failed to update reimbursement:", err.message);
+      return -1;
     }
   }
 
@@ -332,6 +348,7 @@ export function useReimbursementFunctions() {
     error,
     fetchReimbursements,
     fetchReimbursementByUserId,
+    fetchReimbursementById,
     createReimbursement,
     updateReimbursement,
     deleteReimbursement,

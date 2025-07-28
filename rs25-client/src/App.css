@@ -86,17 +86,17 @@ body {
   font-family: "Roboto", sans-serif;
 }
 .text-area-input {
-    width: 100%;
-    padding: 8px;
-    margin: 8px 0;
-    box-sizing: border-box; /* Include padding and border in element's total width and height */
-    border: 1px solid #ccc; /* Light gray border */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 16px; /* Font size for input */
-    font-family: "Roboto", sans-serif;
-    height: 150px;
-    resize: vertical;
-    max-width: 100%;
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size for input */
+  font-family: "Roboto", sans-serif;
+  height: 150px;
+  resize: vertical;
+  max-width: 100%;
 }
 
 .file-input-container {
@@ -137,21 +137,21 @@ body {
 }
 
 .no-spinner-input {
-    -moz-appearance: textfield;
-    -webkit-appearance: none;
-    appearance: textfield;
-    background-color: #eaeaea;
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  appearance: textfield;
+  background-color: #eaeaea;
 }
 
 .radio-input-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 50%;
-    margin-bottom: 8px;
-    box-sizing: border-box;
-    gap: 25px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 50%;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+  gap: 25px;
 }
 
 /*Button styles*/
