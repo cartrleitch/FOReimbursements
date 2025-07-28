@@ -630,6 +630,15 @@ function App() {
           </Link>
           <ul className="link-list">
             <li>
+              {auth?.user?.username !== undefined ? (
+                <Link className="link-list-item" to="/">
+                  Dashboard
+                </Link>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
               <Link className="link-list-item" to="/about">
                 About
               </Link>
