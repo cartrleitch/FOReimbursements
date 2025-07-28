@@ -4,11 +4,14 @@ import { RedirectButton, Button } from "./Components";
 import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
 import { usePurchaseFunctions } from "./purchaseFunctions";
 import { toast } from "react-toastify";
+import { useAuth } from "./AuthContext";
 interface Reimbursement {
   id: number;
   vendorid: string;
   userid: string;
-  payTo: string;
+    submittedBy: string;
+    userName: string;
+    vendorName?: string;
   actionRequested: string;
   totalAmount: number;
   dateSubmitted: string;
@@ -21,6 +24,7 @@ interface TableProps {
   rows: Reimbursement[];
   deleteReimbursement: (id: number) => Promise<void>;
   fetchReimbursements: () => Promise<void>;
+  fetchReimbursementByUserId: (userId: string | undefined) => Promise<void>;
 }
 
 const columnns: GridColDef[] = [
@@ -28,11 +32,19 @@ const columnns: GridColDef[] = [
   { field: "vendorId", headerName: "VendorId", flex: 1, hideable: false },
   { field: "userId", headerName: "UserId", flex: 1, hideable: false },
   {
+    field: "userName",
+    headerName: "Submitted By",
+    flex: 1
+  },
+  {
     field: "payTo",
     headerName: "Pay To",
     flex: 1,
     renderCell: (params) => {
-      return "Vendor or User name";
+        if (params.row.vendorName !== null) {
+            return params.row.vendorName;
+        }
+        return params.row.userName;
     },
   },
   { field: "actionRequested", headerName: "Action Requested", flex: 1 },
@@ -66,6 +78,7 @@ export function ReimbursementTable({
   rows,
   deleteReimbursement,
   fetchReimbursements,
+  fetchReimbursementByUserId,
 }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
@@ -78,12 +91,22 @@ export function ReimbursementTable({
     const purchases = await fetchPurchaseByReimId(reimId);
     setSelectedRowPurchases(purchases);
   };
+  const auth = useAuth();
 
   return (
     <div className="reim-table">
       <div className="table-button-div">
         <RedirectButton to="/create" content="New" />
-        <Button onClick={fetchReimbursements} content="Refresh" />
+        <Button
+          onClick={() => {
+            if (auth?.user?.role === "Admin") {
+              fetchReimbursements();
+            } else {
+              fetchReimbursementByUserId(auth?.user?.id);
+            }
+          }}
+          content="Refresh"
+        />
         {/*<RedirectButton to="/update" content="Edit" />*/}
         <Button
           onClick={async () => {

@@ -22,8 +22,52 @@ namespace RS25.Controllers
         [Authorize]
         public async Task<IActionResult> GetReimbursements()
         {
-            var reimbursements = await _context.Reimbursement.ToListAsync();
+            var reimbursements = await _context.Reimbursement.Select(r => new
+            {
+                r.Id,
+                r.TotalAmount,
+                r.DateSubmitted,
+                r.PaymentMethod,
+                r.Status,
+                r.DateApproved,
+                r.ActionRequested,
+                VendorName = _context.Vendor.Where(v => v.Id.ToString() == r.VendorId).Select(v => v.Name).FirstOrDefault(),
+                UserName = _context.Users.Where(u => u.Id == r.UserId).Select(u => u.UserName).FirstOrDefault()
+            }).ToListAsync();
 
+            return Ok(reimbursements);
+        }
+
+        // GET: api/reimbursement/{id}
+        // returns all reimbursements for a specific user and includes the
+        //vendor name if vendorid is provided and UserName of user
+        [HttpGet("{id}", Name = "GetReimbursementByUserId")]
+        [Authorize]
+        public async Task<IActionResult> GetReimbursementByUserId(string id)
+        {
+            if (id == "")
+            {
+                return BadRequest("Invalid User ID");
+            }
+            var reimbursements = await _context.Reimbursement
+                .Where(r => r.UserId == id)
+                .Select(r => new 
+                {
+                    r.Id,
+                    r.TotalAmount,
+                    r.DateSubmitted,
+                    r.PaymentMethod,
+                    r.Status,
+                    r.DateApproved,
+                    r.ActionRequested,
+                    VendorName = _context.Vendor.Where(v => v.Id.ToString() == r.VendorId).Select(v => v.Name).FirstOrDefault(),
+                    UserName = _context.Users.Where(u => u.Id == r.UserId).Select(u => u.UserName).FirstOrDefault()
+                })
+                .ToListAsync();
+            if (reimbursements == null || !reimbursements.Any())
+            {
+                return NotFound("No reimbursements found for this user");
+            }
             return Ok(reimbursements);
         }
 

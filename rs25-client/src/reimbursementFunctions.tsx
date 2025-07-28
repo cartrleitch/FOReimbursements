@@ -42,6 +42,31 @@ export function useReimbursementFunctions() {
     }
   }
 
+  async function fetchReimbursementByUserId(userId: string | undefined) {
+    setLoading(true);
+    setError(null);
+    console.log("fetchReimbursementByUserId triggered for userId:", userId);
+    try {
+      const response = await fetch(`${API_URL}/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      setData(result);
+      return result;
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // POST a new reimbursement to the API
   async function createReimbursement() {
     const totalAmount = parseFloat(
@@ -52,8 +77,9 @@ export function useReimbursementFunctions() {
 
     var reimData: any;
 
+    const userId = auth?.user?.id;
+
     if (userOrVendor === "user") {
-      const userId = auth?.user?.id;
       reimData = {
         userId: userId,
         actionRequested: actionRequested,
@@ -62,6 +88,7 @@ export function useReimbursementFunctions() {
         status: "Pending",
       };
     } else if (userOrVendor === "vendor") {
+      console.log("Creating vendor reimbursement");
       const vendorName = (
         document.getElementById("vendorName") as HTMLInputElement
       ).value;
@@ -93,10 +120,12 @@ export function useReimbursementFunctions() {
         zip: vendorZip,
       };
       const vendorResponse = await createVendor(vendorData);
+      console.log("Vendor response:", vendorResponse);
       if (vendorResponse && vendorResponse.id) {
         const vendorId = vendorResponse.id;
         reimData = {
-          vendorId: vendorId,
+          userId: userId,
+          vendorId: String(vendorId),
           actionRequested: actionRequested,
           totalAmount: totalAmount,
           dateSubmitted: dateSubmitted,
@@ -107,6 +136,7 @@ export function useReimbursementFunctions() {
         return -1;
       }
     } else {
+      console.error("Invalid userOrVendor value:", userOrVendor);
       return -1;
     }
 
@@ -125,6 +155,7 @@ export function useReimbursementFunctions() {
     setError(null);
 
     try {
+      console.log("Creating reimbursement with data:", reimData);
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
@@ -300,6 +331,7 @@ export function useReimbursementFunctions() {
     loading,
     error,
     fetchReimbursements,
+    fetchReimbursementByUserId,
     createReimbursement,
     updateReimbursement,
     deleteReimbursement,

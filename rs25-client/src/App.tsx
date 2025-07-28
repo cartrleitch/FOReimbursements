@@ -58,11 +58,20 @@ function ErrorPage() {
   );
 }
 function MainPage() {
-  const { data, fetchReimbursements, deleteReimbursement } =
-    useReimbursementFunctions();
+  const auth = useAuth();
+  const {
+    data,
+    fetchReimbursements,
+    fetchReimbursementByUserId,
+    deleteReimbursement
+  } = useReimbursementFunctions();
   // eslint-disable-next-line
   useEffect(() => {
-    fetchReimbursements();
+    if (auth?.user?.role === "Admin") {
+      fetchReimbursements();
+    } else {
+      fetchReimbursementByUserId(auth?.user?.id);
+    }
     // eslint-disable-next-line
   }, []);
 
@@ -74,6 +83,7 @@ function MainPage() {
           rows={data}
           deleteReimbursement={deleteReimbursement}
           fetchReimbursements={fetchReimbursements}
+          fetchReimbursementByUserId={fetchReimbursementByUserId}
         />
       </div>
     </div>
@@ -138,14 +148,16 @@ function BugReportPage() {
   );
 }
 function CreateReimbursementPage() {
-  const { createReimbursement, userOrVendor, setActionRequested, setUserOrVendor, actionRequested} = useReimbursementFunctions();
+  const {
+    createReimbursement,
+    userOrVendor,
+    setActionRequested,
+    setUserOrVendor
+  } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
   const { sendEmail } = useEmailFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
-  
-
-  const auth = useAuth();
 
   const nav = useNavigate();
 
