@@ -29,6 +29,7 @@ import React from "react";
 import { useEmailFunctions } from "./emailFunctions";
 import { useAuth } from "./AuthContext";
 import { PrivateRoute } from "./PrivateRoute";
+import { fetchAppUserById, updateAppUser } from "./applicationUserFunctions";
 
 function AboutPage() {
   return (
@@ -164,6 +165,7 @@ function CreateReimbursementPage() {
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
   const nav = useNavigate();
+  const auth = useAuth();
 
   const updateTotalAmount = (updatedRows?: Purchase[]) => {
     const rowsToUse = updatedRows || rowsPur;
@@ -196,16 +198,21 @@ function CreateReimbursementPage() {
       }));
       const successPur = await createPurchase(rowsPurWithId);
       if (successPur) {
-        var purchaseInfo = `Reimbursement Info\nVendor: ${
-          newReimResponse.vendor
-        }\nVendor Address: ${newReimResponse.vendorAddress}\nVendor Website: ${
-          newReimResponse.vendorWebsite
-        }\nTotal: ${newReimResponse.totalAmount.toLocaleString("en-US", {
+        var reimbursee: string | undefined = "";
+        if (newReimResponse.vendorName) {
+          reimbursee = newReimResponse.vendorName;
+        } else {
+          reimbursee = auth?.user?.username;
+        }
+        var purchaseInfo = `Reimbursement Info\nSubmitted by: ${
+          auth?.user?.username
+        }\nReimbursee: ${reimbursee}\nAction Requested: ${
+          newReimResponse.actionRequested
+        }
+        \nTotal: ${newReimResponse.totalAmount.toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
-        })}\nDate Submitted: ${
-          newReimResponse.dateSubmitted.split("T")[0]
-        }\nPayment Method: ${newReimResponse.paymentMethod}\n\nPurchase Info\n`;
+        })}\nDate Submitted: ${newReimResponse.dateSubmitted.split("T")[0]}`;
 
         var purCounter = 0;
 
@@ -222,8 +229,9 @@ function CreateReimbursementPage() {
           })}\nDate: ${purchase.datep}\n`;
         }
 
+        // to should be email address of admin
         const data = {
-          to: "carterleitch@gmail.com",
+          to: `carterleitch@gmail.com`,
           subject: `New Reimbursement Created!`,
           content: purchaseInfo,
         };
@@ -442,6 +450,7 @@ function AccessDeniedPage() {
   );
 }
 function AccountPage() {
+  const [editMode, setEditMode] = React.useState(false);
   const nav = useNavigate();
   const auth = useAuth();
 
@@ -453,13 +462,153 @@ function AccountPage() {
     toast.success("Successfully logged out!");
   };
 
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const firstName = (document.getElementById("firstName") as HTMLInputElement)
+      .value;
+    const lastName = (document.getElementById("lastName") as HTMLInputElement)
+      .value;
+    const phoneNumber = (
+      document.getElementById("phoneNumber") as HTMLInputElement
+    ).value;
+    const address = (document.getElementById("address") as HTMLInputElement)
+      .value;
+    const city = (document.getElementById("city") as HTMLInputElement).value;
+    const state = (document.getElementById("state") as HTMLInputElement).value;
+    const zipCode = (document.getElementById("zipCode") as HTMLInputElement)
+      .value;
+    if (
+      !firstName ||
+      !lastName ||
+      !phoneNumber ||
+      !address ||
+      !city ||
+      !state ||
+      !zipCode
+    ) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+    const updatedData = {
+      id: auth?.user?.id,
+      emailAddress: auth?.user?.username,
+      firstName,
+      lastName,
+      phoneNumber,
+      address,
+      city,
+      state,
+      zipCode,
+    };
+    try {
+      fetchAppUserById(auth?.user?.id || "").then((user) => {
+        if (user) {
+          console.log("Fetched user:", user);
+          updateAppUser(user.id, updatedData)
+            .then(() => {
+              auth?.user && Object.assign(auth.user, updatedData);
+              if (auth && auth.user) {
+                auth.user.firstName = firstName;
+                auth.user.lastName = lastName;
+                auth.user.phoneNumber = phoneNumber;
+                auth.user.address = address;
+                auth.user.city = city;
+                auth.user.state = state;
+                auth.user.zipCode = zipCode;
+              }
+              setEditMode(false);
+              toast.success("Account information updated successfully!");
+            })
+            .catch((error) => {
+              console.error("Error updating account information:", error);
+              toast.error("Failed to update account information.");
+            });
+        } else {
+          toast.error("User not found.");
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching user information:", error);
+      toast.error("Failed to fetch user information.");
+    }
+  };
+
   return (
     <div className="content">
       <Title content="Account Information" />
-      <p className="center-p">Username: {auth?.user?.username}</p>
-      <p className="center-p">Role: {auth?.user?.role}</p>
+      <div>
+        <form onSubmit={handleSubmit} className="normal-form">
+          <InputField
+            id="userName"
+            type="text"
+            label="Email/Username"
+            defaultValue={auth?.user?.username}
+            readonly={true}
+          />
+          <InputField
+            id="role"
+            type="text"
+            label="Role"
+            defaultValue={auth?.user?.role}
+            readonly={true}
+          />
+          <InputField
+            id="firstName"
+            type="text"
+            label="First Name"
+            defaultValue={auth?.user?.firstName}
+            readonly={!editMode}
+          />
+          <InputField
+            id="lastName"
+            type="text"
+            label="Last Name"
+            defaultValue={auth?.user?.lastName}
+            readonly={!editMode}
+          />
+          <InputField
+            id="phoneNumber"
+            type="text"
+            label="Phone Number"
+            defaultValue={auth?.user?.phoneNumber}
+            readonly={!editMode}
+          />
+          <InputField
+            id="address"
+            type="text"
+            label="Address"
+            defaultValue={auth?.user?.address}
+            readonly={!editMode}
+          />
+          <InputField
+            id="city"
+            type="text"
+            label="City"
+            defaultValue={auth?.user?.city}
+            readonly={!editMode}
+          />
+          <InputField
+            id="state"
+            type="text"
+            label="State"
+            defaultValue={auth?.user?.state}
+            readonly={!editMode}
+          />
+          <InputField
+            id="zipCode"
+            type="text"
+            label="Zip Code"
+            defaultValue={auth?.user?.zipCode}
+            readonly={!editMode}
+          />
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            {editMode && <SubmitButton content="Save Changes" />}
+          </div>
+        </form>
+      </div>
       <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
+        <Button onClick={() => setEditMode(!editMode)} content="Edit Account" />
         <SpookyButton onClick={handleLogout} content="Logout" />
       </div>
     </div>

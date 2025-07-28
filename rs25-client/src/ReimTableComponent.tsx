@@ -11,6 +11,7 @@ import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
 import { usePurchaseFunctions } from "./purchaseFunctions";
 import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
+import { useEmailFunctions } from "./emailFunctions";
 
 export interface Reimbursement {
   id: number;
@@ -125,6 +126,7 @@ export function ReimbursementTable({
     setSelectedRowPurchases(purchases);
   };
   const auth = useAuth();
+  const { sendEmail } = useEmailFunctions();
 
   return (
     <div className="reim-table">
@@ -163,6 +165,12 @@ export function ReimbursementTable({
               }
               fetchReimbursementById(selectedRowId || 0).then(
                 (reimbursement) => {
+                  if (reimbursement.status !== "Pending") {
+                    toast.error(
+                      "Reimbursement has already been approved or rejected."
+                    );
+                    return;
+                  }
                   updateReimbursement(
                     selectedRowId || 0,
                     reimbursement.totalAmount,
@@ -176,6 +184,23 @@ export function ReimbursementTable({
                     reimbursement.userId,
                     reimbursement.vendorId
                   );
+                  const emailData = {
+                    to: reimbursement.userName,
+                    subject: "Reimbursement Request Rejected",
+                    content: `Your reimbursement request has been rejected. Please contact the administrator for more details.\nRejected Reimbursement Details:\nRejected by: ${
+                      auth?.user?.username
+                    }\nReimbursement Submission Date: ${
+                      reimbursement.dateSubmitted.split("T")[0]
+                    }\nTotal: ${reimbursement.totalAmount.toLocaleString(
+                      "en-US",
+                      {
+                        style: "currency",
+                        currency: "USD",
+                      }
+                    )}\nAction Requested: ${reimbursement.actionRequested}`,
+                  };
+                  toast.success("Reimbursement rejected successfully!");
+                  sendEmail(emailData);
                 }
               );
             }}
@@ -207,6 +232,12 @@ export function ReimbursementTable({
             onClick={() => {
               fetchReimbursementById(selectedRowId || 0).then(
                 (reimbursement) => {
+                  if (reimbursement.status !== "Pending") {
+                    toast.error(
+                      "Reimbursement has already been approved or rejected."
+                    );
+                    return;
+                  }
                   const paymentMethodSelected = (
                     document.getElementById(
                       "paymentMethodSelect"
@@ -225,6 +256,23 @@ export function ReimbursementTable({
                     reimbursement.userId,
                     reimbursement.vendorId
                   );
+                  const emailData = {
+                    to: reimbursement.userName,
+                    subject: "Reimbursement Request Approved",
+                    content: `Your reimbursement request has been approved. Please contact the administrator for more details or if you experience any issues.\nApproved Reimbursement Details:\nApproved by: ${
+                      auth?.user?.username
+                    }\nReimbursement Submission Date: ${
+                      reimbursement.dateSubmitted.split("T")[0]
+                    }\nTotal: ${reimbursement.totalAmount.toLocaleString(
+                      "en-US",
+                      {
+                        style: "currency",
+                        currency: "USD",
+                      }
+                    )}\nAction Requested: ${reimbursement.actionRequested}`,
+                  };
+                  sendEmail(emailData);
+                  toast.success("Reimbursement approved successfully!");
                   setShowApprovalForm(false);
                 }
               );

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import { createVendor } from "./vendorFunctions";
-import { Reimbursement } from "./ReimTableComponent";
 export function useReimbursementFunctions() {
   const API_URL = "http://localhost:5000/api/Reimbursement";
   const API_URL_PURCHASE = "http://localhost:5000/api/Purchase";
@@ -181,7 +180,6 @@ export function useReimbursementFunctions() {
     setError(null);
 
     try {
-      console.log("Creating reimbursement with data:", reimData);
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
@@ -296,7 +294,7 @@ export function useReimbursementFunctions() {
     dateApproved?: Date,
     actionRequested?: string,
     userId?: string,
-      vendorId?: string
+    vendorId?: string
   ) {
     try {
       setLoading(true);
@@ -312,7 +310,7 @@ export function useReimbursementFunctions() {
         userId: userId,
         vendorId: vendorId,
       };
-        console.log("Reimbursement data before filtering:", reimData);
+      console.log("Reimbursement data before filtering:", reimData);
       // Filter out undefined properties
       const filteredReimData = Object.fromEntries(
         Object.entries(reimData).filter(([_, value]) => value !== undefined)
