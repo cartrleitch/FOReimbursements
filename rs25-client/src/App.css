@@ -85,6 +85,17 @@ body {
   font-size: 16px; /* Font size for input */
   font-family: "Roboto", sans-serif;
 }
+.inactive-input {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px; /* Font size for input */
+    font-family: "Roboto", sans-serif;
+    background-color: #eaeaea; /* Light gray background for inactive input */
+}
 .text-area-input {
   width: 100%;
   padding: 8px;

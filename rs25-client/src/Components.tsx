@@ -70,6 +70,8 @@ export function InputField({
   onChange,
   value,
   name,
+  defaultValue,
+  readonly = false,
 }: {
   id: string;
   placeholder?: string;
@@ -78,6 +80,8 @@ export function InputField({
   onChange?: (e: any) => void;
   value?: string;
   name?: string;
+  defaultValue?: string;
+  readonly?: boolean;
 }) {
   return (
     <div>
@@ -86,10 +90,13 @@ export function InputField({
         type={type}
         id={id}
         placeholder={placeholder}
-        className="normal-input"
+        className={readonly ? "inactive-input" : "normal-input"}
         onChange={onChange}
         value={value}
         name={name}
+        defaultValue={defaultValue}
+        inert={readonly}
+        readOnly={readonly}
       />
     </div>
   );

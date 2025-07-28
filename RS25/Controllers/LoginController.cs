@@ -51,7 +51,14 @@ namespace RS25.Controllers
         {
             new Claim("id", user.Id),
             new Claim("username", user.UserName ?? ""),
-            new Claim("email", user.EmailAddress ?? "")
+            new Claim("email", user.EmailAddress ?? ""),
+            new Claim("firstName", user.FirstName ?? ""),
+            new Claim("lastName", user.LastName ?? ""),
+            new Claim("phoneNumber", user.PhoneNumber ?? ""),
+            new Claim("address", user.Address ?? ""),
+            new Claim("city", user.City ?? ""),
+            new Claim("state", user.State ?? ""),
+            new Claim("zipCode", user.ZipCode ?? "")
         };
 
             foreach (var role in roles)
