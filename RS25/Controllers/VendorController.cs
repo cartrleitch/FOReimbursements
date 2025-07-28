@@ -36,5 +36,19 @@ namespace RS25.Controllers
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetVendors), new { id = vendor.Id }, vendor);
         }
+        // DELETE: api/vendor/{id}
+        [HttpDelete("{id}", Name = "DeleteVendor")]
+        [Authorize (Roles = "Admin")]
+        public async Task<IActionResult> DeleteVendor(int id)
+        {
+            var vendor = await _context.Vendor.FindAsync(id);
+            if (vendor == null)
+            {
+                return NotFound("Vendor not found");
+            }
+            _context.Vendor.Remove(vendor);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }

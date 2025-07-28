@@ -59,9 +59,6 @@ namespace RS25.Controllers
             {
                 return NotFound("Reimbursement not found");
             }
-            currReim.Vendor = Reimbursement.Vendor;
-            currReim.VendorAddress = Reimbursement.VendorAddress;
-            currReim.VendorWebsite = Reimbursement.VendorWebsite;
             currReim.TotalAmount = Reimbursement.TotalAmount;
             currReim.DateSubmitted = Reimbursement.DateSubmitted;
             currReim.PaymentMethod = Reimbursement.PaymentMethod;

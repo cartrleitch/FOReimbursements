@@ -13,8 +13,9 @@ import {
   Title,
   InputFieldTextArea,
   InputFieldNumber,
-    SpookyButton,
-    Button
+  SpookyButton,
+  Button,
+  InputRadio,
 } from "./Components";
 import { ReimbursementTable } from "./ReimTableComponent";
 import { PurchaseTable, Purchase } from "./PurTableComponent";
@@ -137,11 +138,14 @@ function BugReportPage() {
   );
 }
 function CreateReimbursementPage() {
-  const { createReimbursement } = useReimbursementFunctions();
+  const { createReimbursement, userOrVendor, setActionRequested, setUserOrVendor, actionRequested} = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
   const { sendEmail } = useEmailFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
+  
+
+  const auth = useAuth();
 
   const nav = useNavigate();
 
@@ -230,24 +234,86 @@ function CreateReimbursementPage() {
           handleSubmit();
         }}
       >
-        <InputField
-          id="vendor"
-          placeholder="Vendor"
-          type="text"
-          label="Vendor"
-        />
-        <InputField
-          id="vendoraddress"
-          placeholder="Vendor Address"
-          type="text"
-          label="Vendor Address"
-        />
-        <InputField
-          id="vendorwebsite"
-          placeholder="Vendor Website"
-          type="text"
-          label="Vendor Website"
-        />
+        <label htmlFor="radio-container-reimbursee">
+          Select who to reimburse.
+        </label>
+        <div className="radio-input-container" id="radio-container-reimbursee">
+          <InputRadio
+            id="user"
+            value="user"
+            name="userorvendor"
+            label="Me"
+            checked={true}
+            onChange={(e) => setUserOrVendor(e.target.value)}
+          />
+          <InputRadio
+            id="vendor"
+            value="vendor"
+            name="userorvendor"
+            label="Other person or company"
+            onChange={(e) => setUserOrVendor(e.target.value)}
+          />
+        </div>
+
+        {userOrVendor === "vendor" ? (
+          <div>
+            <label htmlFor="vendor-div">
+              Other person or company's information
+            </label>
+
+            <div id="vendor-div" style={{ marginTop: "4px" }}>
+              <InputField id="vendorName" type="text" label="Name"></InputField>
+              <InputField
+                id="vendorWebsite"
+                type="text"
+                label="Website (if applicable)"
+              ></InputField>
+              <InputField
+                id="vendorAddress"
+                type="text"
+                label="Street"
+              ></InputField>
+              <InputField id="vendorCity" type="text" label="City"></InputField>
+              <InputField
+                id="vendorState"
+                type="text"
+                label="State"
+              ></InputField>
+              <InputField
+                id="vendorZipCode"
+                type="text"
+                label="Zip Code"
+              ></InputField>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
+
+        <label htmlFor="radio-container-action-requested">
+          Select purpose of request.
+        </label>
+        <div
+          className="radio-input-container"
+          id="radio-container-action-requestedcontainer"
+        >
+          <InputRadio
+            id="reimbursement"
+            value="reimbursement"
+            name="actionrequested"
+            label="Reimbursement"
+            checked={true}
+            onChange={(e) => setActionRequested(e.target.value)}
+          />
+          <InputRadio
+            id="notification"
+            value="notification"
+            name="actionrequested"
+            label="Notification of purchase"
+            onChange={(e) => setActionRequested(e.target.value)}
+          />
+        </div>
+
         <InputFieldNumber
           id="totalamount"
           placeholder="Total Amount $"
@@ -257,11 +323,6 @@ function CreateReimbursementPage() {
           min="0"
           value={totalAmount.toString()}
           readonly={true}
-        />
-        <InputSelect
-          id="paymentmethod"
-          options={["Credit Card", "Cash", "Check", "Bank Transfer"]}
-          label="Payment Method"
         />
         <div className="pur-table-container">
           <PurchaseTable
@@ -339,15 +400,17 @@ function LoginPage() {
   );
 }
 function LogoutPage() {
-    const nav = useNavigate();
+  const nav = useNavigate();
   return (
     <div className="content">
       <Title content="Successfully Logged Out" />
-          <p className="center-p">You can now close this tab or return to login page to login again.</p>
-          <br />
-          <div style={{ display: "flex", justifyContent: "center" }}>
-              <Button onClick={() => nav("/Account/login")} content="Login" />
-          </div>
+      <p className="center-p">
+        You can now close this tab or return to login page to login again.
+      </p>
+      <br />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Button onClick={() => nav("/Account/login")} content="Login" />
+      </div>
     </div>
   );
 }
@@ -381,8 +444,14 @@ function AccountPage() {
       <p className="center-p">Role: {auth?.user?.role}</p>
       <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
-              <SpookyButton onClick={handleLogout} content="Logout" />
-              <SpookyButton onClick={() => { console.log(auth?.user); console.log(localStorage.getItem("token")); }} content="Debug" />
+        <SpookyButton onClick={handleLogout} content="Logout" />
+        <SpookyButton
+          onClick={() => {
+            console.log(auth?.user);
+            console.log(localStorage.getItem("token"));
+          }}
+          content="Debug"
+        />
       </div>
     </div>
   );

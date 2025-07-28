@@ -5,7 +5,7 @@ namespace RS25.Models
         public int Id { get; set; }
         public string? VendorId  { get; set; }
         public string? UserId { get; set; }
-        public string? ActionRequested { get; set; } // e.g., Refund, Expense Reimbursement
+        public string? ActionRequested { get; set; }
         public decimal TotalAmount { get; set; }
         public DateTime DateSubmitted { get; set; }
         public string? PaymentMethod { get; set; } // e.g., Credit Card, Cash, Bank Transfer

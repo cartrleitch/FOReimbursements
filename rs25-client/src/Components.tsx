@@ -67,14 +67,16 @@ export function InputField({
   type,
   label,
   onChange,
-  value,
+    value,
+  name
 }: {
   id: string;
-  placeholder: string;
+  placeholder?: string;
   type: string;
-  label: string;
+  label?: string;
   onChange?: (e: any) => void;
-  value?: string;
+        value?: string;
+        name?: string;
 }) {
   return (
     <div>
@@ -85,7 +87,8 @@ export function InputField({
         placeholder={placeholder}
         className="normal-input"
         onChange={onChange}
-        value={value}
+              value={value}
+              name={name}
       />
     </div>
   );
@@ -219,6 +222,35 @@ export function FileInput({
   );
 }
 
+export function InputRadio({
+    id,
+    name,
+    label,
+    value,
+    checked,
+    onChange,
+    }: {
+    id: string;
+    name: string;
+    label: string;
+    value: string;
+    checked?: boolean;
+    onChange?: (e: any) => void;
+    }) {
+    return (
+        <div>
+        <input
+            type="radio"
+            id={id}
+            name={name}
+            value={value}
+                defaultChecked={checked}
+            onChange={onChange}
+        />
+        <label htmlFor={id}>{label}</label>
+        </div>
+    );
+}
 export function Title({ content }: { content: string }) {
   return (
     <div className="content-title-container">

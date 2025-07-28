@@ -6,12 +6,15 @@ import { usePurchaseFunctions } from "./purchaseFunctions";
 import { toast } from "react-toastify";
 interface Reimbursement {
   id: number;
-  vendor: string;
-  vendorAddress: string;
-  vendorWebsite: string;
+  vendorid: string;
+  userid: string;
+  payTo: string;
+  actionRequested: string;
   totalAmount: number;
   dateSubmitted: string;
-  paymentMethod: string;
+  status: string;
+  dateApproved?: string;
+  paymentMethod?: string;
 }
 
 interface TableProps {
@@ -22,19 +25,30 @@ interface TableProps {
 
 const columnns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
-  { field: "vendor", headerName: "Vendor", flex: 1 },
-  { field: "vendorAddress", headerName: "Vendor Address", flex: 1 },
-  { field: "vendorWebsite", headerName: "Vendor Website", flex: 1 },
+  { field: "vendorId", headerName: "VendorId", flex: 1, hideable: false },
+  { field: "userId", headerName: "UserId", flex: 1, hideable: false },
+  {
+    field: "payTo",
+    headerName: "Pay To",
+    flex: 1,
+    renderCell: (params) => {
+      return "Vendor or User name";
+    },
+  },
+  { field: "actionRequested", headerName: "Action Requested", flex: 1 },
   {
     field: "totalAmount",
     headerName: "Total Amount",
     flex: 1,
     type: "number",
     headerAlign: "left",
-      align: "left",
-        renderCell: (params) => {
-            return params.row.totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-        }
+    align: "left",
+    renderCell: (params) => {
+      return params.row.totalAmount.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      });
+    },
   },
   {
     field: "dateSubmitted",
@@ -44,6 +58,8 @@ const columnns: GridColDef[] = [
     valueGetter: (value: any) => new Date(value),
   },
   { field: "paymentMethod", headerName: "Payment Method", flex: 1 },
+  { field: "status", headerName: "Status", flex: 1, type: "string" },
+  { field: "dateApproved", headerName: "Date Approved", flex: 1, type: "date" },
 ];
 
 export function ReimbursementTable({
@@ -87,7 +103,7 @@ export function ReimbursementTable({
         checkboxSelection
         disableMultipleRowSelection
         autoPageSize
-        columnVisibilityModel={{ id: false }}
+        columnVisibilityModel={{ id: false, vendorId: false, userId: false }}
         getRowId={(row) => row.id}
         onRowSelectionModelChange={(id) => {
           setSelectedRowPurchases([]);
