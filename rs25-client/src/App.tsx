@@ -63,7 +63,7 @@ function MainPage() {
     data,
     fetchReimbursements,
     fetchReimbursementByUserId,
-    deleteReimbursement
+    deleteReimbursement,
   } = useReimbursementFunctions();
   // eslint-disable-next-line
   useEffect(() => {
@@ -152,7 +152,7 @@ function CreateReimbursementPage() {
     createReimbursement,
     userOrVendor,
     setActionRequested,
-    setUserOrVendor
+    setUserOrVendor,
   } = useReimbursementFunctions();
   const { createPurchase } = usePurchaseFunctions();
   const { sendEmail } = useEmailFunctions();
@@ -457,13 +457,6 @@ function AccountPage() {
       <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
         <SpookyButton onClick={handleLogout} content="Logout" />
-        <SpookyButton
-          onClick={() => {
-            console.log(auth?.user);
-            console.log(localStorage.getItem("token"));
-          }}
-          content="Debug"
-        />
       </div>
     </div>
   );

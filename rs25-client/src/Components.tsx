@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import React from "react";
+import { useAuth } from "./AuthContext";
 
 export function Button({
   onClick,
@@ -67,16 +68,16 @@ export function InputField({
   type,
   label,
   onChange,
-    value,
-  name
+  value,
+  name,
 }: {
   id: string;
   placeholder?: string;
   type: string;
   label?: string;
   onChange?: (e: any) => void;
-        value?: string;
-        name?: string;
+  value?: string;
+  name?: string;
 }) {
   return (
     <div>
@@ -87,8 +88,8 @@ export function InputField({
         placeholder={placeholder}
         className="normal-input"
         onChange={onChange}
-              value={value}
-              name={name}
+        value={value}
+        name={name}
       />
     </div>
   );
@@ -223,33 +224,41 @@ export function FileInput({
 }
 
 export function InputRadio({
-    id,
-    name,
-    label,
-    value,
-    checked,
-    onChange,
-    }: {
-    id: string;
-    name: string;
-    label: string;
-    value: string;
-    checked?: boolean;
-    onChange?: (e: any) => void;
-    }) {
-    return (
-        <div>
-        <input
-            type="radio"
-            id={id}
-            name={name}
-            value={value}
-                defaultChecked={checked}
-            onChange={onChange}
-        />
-        <label htmlFor={id}>{label}</label>
-        </div>
-    );
+  id,
+  name,
+  label,
+  value,
+  checked,
+  onChange,
+}: {
+  id: string;
+  name: string;
+  label: string;
+  value: string;
+  checked?: boolean;
+  onChange?: (e: any) => void;
+}) {
+  return (
+    <div>
+      <input
+        type="radio"
+        id={id}
+        name={name}
+        value={value}
+        defaultChecked={checked}
+        onChange={onChange}
+      />
+      <label htmlFor={id}>{label}</label>
+    </div>
+  );
+}
+
+export function AdminOnlyWrapper({ children }: { children: React.ReactNode }) {
+  const auth = useAuth();
+  if (auth?.user?.role !== "Admin") {
+    return null;
+  }
+  return <>{children}</>;
 }
 export function Title({ content }: { content: string }) {
   return (

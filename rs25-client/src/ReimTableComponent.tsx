@@ -1,6 +1,6 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import React from "react";
-import { RedirectButton, Button } from "./Components";
+import { RedirectButton, Button, AdminOnlyWrapper } from "./Components";
 import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
 import { usePurchaseFunctions } from "./purchaseFunctions";
 import { toast } from "react-toastify";
@@ -9,9 +9,9 @@ interface Reimbursement {
   id: number;
   vendorid: string;
   userid: string;
-    submittedBy: string;
-    userName: string;
-    vendorName?: string;
+  submittedBy: string;
+  userName: string;
+  vendorName?: string;
   actionRequested: string;
   totalAmount: number;
   dateSubmitted: string;
@@ -34,17 +34,17 @@ const columnns: GridColDef[] = [
   {
     field: "userName",
     headerName: "Submitted By",
-    flex: 1
+    flex: 1,
   },
   {
     field: "payTo",
     headerName: "Pay To",
     flex: 1,
     renderCell: (params) => {
-        if (params.row.vendorName !== null) {
-            return params.row.vendorName;
-        }
-        return params.row.userName;
+      if (params.row.vendorName !== null) {
+        return params.row.vendorName;
+      }
+      return params.row.userName;
     },
   },
   { field: "actionRequested", headerName: "Action Requested", flex: 1 },
@@ -108,17 +108,19 @@ export function ReimbursementTable({
           content="Refresh"
         />
         {/*<RedirectButton to="/update" content="Edit" />*/}
-        <Button
-          onClick={async () => {
-            if (selectedRowId !== null) {
-              deleteReimbursement(selectedRowId);
-            } else {
-              toast.error("No row selected!");
-            }
-          }}
-          content="Delete"
-          className="spooky-button"
-        />
+        <AdminOnlyWrapper>
+          <Button
+            onClick={async () => {
+              if (selectedRowId !== null) {
+                deleteReimbursement(selectedRowId);
+              } else {
+                toast.error("No row selected!");
+              }
+            }}
+            content="Delete"
+            className="spooky-button"
+          />
+        </AdminOnlyWrapper>
       </div>
       <DataGrid
         rows={rows}
