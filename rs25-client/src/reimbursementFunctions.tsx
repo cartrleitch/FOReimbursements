@@ -85,7 +85,6 @@ export function useReimbursementFunctions() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Reimbursement fetched by ID:", result);
       return result;
     } catch (err: any) {
       setError(err.message);
@@ -297,7 +296,7 @@ export function useReimbursementFunctions() {
     dateApproved?: Date,
     actionRequested?: string,
     userId?: string,
-    vendorId?: string
+      vendorId?: string
   ) {
     try {
       setLoading(true);
@@ -313,6 +312,7 @@ export function useReimbursementFunctions() {
         userId: userId,
         vendorId: vendorId,
       };
+        console.log("Reimbursement data before filtering:", reimData);
       // Filter out undefined properties
       const filteredReimData = Object.fromEntries(
         Object.entries(reimData).filter(([_, value]) => value !== undefined)

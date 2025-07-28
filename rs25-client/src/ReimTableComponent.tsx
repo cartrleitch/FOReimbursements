@@ -5,6 +5,7 @@ import {
   Button,
   AdminOnlyWrapper,
   SpookyButton,
+  InputSelect,
 } from "./Components";
 import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
 import { usePurchaseFunctions } from "./purchaseFunctions";
@@ -13,8 +14,8 @@ import { useAuth } from "./AuthContext";
 
 export interface Reimbursement {
   id: number;
-  vendorid: string;
-  userid: string;
+  vendorId: string;
+  userId: string;
   submittedBy: string;
   userName: string;
   vendorName?: string;
@@ -117,6 +118,7 @@ export function ReimbursementTable({
   const [selectedRowPurchases, setSelectedRowPurchases] = React.useState<
     Purchase[]
   >([]);
+  const [showApprovalForm, setShowApprovalForm] = React.useState(false);
   const { fetchPurchaseByReimId } = usePurchaseFunctions();
   const getRelatedPurchases = async (reimId: number) => {
     const purchases = await fetchPurchaseByReimId(reimId);
@@ -142,23 +144,12 @@ export function ReimbursementTable({
         <AdminOnlyWrapper>
           <Button
             onClick={() => {
-              fetchReimbursementById(selectedRowId || 0).then(
-                (reimbursement) => {
-                  updateReimbursement(
-                    selectedRowId || 0,
-                    reimbursement.totalAmount,
-                    reimbursement.dateSubmitted
-                      ? new Date(reimbursement.dateSubmitted)
-                      : undefined,
-                    reimbursement.paymentMethod,
-                    "Approved",
-                    new Date(),
-                    reimbursement.actionRequested,
-                    reimbursement.userid,
-                    reimbursement.vendorid
-                  );
-                }
-              );
+              if (selectedRowId === null) {
+                toast.error("No row selected!");
+                return;
+              }
+
+              setShowApprovalForm(true);
             }}
             content="Approve"
           />
@@ -166,6 +157,10 @@ export function ReimbursementTable({
         <AdminOnlyWrapper>
           <SpookyButton
             onClick={() => {
+              if (selectedRowId === null) {
+                toast.error("No row selected!");
+                return;
+              }
               fetchReimbursementById(selectedRowId || 0).then(
                 (reimbursement) => {
                   updateReimbursement(
@@ -178,8 +173,8 @@ export function ReimbursementTable({
                     "Rejected",
                     new Date(),
                     reimbursement.actionRequested,
-                    reimbursement.userid,
-                    reimbursement.vendorid
+                    reimbursement.userId,
+                    reimbursement.vendorId
                   );
                 }
               );
@@ -201,6 +196,43 @@ export function ReimbursementTable({
           />
         </AdminOnlyWrapper>
       </div>
+      {showApprovalForm && (
+        <div style={{ marginBottom: "8px" }}>
+          <InputSelect
+            id="paymentMethodSelect"
+            options={["Check", "Credit Card", "ACH/Direct Deposit"]}
+            label="Payment Method"
+          />
+          <Button
+            onClick={() => {
+              fetchReimbursementById(selectedRowId || 0).then(
+                (reimbursement) => {
+                  const paymentMethodSelected = (
+                    document.getElementById(
+                      "paymentMethodSelect"
+                    ) as HTMLSelectElement
+                  ).value;
+                  updateReimbursement(
+                    selectedRowId || 0,
+                    reimbursement.totalAmount,
+                    reimbursement.dateSubmitted
+                      ? new Date(reimbursement.dateSubmitted)
+                      : undefined,
+                    paymentMethodSelected,
+                    "Approved",
+                    new Date(),
+                    reimbursement.actionRequested,
+                    reimbursement.userId,
+                    reimbursement.vendorId
+                  );
+                  setShowApprovalForm(false);
+                }
+              );
+            }}
+            content="Approve Reimbursement"
+          />
+        </div>
+      )}
       <DataGrid
         rows={rows}
         columns={columnns}

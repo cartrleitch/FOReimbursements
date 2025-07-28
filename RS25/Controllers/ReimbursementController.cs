@@ -85,6 +85,8 @@ namespace RS25.Controllers
                 .Select(r => new 
                 {
                     r.Id,
+                    r.VendorId,
+                    r.UserId,
                     r.TotalAmount,
                     r.DateSubmitted,
                     r.PaymentMethod,
