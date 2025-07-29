@@ -23,11 +23,11 @@ namespace RS25.Data
                 }
             }
 
-            var adminEmailDefault = "carterleitch@gmail.com";
-            var adminPasswordDefault = "Password123$";
+            var adminEmailDefault = Environment.GetEnvironmentVariable("ADMIN_SEED_EMAIL")!;
+            var adminPasswordDefault = Environment.GetEnvironmentVariable("ADMIN_SEED_PASSWORD")!;
 
-            var userEmailDefault = "csleitch@students.unwsp.edu";
-            var userPasswordDefault = "Password123$";
+            var userEmailDefault = Environment.GetEnvironmentVariable("USER_SEED_EMAIL")!;
+            var userPasswordDefault = Environment.GetEnvironmentVariable("USER_SEED_PASSWORD")!;
 
             var adminUser = await userManager.FindByEmailAsync(adminEmailDefault);
             var defaultUser = await userManager.FindByEmailAsync(userEmailDefault);
