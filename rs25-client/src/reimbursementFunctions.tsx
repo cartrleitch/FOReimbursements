@@ -20,7 +20,7 @@ export function useReimbursementFunctions() {
 
   const auth = useAuth();
 
-  async function fetchReimbursements() {
+    async function fetchReimbursements() {
     setLoading(true);
     setError(null);
     console.log("fetchReimbursements triggered");

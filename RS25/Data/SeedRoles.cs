@@ -1,6 +1,5 @@
-using RS25.Models;
 using Microsoft.AspNetCore.Identity;
-using System;
+using DotNetEnv;
 
 namespace RS25.Data
 {
@@ -22,6 +21,7 @@ namespace RS25.Data
                     await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
+            Env.Load();
 
             var adminEmailDefault = Environment.GetEnvironmentVariable("ADMIN_SEED_EMAIL")!;
             var adminPasswordDefault = Environment.GetEnvironmentVariable("ADMIN_SEED_PASSWORD")!;

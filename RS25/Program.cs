@@ -2,10 +2,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RS25.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using DotNetEnv;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+Env.Load();
+builder.Configuration.AddEnvironmentVariables();
 // Add services to the container.
 
 builder.Services.AddControllers();
