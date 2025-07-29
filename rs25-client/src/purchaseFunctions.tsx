@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Purchase } from "./PurTableComponent";
 export function usePurchaseFunctions() {
-  const API_URL = "http://localhost:5000/api/Purchase";
-  const API_URL_RECEIPT = "http://localhost:5000/api/Receipt";
+  const apiUrl = process.env.REACT_APP_API_URL;
+
+  const API_URL = `${apiUrl}/api/Purchase`;
+  const API_URL_RECEIPT = `${apiUrl}/api/Receipt`;
 
   // eslint-disable-next-line
   const [data, setData] = useState<any[]>([]);
@@ -13,13 +15,13 @@ export function usePurchaseFunctions() {
     setLoading(true);
     setError(null);
     try {
-        const response = await fetch(API_URL, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        });
+      const response = await fetch(API_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -49,8 +51,8 @@ export function usePurchaseFunctions() {
         const response = await fetch(API_URL, {
           method: "POST",
           headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
             account,
@@ -65,10 +67,10 @@ export function usePurchaseFunctions() {
         const purchaseId = (await response.json()).id;
         const responseFile = await fetch(`${API_URL}/upload/${purchaseId}`, {
           method: "POST",
-            body: formData,
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
 
         if (!response.ok || !responseFile.ok) {
@@ -87,34 +89,34 @@ export function usePurchaseFunctions() {
 
   async function deletePurchase(id: number) {
     try {
-        const relatedReceipts = await fetch(`${API_URL_RECEIPT}/${id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        });
+      const relatedReceipts = await fetch(`${API_URL_RECEIPT}/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (!relatedReceipts.ok) {
         throw new Error(`HTTP error! status: ${relatedReceipts.status}`);
       }
       for (const receipt of await relatedReceipts.json()) {
         const response = await fetch(`${API_URL_RECEIPT}/${receipt.id}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       }
       const response = await fetch(`${API_URL}/${id}`, {
-          method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -143,8 +145,8 @@ export function usePurchaseFunctions() {
       const response = await fetch(API_URL, {
         method: "PUT",
         headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           id: Number(id),
@@ -170,13 +172,13 @@ export function usePurchaseFunctions() {
     setLoading(true);
     setError(null);
     try {
-        const response = await fetch(`${API_URL}/${reimId}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        });
+      const response = await fetch(`${API_URL}/${reimId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

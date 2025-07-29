@@ -117,11 +117,11 @@ export function PurchaseTable({
     if (selectedRowId === null) {
       alert("Please select a purchase to delete.");
       return;
-      }
-      const newRowsList = rows.filter((row) => row.id !== selectedRowId)
-      setRows(newRowsList);
-      setSelectedRowId(null);
-      updateTotalAmount?.(newRowsList);
+    }
+    const newRowsList = rows.filter((row) => row.id !== selectedRowId);
+    setRows(newRowsList);
+    setSelectedRowId(null);
+    updateTotalAmount?.(newRowsList);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -246,7 +246,8 @@ const displayColumnns: GridColDef[] = [
     hideable: true,
     renderCell: (params) => {
       const fileName = params.row.fileName;
-      const downloadUrl = `http://localhost:5000/api/receipt/download/${fileName}`;
+      const apiUrl = process.env.REACT_APP_API_URL;
+      const downloadUrl = `${apiUrl}/api/receipt/download/${fileName}`;
       if (fileName) {
         return (
           <a href={downloadUrl} download={fileName}>
