@@ -9,6 +9,7 @@ import {
   FileInput,
 } from "./Components";
 import { toast } from "react-toastify";
+import OpenAI from "openai";
 
 export interface Purchase {
   id: number;
@@ -86,6 +87,19 @@ export function PurchaseTable({
   const [amountp, setAmount] = React.useState("");
   const [datep, setDate] = React.useState("");
   const [file, setFile] = React.useState<File | null>(null);
+    const openAiKey = process.env.REACT_APP_OPENAI_API_KEY;
+
+    const toBase64 = (file: File | null): Promise<string> => {
+        if (!file) {
+            return Promise.reject(new Error("No file provided"));
+        }
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
+        });
+    }
 
   const addPurchase = () => {
     if (!accountp || !descriptionp || !amountp || !datep || file == null) {
@@ -124,9 +138,43 @@ export function PurchaseTable({
     updateTotalAmount?.(newRowsList);
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
+
+        const client = new OpenAI({ apiKey: openAiKey, dangerouslyAllowBrowser: true });
+
+        try {
+            const fileBase64 = await toBase64(file);
+            console.log("File converted to base64:", fileBase64);
+            console.log(file);
+            const response =
+                await client.responses.create({
+                    model: "gpt-4.1-mini",
+                    input: [
+                        {
+                            role: "user",
+                            content:
+                                "Read this receipt and return a JSON with date, descriptionOfPurchase, and total. descriptionOfPurchase should be a 1-50 word summary of the purchase. If a piece of information is not available, set the value to null.",
+                        },
+                        {
+                            role: "user",
+                            content: [
+                                {
+                                    type: "input_image",
+                                    image_url: `data:image/jpeg;base64,${fileBase64}`,
+                                        detail: "auto"
+                                },
+                            ],
+                        },
+                    ],
+                });
+            console.log(response.output_text);
+        }
+        catch (error) {
+            console.error("Error processing receipt with OpenAI:", error);
+            toast.error("Failed to process receipt with OpenAI.");
+        }
     }
   };
 
