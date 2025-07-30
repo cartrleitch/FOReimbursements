@@ -10,6 +10,7 @@ import {
 } from "./Components";
 import { toast } from "react-toastify";
 import OpenAI from "openai";
+import { useLoading } from "./LoadingContext";
 
 export interface Purchase {
   id: number;
@@ -86,7 +87,8 @@ export function PurchaseTable({
   const [descriptionp, setDescription] = React.useState("");
   const [amountp, setAmount] = React.useState("");
   const [datep, setDate] = React.useState("");
-  const [file, setFile] = React.useState<File | null>(null);
+    const [file, setFile] = React.useState<File | null>(null);
+    const { setLoading } = useLoading();
     const openAiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
     const toBase64 = (file: File | null): Promise<string> => {
@@ -140,7 +142,8 @@ export function PurchaseTable({
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      setFile(event.target.files[0]);
+        setFile(event.target.files[0]);
+        setLoading(true);
 
         const client = new OpenAI({ apiKey: openAiKey, dangerouslyAllowBrowser: true });
         try {
@@ -154,7 +157,7 @@ export function PurchaseTable({
                         {
                             role: "user",
                             content:
-                                "Read this receipt and return a JSON with date, descriptionOfPurchase, and total. descriptionOfPurchase should be a 1-50 word summary of the purchase. Date should be in ISO 8601 format YYYY-MM-DD. If a piece of information is not available, set the value to null.",
+                                "Read this receipt and return a JSON with date, descriptionOfPurchase, and total. descriptionOfPurchase should be a 1-50 word summary of the purchase. Date should be in ISO 8601 format YYYY-MM-DD. If a piece of information is not available, set the value to null. Output text should only be a JSON object no matter what; it must be able to be parsed to a JSON object. DO NOT include a prefix of ```json or anything",
                         },
                         {
                             role: "user",
@@ -169,7 +172,6 @@ export function PurchaseTable({
                     ],
                 });
             const receiptData = JSON.parse(response.output_text)
-            console.log("Receipt data from OpenAI:", receiptData);
             setAmount(receiptData.total || "");
             setDescription(receiptData.descriptionOfPurchase || "");
             setDate(receiptData.date || "");
@@ -177,6 +179,9 @@ export function PurchaseTable({
         catch (error) {
             console.error("Error processing receipt with OpenAI:", error);
             toast.error("Failed to process receipt with OpenAI.");
+        }
+        finally {
+            setLoading(false);
         }
     }
   };

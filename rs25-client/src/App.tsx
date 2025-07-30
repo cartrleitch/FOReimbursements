@@ -30,7 +30,7 @@ import { useEmailFunctions } from "./emailFunctions";
 import { useAuth } from "./AuthContext";
 import { PrivateRoute } from "./PrivateRoute";
 import { fetchAppUserById, updateAppUser } from "./applicationUserFunctions";
-
+import { GlobalLoading } from "./LoadingOverlay"; 
 function AboutPage() {
   return (
     <div className="content">
@@ -665,7 +665,7 @@ function App() {
             </li>
           </ul>
         </nav>
-
+              <GlobalLoading />
         <Routes>
           <Route
             path="/"
