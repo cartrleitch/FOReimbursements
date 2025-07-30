@@ -3,10 +3,12 @@ import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import { createVendor } from "./vendorFunctions";
 export function useReimbursementFunctions() {
-  const API_URL = "http://localhost:5000/api/Reimbursement";
-  const API_URL_PURCHASE = "http://localhost:5000/api/Purchase";
-  const API_URL_RECEIPT = "http://localhost:5000/api/Receipt";
-  const API_URL_GETBYID = "http://localhost:5000/get";
+  const apiUrl = process.env.REACT_APP_API_URL;
+
+  const API_URL = `${apiUrl}/api/Reimbursement`;
+  const API_URL_PURCHASE = `${apiUrl}/api/Purchase`;
+  const API_URL_RECEIPT = `${apiUrl}/api/Receipt`;
+  const API_URL_GETBYID = `${apiUrl}/get`;
   // eslint-disable-next-line
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -18,7 +20,7 @@ export function useReimbursementFunctions() {
 
   const auth = useAuth();
 
-  async function fetchReimbursements() {
+    async function fetchReimbursements() {
     setLoading(true);
     setError(null);
     console.log("fetchReimbursements triggered");

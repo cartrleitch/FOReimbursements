@@ -30,7 +30,7 @@ import { useEmailFunctions } from "./emailFunctions";
 import { useAuth } from "./AuthContext";
 import { PrivateRoute } from "./PrivateRoute";
 import { fetchAppUserById, updateAppUser } from "./applicationUserFunctions";
-
+import { GlobalLoading } from "./LoadingOverlay"; 
 function AboutPage() {
   return (
     <div className="content">
@@ -630,6 +630,15 @@ function App() {
           </Link>
           <ul className="link-list">
             <li>
+              {auth?.user?.username !== undefined ? (
+                <Link className="link-list-item" to="/">
+                  Dashboard
+                </Link>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
               <Link className="link-list-item" to="/about">
                 About
               </Link>
@@ -656,7 +665,7 @@ function App() {
             </li>
           </ul>
         </nav>
-
+              <GlobalLoading />
         <Routes>
           <Route
             path="/"
