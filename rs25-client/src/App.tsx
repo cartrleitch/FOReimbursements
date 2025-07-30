@@ -363,7 +363,8 @@ function CreateReimbursementPage() {
 }
 function LoginPage() {
   const nav = useNavigate();
-  const auth = useAuth();
+    const auth = useAuth();
+    const apiUrl = process.env.REACT_APP_API_URL;
 
   const login = async (e: any) => {
     e.preventDefault();
@@ -380,7 +381,7 @@ function LoginPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/Auth/login", {
+        const response = await fetch(`${apiUrl}/api/Auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
