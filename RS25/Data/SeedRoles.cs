@@ -29,8 +29,12 @@ namespace RS25.Data
             var userEmailDefault = Environment.GetEnvironmentVariable("USER_SEED_EMAIL")!;
             var userPasswordDefault = Environment.GetEnvironmentVariable("USER_SEED_PASSWORD")!;
 
+            var motherAccountEmail = Environment.GetEnvironmentVariable("MOTHER_SEED_EMAIL")!;
+            var motherAccountPasswordDefault = Environment.GetEnvironmentVariable("MOTHER_SEED_PASSWORD")!;
+
             var adminUser = await userManager.FindByEmailAsync(adminEmailDefault);
             var defaultUser = await userManager.FindByEmailAsync(userEmailDefault);
+            var motherAccountUser = await userManager.FindByEmailAsync(motherAccountEmail);
 
             if (adminUser == null)
             {
@@ -73,6 +77,28 @@ namespace RS25.Data
                     // Assign the user role to the user
                     await userManager.AddToRoleAsync(defaultUser, "User");
                     Console.WriteLine("<---- Default user created and assigned to User role.");
+                }
+            }
+
+            if (motherAccountUser == null)
+            {
+                Console.WriteLine("<---- Mother account user not found, creating a new one...");
+                // Create the mother account user if it does not exist
+                motherAccountUser = new ApplicationUser
+                {
+                    FirstName = "Paget",
+                    LastName = "Leitch",
+                    EmailAddress = motherAccountEmail,
+                    Email = motherAccountEmail,
+                    UserName = motherAccountEmail
+                };
+                var result = await userManager.CreateAsync(motherAccountUser, motherAccountPasswordDefault);
+                Console.WriteLine($"<---- Mother account user creation result: {result}");
+                if (result.Succeeded)
+                {
+                    // Assign the user role to the user
+                    await userManager.AddToRoleAsync(motherAccountUser, "User");
+                    Console.WriteLine("<---- Mother account user created and assigned to User role.");
                 }
             }
 
