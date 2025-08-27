@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using RS25.Data;
 using RS25.Models;
+using OpenAI.Chat;
+using System.Text.Json;
+using System.ClientModel;
 
 namespace RS25.Controllers
 {
@@ -38,18 +41,19 @@ namespace RS25.Controllers
             var purchases = await _context.Purchase
                 .Where(p => p.ReimId == reimId)
                 .Join(
-                _context.Receipt, 
-                purchase => purchase.Id, 
-                receipt => receipt.PurId, 
-                (purchase, receipt) => new { 
-                purchase.Id,
-                purchase.Account,
-                purchase.Description,
-                purchase.Amount,
-                purchase.PurchaseDate,
-                purchase.ReimId,
-                receipt.FileName,
-                receipt.FilePath
+                _context.Receipt,
+                purchase => purchase.Id,
+                receipt => receipt.PurId,
+                (purchase, receipt) => new
+                {
+                    purchase.Id,
+                    purchase.Account,
+                    purchase.Description,
+                    purchase.Amount,
+                    purchase.PurchaseDate,
+                    purchase.ReimId,
+                    receipt.FileName,
+                    receipt.FilePath
                 }
                 ).ToListAsync();
             if (purchases == null)
@@ -139,7 +143,7 @@ namespace RS25.Controllers
             {
                 Directory.CreateDirectory("Uploads");
             }
-            
+
             var fileNameWithGuid = $"{Guid.NewGuid()}_{file.FileName}";
             var filePath = Path.Combine(uploadDir, fileNameWithGuid);
 
@@ -160,6 +164,75 @@ namespace RS25.Controllers
 
             await _context.SaveChangesAsync();
             return Ok(new { Message = "Files uploaded successfully", FilePath = filePath });
+        }
+
+        // POST: api/purchase/summary
+        [HttpPost("summary", Name = "SummarizeReceipt")]
+        [Authorize]
+        public async Task<IActionResult> SummarizeReceipt([FromBody] string fileBase64)
+        {
+            Console.WriteLine("<------ Received file data for summarization" + fileBase64);
+            if (fileBase64 == null)
+                {
+                return BadRequest("File data is null");
+            }
+
+            ChatClient client = new(
+                model: "gpt-4.1-mini",
+                apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY")
+            );
+
+            string promptString = $$"""
+                {
+                    "model": "gpt-4.1-mini",
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "Read this receipt and return a JSON with date, descriptionOfPurchase, and total. descriptionOfPurchase should be a 1-50 word summary of the purchase. Date should be in ISO 8601 format YYYY-MM-DD. If a piece of information is not available, set the value to null. Output text should only be a JSON object no matter what; it must be able to be parsed to a JSON object. DO NOT include a prefix of ```json or anything"
+                                }
+                            ]
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "image_url",
+                                    "image_url": { 
+                                    "url": "{{fileBase64}}",
+                                    "detail": "auto" 
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+                """;
+
+            try
+            {
+                BinaryData input = BinaryData.FromString(promptString);
+
+                using BinaryContent content = BinaryContent.Create(input);
+
+                ClientResult result = await client.CompleteChatAsync(content);
+
+                BinaryData output = result.GetRawResponse().Content;
+
+                using JsonDocument outputJson = JsonDocument.Parse(output.ToString());
+
+                string outputString = outputJson.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString()!;
+                Console.WriteLine("<------ Final JSON Result " + outputString);
+
+                return Ok(outputString);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error during summarization: " + ex.Message);
+                return StatusCode(500, "Internal server error during summarization.");
+            }
         }
     }
 }

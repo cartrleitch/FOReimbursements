@@ -9,8 +9,6 @@ export const GlobalLoading: React.FC = () => {
     return (
         <div className="loading-overlay">
             <div className="loading-message">Processing...</div>
-            <br />
-            <div className="loading-message">Thank you for your patience.</div>
         </div>
     );
 };
