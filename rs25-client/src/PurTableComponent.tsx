@@ -11,6 +11,7 @@ import {
 import { toast } from "react-toastify";
 import OpenAI from "openai";
 import { useLoading } from "./LoadingContext";
+import { usePurchaseFunctions } from "./purchaseFunctions";
 
 export interface Purchase {
   id: number;
@@ -89,7 +90,7 @@ export function PurchaseTable({
   const [datep, setDate] = React.useState("");
     const [file, setFile] = React.useState<File | null>(null);
     const { setLoading } = useLoading();
-    const openAiKey = process.env.REACT_APP_OPENAI_API_KEY;
+    const { getAISummary } = usePurchaseFunctions();
 
     const toBase64 = (file: File | null): Promise<string> => {
         if (!file) {
@@ -145,36 +146,17 @@ export function PurchaseTable({
         setFile(event.target.files[0]);
         setLoading(true);
 
-        const client = new OpenAI({ apiKey: openAiKey, dangerouslyAllowBrowser: true });
         try {
             const fileBase64 = await toBase64(event.target.files[0]);
-            console.log("File converted to base64:", fileBase64);
-            console.log(event.target.files[0]);
-            const response =
-                await client.responses.create({
-                    model: "gpt-4.1-mini",
-                    input: [
-                        {
-                            role: "user",
-                            content:
-                                "Read this receipt and return a JSON with date, descriptionOfPurchase, and total. descriptionOfPurchase should be a 1-50 word summary of the purchase. Date should be in ISO 8601 format YYYY-MM-DD. If a piece of information is not available, set the value to null. Output text should only be a JSON object no matter what; it must be able to be parsed to a JSON object. DO NOT include a prefix of ```json or anything",
-                        },
-                        {
-                            role: "user",
-                            content: [
-                                {
-                                    type: "input_image",
-                                    image_url: `${fileBase64}`,
-                                        detail: "auto"
-                                },
-                            ],
-                        },
-                    ],
-                });
-            const receiptData = JSON.parse(response.output_text)
-            setAmount(receiptData.total || "");
-            setDescription(receiptData.descriptionOfPurchase || "");
-            setDate(receiptData.date || "");
+
+            await getAISummary(fileBase64).then((receiptData) => {
+                console.log("Received receipt data from OpenAI:", receiptData);
+                if (receiptData) {
+                    setAmount(receiptData.total || "");
+                    setDescription(receiptData.descriptionOfPurchase || "");
+                    setDate(receiptData.date || "");
+                }
+            });
         }
         catch (error) {
             console.error("Error processing receipt with OpenAI:", error);
@@ -244,7 +226,7 @@ export function PurchaseTable({
           />
           <FileInput
             id="receipts"
-            label="Receipts"
+            label="Receipt (Please ensure receipt is readable to ensure accurate AI autofill results)"
             onChange={handleFileChange}
             ref={inputRef}
           />

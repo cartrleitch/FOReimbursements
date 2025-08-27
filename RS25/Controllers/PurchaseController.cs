@@ -171,6 +171,12 @@ namespace RS25.Controllers
         [Authorize]
         public async Task<IActionResult> SummarizeReceipt([FromBody] string fileBase64)
         {
+            Console.WriteLine("<------ Received file data for summarization" + fileBase64);
+            if (fileBase64 == null)
+                {
+                return BadRequest("File data is null");
+            }
+
             ChatClient client = new(
                 model: "gpt-4.1-mini",
                 apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY")
@@ -205,16 +211,28 @@ namespace RS25.Controllers
                 }
                 """;
 
-            BinaryData input = BinaryData.FromString(promptString);
-            using BinaryContent content = BinaryContent.Create(input);
-            ClientResult result = await client.CompleteChatAsync(content);
-            BinaryData output = result.GetRawResponse().Content;
+            try
+            {
+                BinaryData input = BinaryData.FromString(promptString);
 
-            using JsonDocument outputJson = JsonDocument.Parse(output.ToString());
-            string outputString = outputJson.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString()!;
-            Console.WriteLine("<------ Final JSON Result " + outputString);
+                using BinaryContent content = BinaryContent.Create(input);
 
-            return Ok(outputString);
+                ClientResult result = await client.CompleteChatAsync(content);
+
+                BinaryData output = result.GetRawResponse().Content;
+
+                using JsonDocument outputJson = JsonDocument.Parse(output.ToString());
+
+                string outputString = outputJson.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString()!;
+                Console.WriteLine("<------ Final JSON Result " + outputString);
+
+                return Ok(outputString);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error during summarization: " + ex.Message);
+                return StatusCode(500, "Internal server error during summarization.");
+            }
         }
     }
 }

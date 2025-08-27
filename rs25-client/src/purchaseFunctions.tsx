@@ -192,6 +192,32 @@ export function usePurchaseFunctions() {
     }
   }
 
+  async function getAISummary(fileBase64: string) {
+    setLoading(true);
+      setError(null);
+      console.log(fileBase64);
+    try {
+      const response = await fetch(`${API_URL}/summary`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+          body: JSON.stringify(fileBase64),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+        const data = await response.json();
+      return data;
+    } catch (err: any) {
+      setError(err.message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     data,
     loading,
@@ -201,5 +227,6 @@ export function usePurchaseFunctions() {
     deletePurchase,
     updatePurchase,
     fetchPurchaseByReimId,
+    getAISummary,
   };
 }
