@@ -146,23 +146,40 @@ export function InputFieldTextArea({
   label,
   onChange,
   value,
+  readonly = false,
+  disabled = false,
 }: {
   id: string;
-  placeholder: string;
+  placeholder?: string;
   label: string;
   onChange?: (e: any) => void;
   value?: string;
+  readonly?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <div>
       <label htmlFor={id}>{label}</label>
-      <textarea
-        id={id}
-        placeholder={placeholder}
-        className="text-area-input"
-        onChange={onChange}
-        value={value}
-      />
+      {disabled ? (
+        <textarea
+          id={id}
+          placeholder={placeholder}
+          className="text-area-input"
+          onChange={onChange}
+          value={value}
+          readOnly={readonly}
+          disabled
+        />
+      ) : (
+        <textarea
+          id={id}
+          placeholder={placeholder}
+          className="text-area-input"
+          onChange={onChange}
+          value={value}
+          readOnly={readonly}
+        />
+      )}
     </div>
   );
 }
@@ -271,6 +288,14 @@ export function Title({ content }: { content: string }) {
   return (
     <div className="content-title-container">
       <h1 className="content-title">{content}</h1>
+    </div>
+  );
+}
+
+export function SmallerTitle({ content }: { content: string }) {
+  return (
+    <div className="content-title-container">
+      <h2 className="content-title">{content}</h2>
     </div>
   );
 }

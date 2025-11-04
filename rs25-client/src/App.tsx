@@ -4,6 +4,7 @@ import {
   Route,
   Link,
   useNavigate,
+  useSearchParams,
 } from "react-router-dom";
 import { useReimbursementFunctions } from "./reimbursementFunctions";
 import {
@@ -16,6 +17,7 @@ import {
   SpookyButton,
   Button,
   InputRadio,
+  SmallerTitle,
 } from "./Components";
 import { ReimbursementTable } from "./ReimTableComponent";
 import { PurchaseTable, Purchase } from "./PurTableComponent";
@@ -30,7 +32,7 @@ import { useEmailFunctions } from "./emailFunctions";
 import { useAuth } from "./AuthContext";
 import { PrivateRoute } from "./PrivateRoute";
 import { fetchAppUserById, updateAppUser } from "./applicationUserFunctions";
-import { GlobalLoading } from "./LoadingOverlay"; 
+import { GlobalLoading } from "./LoadingOverlay";
 function AboutPage() {
   return (
     <div className="content">
@@ -363,8 +365,8 @@ function CreateReimbursementPage() {
 }
 function LoginPage() {
   const nav = useNavigate();
-    const auth = useAuth();
-    const apiUrl = process.env.REACT_APP_API_URL;
+  const auth = useAuth();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const login = async (e: any) => {
     e.preventDefault();
@@ -381,7 +383,7 @@ function LoginPage() {
     }
 
     try {
-        const response = await fetch(`${apiUrl}/api/Auth/login`, {
+      const response = await fetch(`${apiUrl}/api/Auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -615,6 +617,159 @@ function AccountPage() {
     </div>
   );
 }
+
+function DetailsPage() {
+  interface PurchaseDetails {
+    id: number;
+    account: string;
+    description: string;
+    amount: number;
+    purchaseDate: string;
+    reimId: string;
+  }
+
+  const [searchParams] = useSearchParams();
+  const selectedReimId = Number(searchParams.get("id") || "");
+  const { fetchReimbursementById } = useReimbursementFunctions();
+  const { fetchPurchaseByReimId } = usePurchaseFunctions();
+  const [purchases, setPurchases] = React.useState<PurchaseDetails[]>([]);
+  const [reimbursement, setReimbursement] = React.useState<any>(null);
+  console.log("Banana Selected Reimbursement ID:", selectedReimId);
+  React.useEffect(() => {
+    if (selectedReimId) {
+      fetchReimbursementById(selectedReimId).then((data) => {
+        setReimbursement(data);
+      });
+      fetchPurchaseByReimId(selectedReimId).then((data) => {
+        setPurchases(data);
+      });
+    }
+  }, []);
+
+  if (!reimbursement) {
+    return <div>Loading...</div>;
+  }
+  return (
+    <div className="content">
+      <Title content="Reimbursement Details" />
+      <div>
+        <form className="normal-form">
+          <InputField
+            id="userName"
+            type="text"
+            label="Submitted By"
+            defaultValue={reimbursement.userName}
+            readonly={true}
+          />
+          <InputField
+            id="actionRequested"
+            type="text"
+            label="Action Requested"
+            defaultValue={reimbursement.actionRequested}
+            readonly={true}
+          />
+          <InputField
+            id="status"
+            type="text"
+            label="Status"
+            defaultValue={reimbursement.status}
+            readonly={true}
+          />
+          <InputField
+            id="dateSubmitted"
+            type="text"
+            label="Date Submitted"
+            defaultValue={reimbursement.dateSubmitted.split("T")[0]}
+            readonly={true}
+          />
+          {reimbursement.dateApproved && (
+            <InputField
+              id="dateApproved"
+              type="text"
+              label="Date Approved"
+              defaultValue={reimbursement.dateApproved.split("T")[0]}
+              readonly={true}
+            />
+          )}
+          <InputField
+            id="totalAmount"
+            type="text"
+            label="Total Amount"
+            defaultValue={reimbursement.totalAmount.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })}
+            readonly={true}
+          />
+          {reimbursement.vendorName && (
+            <InputField
+              id="vendorName"
+              type="text"
+              label="Vendor Name"
+              defaultValue={reimbursement.vendorName}
+              readonly={true}
+            />
+          )}
+          {reimbursement.vendorWebsite && (
+            <InputField
+              id="vendorWebsite"
+              type="text"
+              label="Vendor Website"
+              defaultValue={reimbursement.vendorWebsite}
+              readonly={true}
+            />
+          )}
+        </form>
+      </div>
+      <div>
+        {purchases.length > 0
+          ? purchases.map((purchase, index) => (
+              <div key={index}>
+                <SmallerTitle content={`Purchase ${index + 1}`}></SmallerTitle>
+                <form className="normal-form">
+                  <InputField
+                    id={`account-${index}`}
+                    type="text"
+                    label="Account"
+                    defaultValue={purchase.account}
+                    readonly={true}
+                  />
+                  <InputFieldTextArea
+                    id={`description-${index}`}
+                    label="Description"
+                    value={purchase.description}
+                    readonly={true}
+                    disabled={true}
+                  />
+                  <InputField
+                    id={`amount-${index}`}
+                    type="text"
+                    label="Amount"
+                    defaultValue={Number(purchase.amount).toLocaleString(
+                      "en-US",
+                      {
+                        style: "currency",
+                        currency: "USD",
+                      }
+                    )}
+                    readonly={true}
+                  />
+                  <InputField
+                    id={`date-${index}`}
+                    type="text"
+                    label="Date"
+                    defaultValue={purchase.purchaseDate.split("T")[0]}
+                    readonly={true}
+                  />
+                </form>
+              </div>
+            ))
+          : ""}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const auth = useAuth();
 
@@ -666,7 +821,7 @@ function App() {
             </li>
           </ul>
         </nav>
-              <GlobalLoading />
+        <GlobalLoading />
         <Routes>
           <Route
             path="/"
@@ -697,6 +852,7 @@ function App() {
           <Route path="/Account/login" element={<LoginPage />} />
           <Route path="/Account/logout" element={<LogoutPage />} />
           <Route path="/Account/accessdenied" element={<AccessDeniedPage />} />
+          <Route path="/details" element={<DetailsPage />} />
           <Route
             path="/Account"
             element={
