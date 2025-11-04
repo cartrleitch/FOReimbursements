@@ -1,4 +1,3 @@
-import { Console } from "console";
 import { toast } from "react-toastify";
 
 export function useEmailFunctions() {

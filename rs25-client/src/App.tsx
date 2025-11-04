@@ -686,7 +686,8 @@ function DetailsPage() {
       fetchPurchaseByReimId(selectedReimId).then((data) => {
         setPurchases(data);
       });
-    }
+      }
+      // eslint-disable-next-line
   }, []);
 
   if (!reimbursement) {
