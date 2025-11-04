@@ -88,21 +88,21 @@ export function PurchaseTable({
   const [descriptionp, setDescription] = React.useState("");
   const [amountp, setAmount] = React.useState("");
   const [datep, setDate] = React.useState("");
-    const [file, setFile] = React.useState<File | null>(null);
-    const { setLoading } = useLoading();
-    const { getAISummary } = usePurchaseFunctions();
+  const [file, setFile] = React.useState<File | null>(null);
+  const { setLoading } = useLoading();
+  const { getAISummary } = usePurchaseFunctions();
 
-    const toBase64 = (file: File | null): Promise<string> => {
-        if (!file) {
-            return Promise.reject(new Error("No file provided"));
-        }
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = (error) => reject(error);
-        });
+  const toBase64 = (file: File | null): Promise<string> => {
+    if (!file) {
+      return Promise.reject(new Error("No file provided"));
     }
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   const addPurchase = () => {
     if (!accountp || !descriptionp || !amountp || !datep || file == null) {
@@ -141,30 +141,30 @@ export function PurchaseTable({
     updateTotalAmount?.(newRowsList);
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files && event.target.files.length > 0) {
-        setFile(event.target.files[0]);
-        setLoading(true);
+      setFile(event.target.files[0]);
+      setLoading(true);
 
-        try {
-            const fileBase64 = await toBase64(event.target.files[0]);
+      try {
+        const fileBase64 = await toBase64(event.target.files[0]);
 
-            await getAISummary(fileBase64).then((receiptData) => {
-                console.log("Received receipt data from OpenAI:", receiptData);
-                if (receiptData) {
-                    setAmount(receiptData.total || "");
-                    setDescription(receiptData.descriptionOfPurchase || "");
-                    setDate(receiptData.date || "");
-                }
-            });
-        }
-        catch (error) {
-            console.error("Error processing receipt with OpenAI:", error);
-            toast.error("Failed to process receipt with OpenAI.");
-        }
-        finally {
-            setLoading(false);
-        }
+        await getAISummary(fileBase64).then((receiptData) => {
+          console.log("Received receipt data from OpenAI:", receiptData);
+          if (receiptData) {
+            setAmount(receiptData.total || "");
+            setDescription(receiptData.descriptionOfPurchase || "");
+            setDate(receiptData.date || "");
+          }
+        });
+      } catch (error) {
+        console.error("Error processing receipt with OpenAI:", error);
+        toast.error("Failed to process receipt with OpenAI.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 

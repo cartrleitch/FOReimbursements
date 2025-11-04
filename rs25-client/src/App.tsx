@@ -33,6 +33,7 @@ import { useAuth } from "./AuthContext";
 import { PrivateRoute } from "./PrivateRoute";
 import { fetchAppUserById, updateAppUser } from "./applicationUserFunctions";
 import { GlobalLoading } from "./LoadingOverlay";
+import { jsPDF } from "jspdf";
 function AboutPage() {
   return (
     <div className="content">
@@ -193,49 +194,99 @@ function CreateReimbursementPage() {
     const newReimResponse = await createReimbursement();
     const newReimId = newReimResponse.id;
     console.log("New Reimbursement ID:", newReimId);
+
     if (newReimId >= 0) {
       const rowsPurWithId = rowsPur.map((purchase) => ({
         ...purchase,
         reimId: newReimId.toString(),
       }));
       const successPur = await createPurchase(rowsPurWithId);
+
       if (successPur) {
-        var reimbursee: string | undefined = "";
-        if (newReimResponse.vendorName) {
-          reimbursee = newReimResponse.vendorName;
-        } else {
-          reimbursee = auth?.user?.username;
-        }
-        var purchaseInfo = `Reimbursement Info\nSubmitted by: ${
-          auth?.user?.username
-        }\nReimbursee: ${reimbursee}\nAction Requested: ${
-          newReimResponse.actionRequested
-        }
-        \nTotal: ${newReimResponse.totalAmount.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        })}\nDate Submitted: ${newReimResponse.dateSubmitted.split("T")[0]}`;
-
-        var purCounter = 0;
-
-        for (const purchase of rowsPurWithId) {
-          purCounter++;
-
-          purchaseInfo += `\nPurchase ${purCounter}\nAccount: ${
-            purchase.accountp
-          }\nDescription: ${purchase.descriptionp}\nAmount: ${Number(
-            purchase.amountp
-          ).toLocaleString("en-US", {
+        const doc = new jsPDF();
+        doc.setFontSize(16);
+        doc.text("Reimbursement Details", 10, 10);
+        doc.setFontSize(12);
+        doc.text(`Submitted by: ${auth?.user?.username}`, 10, 20);
+        doc.text(
+          `Reimbursee: ${newReimResponse.vendorName || auth?.user?.username}`,
+          10,
+          30
+        );
+        doc.text(
+          `Address: ${auth?.user?.address}, ${auth?.user?.city}, ${auth?.user?.state}, ${auth?.user?.zipCode}`,
+          10,
+          40
+        );
+        doc.text(
+          `Action Requested: ${newReimResponse.actionRequested}`,
+          10,
+          50
+        );
+        doc.text(
+          `Total: ${newReimResponse.totalAmount.toLocaleString("en-US", {
             style: "currency",
             currency: "USD",
-          })}\nDate: ${purchase.datep}\n`;
-        }
+          })}`,
+          10,
+          60
+        );
+        doc.text(
+          `Date Submitted: ${newReimResponse.dateSubmitted.split("T")[0]}`,
+          10,
+          70
+        );
+
+        let yOffset = 85;
+        rowsPurWithId.forEach((purchase, index) => {
+          doc.text(`Purchase ${index + 1}`, 10, yOffset);
+          doc.text(`Account: ${purchase.accountp}`, 10, yOffset + 10);
+          doc.text(`Description: ${purchase.descriptionp}`, 10, yOffset + 20);
+          doc.text(
+            `Amount: ${Number(purchase.amountp).toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })}`,
+            10,
+            yOffset + 30
+          );
+          doc.text(`Date: ${purchase.datep}`, 10, yOffset + 40);
+          yOffset += 50;
+          if (purchase.file) {
+            const fileURL = URL.createObjectURL(purchase.file);
+            const img = new Image();
+            img.src = fileURL;
+
+            if (yOffset + 100 > doc.internal.pageSize.height) {
+              doc.addPage();
+              yOffset = 10;
+            }
+
+            doc.addImage(img, "JPEG", 10, yOffset, 100, 100);
+          }
+          yOffset += 110;
+        });
+
+        /*for (const purchase of rowsPurWithId) {
+                if (purchase.file) {
+                    const fileURL = URL.createObjectURL(purchase.file);
+                    const img = new Image();
+                    img.src = fileURL;
+                    doc.addImage(img, 'JPEG', 10, yOffset, 100, 100);
+                    yOffset += 100;
+                }
+            }*/
+
+        doc.save(`Reimbursement_${newReimId}_Details.pdf`);
+
+        const pdfBlob = doc.output("blob");
 
         // to should be email address of admin
         const data = {
           to: `carterleitch@gmail.com`,
           subject: `New Reimbursement Created!`,
-          content: purchaseInfo,
+          content: "WIP",
+          attachment: pdfBlob,
         };
         sendEmail(data);
         toast.success("Reimbursement created successfully!");
