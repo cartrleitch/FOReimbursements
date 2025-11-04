@@ -54,6 +54,14 @@ namespace RS25.Controllers
                 IsBodyHtml = false
             };
             mail.To.Add(new MailAddress(to));
+            if (!string.IsNullOrEmpty(email.AttachmentB64) && !string.IsNullOrEmpty(email.AttachmentFileName))
+            {
+                var attachmentBytes = Convert.FromBase64String(email.AttachmentB64);
+                var attachmentStream = new MemoryStream(attachmentBytes);
+                var attachment = new Attachment(attachmentStream, email.AttachmentFileName);
+                mail.Attachments.Add(attachment);
+            }
+
             await client.SendMailAsync(mail);
             return Ok("Email sent successfully");
         }

@@ -171,7 +171,7 @@ namespace RS25.Controllers
         [Authorize]
         public async Task<IActionResult> SummarizeReceipt([FromBody] string fileBase64)
         {
-            Console.WriteLine("<------ Received file data for summarization" + fileBase64);
+            //Console.WriteLine("<------ Received file data for summarization" + fileBase64);
             if (fileBase64 == null)
                 {
                 return BadRequest("File data is null");
@@ -224,7 +224,7 @@ namespace RS25.Controllers
                 using JsonDocument outputJson = JsonDocument.Parse(output.ToString());
 
                 string outputString = outputJson.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString()!;
-                Console.WriteLine("<------ Final JSON Result " + outputString);
+                //Console.WriteLine("<------ Final JSON Result " + outputString);
 
                 return Ok(outputString);
             }

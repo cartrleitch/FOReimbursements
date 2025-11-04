@@ -212,16 +212,17 @@ function CreateReimbursementPage() {
           `Reimbursee: ${newReimResponse.vendorName || auth?.user?.username}`,
           10,
           30
-        );
+          );
+          doc.text(`Phone Number: ${auth?.user?.phoneNumber}`, 10, 40);
         doc.text(
           `Address: ${auth?.user?.address}, ${auth?.user?.city}, ${auth?.user?.state}, ${auth?.user?.zipCode}`,
           10,
-          40
+          50
         );
         doc.text(
           `Action Requested: ${newReimResponse.actionRequested}`,
           10,
-          50
+          60
         );
         doc.text(
           `Total: ${newReimResponse.totalAmount.toLocaleString("en-US", {
@@ -229,15 +230,15 @@ function CreateReimbursementPage() {
             currency: "USD",
           })}`,
           10,
-          60
+          70
         );
         doc.text(
           `Date Submitted: ${newReimResponse.dateSubmitted.split("T")[0]}`,
           10,
-          70
+          80
         );
 
-        let yOffset = 85;
+        let yOffset = 95;
         rowsPurWithId.forEach((purchase, index) => {
           doc.text(`Purchase ${index + 1}`, 10, yOffset);
           doc.text(`Account: ${purchase.accountp}`, 10, yOffset + 10);
@@ -267,7 +268,7 @@ function CreateReimbursementPage() {
           yOffset += 110;
         });
 
-        doc.save(`Reimbursement_${newReimId}_Details.pdf`);
+        // doc.save(`Reimbursement_${newReimId}_Details.pdf`);
 
         const pdfBlob = doc.output("blob");
 
@@ -275,8 +276,9 @@ function CreateReimbursementPage() {
         const data = {
           to: `carterleitch@gmail.com`,
           subject: `New Reimbursement Created!`,
-          content: "WIP",
+          content: "Reimbursement request PDF is attached.",
           attachment: pdfBlob,
+          attachmentFileName: `Reimbursement_${newReimId}_Details.pdf`,
         };
         sendEmail(data);
         toast.success("Reimbursement created successfully!");
