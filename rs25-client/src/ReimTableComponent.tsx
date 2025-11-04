@@ -12,6 +12,7 @@ import { usePurchaseFunctions } from "./purchaseFunctions";
 import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import { useEmailFunctions } from "./emailFunctions";
+import { useNavigate } from "react-router-dom";
 
 export interface Reimbursement {
   id: number;
@@ -128,9 +129,24 @@ export function ReimbursementTable({
   const auth = useAuth();
   const { sendEmail } = useEmailFunctions();
 
+  function DetailsButton() {
+    const navigate = useNavigate();
+
+    function handleDetailsClick() {
+      if (selectedRowId === null) {
+        toast.error("No row selected!");
+        return null;
+      }
+      navigate(`/details?id=${selectedRowId}`);
+    }
+
+    return <Button onClick={handleDetailsClick} content="Details" />;
+  }
+
   return (
     <div className="reim-table">
       <div className="table-button-div">
+        <DetailsButton />
         <RedirectButton to="/create" content="New" />
         <Button
           onClick={() => {
