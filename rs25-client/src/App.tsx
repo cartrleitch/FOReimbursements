@@ -267,16 +267,6 @@ function CreateReimbursementPage() {
           yOffset += 110;
         });
 
-        /*for (const purchase of rowsPurWithId) {
-                if (purchase.file) {
-                    const fileURL = URL.createObjectURL(purchase.file);
-                    const img = new Image();
-                    img.src = fileURL;
-                    doc.addImage(img, 'JPEG', 10, yOffset, 100, 100);
-                    yOffset += 100;
-                }
-            }*/
-
         doc.save(`Reimbursement_${newReimId}_Details.pdf`);
 
         const pdfBlob = doc.output("blob");
