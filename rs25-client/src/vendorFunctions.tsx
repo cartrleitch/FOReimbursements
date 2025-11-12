@@ -21,13 +21,33 @@ export async function fetchVendors() {
     }
 }
 
+export async function fetchVendorByID(vendorID: number) {
+    try {
+        const response = await fetch(`${API_URL}/${vendorID}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        return result;
+    } catch (err: any) {
+        console.error(`Failed to fetch vendor by ID: ${err.message}`);
+        throw err;
+    }
+}
+
 export async function createVendor(vendorData: {
     name: string;
     address?: string;
     website?: string;
     city?: string;
     state?: string;
-    zip?: string;
+    zipCode?: string;
 }) {
     try {
         const response = await fetch(API_URL, {

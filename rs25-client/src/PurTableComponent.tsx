@@ -9,7 +9,6 @@ import {
   FileInput,
 } from "./Components";
 import { toast } from "react-toastify";
-import OpenAI from "openai";
 import { useLoading } from "./LoadingContext";
 import { usePurchaseFunctions } from "./purchaseFunctions";
 

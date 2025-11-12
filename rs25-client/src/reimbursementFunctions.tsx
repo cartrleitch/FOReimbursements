@@ -144,7 +144,7 @@ export function useReimbursementFunctions() {
         website: vendorWebsite,
         city: vendorCity,
         state: vendorState,
-        zip: vendorZip,
+        zipCode: vendorZip,
       };
       const vendorResponse = await createVendor(vendorData);
       console.log("Vendor response:", vendorResponse);

@@ -34,6 +34,7 @@ import { PrivateRoute } from "./PrivateRoute";
 import { fetchAppUserById, updateAppUser } from "./applicationUserFunctions";
 import { GlobalLoading } from "./LoadingOverlay";
 import { jsPDF } from "jspdf";
+import { fetchVendorByID } from "./vendorFunctions";
 function AboutPage() {
   return (
     <div className="content">
@@ -166,6 +167,7 @@ function CreateReimbursementPage() {
   const { sendEmail } = useEmailFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
+  const [vendorInfo, setVendorInfo] = React.useState<any>(null);
 
   const nav = useNavigate();
   const auth = useAuth();
@@ -203,26 +205,60 @@ function CreateReimbursementPage() {
       const successPur = await createPurchase(rowsPurWithId);
 
       if (successPur) {
+        let vendorData = null;
+        console.log("new reimbursement: ", newReimResponse);
+        if (newReimResponse.vendorId) {
+          console.log("Fetching vendor info for ID:", newReimResponse.vendorId);
+          vendorData = await fetchVendorByID(Number(newReimResponse.vendorId));
+          setVendorInfo(vendorData);
+        }
+        console.log("VendorInfo: ", vendorInfo);
+
         const doc = new jsPDF();
         doc.setFontSize(16);
         doc.text("Reimbursement Details", 10, 10);
         doc.setFontSize(12);
-        doc.text(`Submitted by: ${auth?.user?.username}`, 10, 20);
+
+        let yOffset = 20;
+
+        doc.text(`Submitted by: ${auth?.user?.username}`, 10, (yOffset += 10));
+        doc.text(
+          `User Phone Number: ${auth?.user?.phoneNumber}`,
+          10,
+          (yOffset += 10)
+        );
         doc.text(
           `Reimbursee: ${newReimResponse.vendorName || auth?.user?.username}`,
           10,
-          30
-          );
-          doc.text(`Phone Number: ${auth?.user?.phoneNumber}`, 10, 40);
-        doc.text(
-          `Address: ${auth?.user?.address}, ${auth?.user?.city}, ${auth?.user?.state}, ${auth?.user?.zipCode}`,
-          10,
-          50
+          (yOffset += 10)
         );
+
+        if (vendorData) {
+          doc.text(
+            `Address: ${vendorData.address || ""}, ${vendorData.city || ""}, ${
+              vendorData.state || ""
+            }, ${vendorData.zipCode || ""}`,
+            10,
+            (yOffset += 10)
+          );
+        } else {
+          doc.text(
+            `Address: ${auth?.user?.address}, ${auth?.user?.city}, ${auth?.user?.state}, ${auth?.user?.zipCode}`,
+            10,
+            (yOffset += 10)
+          );
+        }
+        if (vendorData && vendorData.website) {
+          doc.text(
+            `Reimbursee Website: ${vendorData.website}`,
+            10,
+            (yOffset += 10)
+          );
+        }
         doc.text(
           `Action Requested: ${newReimResponse.actionRequested}`,
           10,
-          60
+          (yOffset += 10)
         );
         doc.text(
           `Total: ${newReimResponse.totalAmount.toLocaleString("en-US", {
@@ -230,15 +266,15 @@ function CreateReimbursementPage() {
             currency: "USD",
           })}`,
           10,
-          70
+          (yOffset += 10)
         );
         doc.text(
           `Date Submitted: ${newReimResponse.dateSubmitted.split("T")[0]}`,
           10,
-          80
+          (yOffset += 10)
         );
 
-        let yOffset = 95;
+        yOffset += 15;
         rowsPurWithId.forEach((purchase, index) => {
           doc.text(`Purchase ${index + 1}`, 10, yOffset);
           doc.text(`Account: ${purchase.accountp}`, 10, yOffset + 10);
@@ -280,6 +316,7 @@ function CreateReimbursementPage() {
           attachment: pdfBlob,
           attachmentFileName: `Reimbursement_${newReimId}_Details.pdf`,
         };
+        console.log("<----- Final vendorInfo:", vendorInfo);
         sendEmail(data);
         toast.success("Reimbursement created successfully!");
         nav("/");
@@ -677,22 +714,30 @@ function DetailsPage() {
   const { fetchPurchaseByReimId } = usePurchaseFunctions();
   const [purchases, setPurchases] = React.useState<PurchaseDetails[]>([]);
   const [reimbursement, setReimbursement] = React.useState<any>(null);
-  console.log("Banana Selected Reimbursement ID:", selectedReimId);
+  const [vendorInfo, setVendorInfo] = React.useState<any>(null);
+
   React.useEffect(() => {
     if (selectedReimId) {
       fetchReimbursementById(selectedReimId).then((data) => {
         setReimbursement(data);
+        if (data.vendorId) {
+          fetchVendorByID(Number(data.vendorId)).then((vendorData) => {
+            setVendorInfo(vendorData);
+          });
+        }
       });
       fetchPurchaseByReimId(selectedReimId).then((data) => {
         setPurchases(data);
       });
-      }
-      // eslint-disable-next-line
+    }
+    // eslint-disable-next-line
   }, []);
+  console.log("Reimbursement Data:", reimbursement);
 
   if (!reimbursement) {
     return <div>Loading...</div>;
   }
+  console.log(vendorInfo);
   return (
     <div className="content">
       <Title content="Reimbursement Details" />
@@ -749,16 +794,54 @@ function DetailsPage() {
             <InputField
               id="vendorName"
               type="text"
-              label="Vendor Name"
+              label="Reimbursee Name"
               defaultValue={reimbursement.vendorName}
               readonly={true}
             />
           )}
+          {vendorInfo && vendorInfo.address && (
+            <InputField
+              id="vendorAddress"
+              type="text"
+              label="Reimbursee Address"
+              defaultValue={vendorInfo.address}
+              readonly={true}
+            />
+          )}
+
+          {vendorInfo && vendorInfo.city && (
+            <InputField
+              id="vendorCity"
+              type="text"
+              label="Reimbursee City"
+              defaultValue={vendorInfo.city}
+              readonly={true}
+            />
+          )}
+          {vendorInfo && vendorInfo.state && (
+            <InputField
+              id="vendorState"
+              type="text"
+              label="Reimbursee State"
+              defaultValue={vendorInfo.state}
+              readonly={true}
+            />
+          )}
+          {vendorInfo && vendorInfo.zipCode && (
+            <InputField
+              id="vendorZip"
+              type="text"
+              label="Reimbursee Zip Code"
+              defaultValue={vendorInfo.zipCode}
+              readonly={true}
+            />
+          )}
+
           {reimbursement.vendorWebsite && (
             <InputField
               id="vendorWebsite"
               type="text"
-              label="Vendor Website"
+              label="Reimbursee Website"
               defaultValue={reimbursement.vendorWebsite}
               readonly={true}
             />
