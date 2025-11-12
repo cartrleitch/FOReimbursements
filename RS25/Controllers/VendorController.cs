@@ -23,6 +23,20 @@ namespace RS25.Controllers
             var vendors = await _context.Vendor.ToListAsync();
             return Ok(vendors);
         }
+
+        // GET: api/vendor/{id} 
+        [HttpGet("{id}", Name = "GetVendorById")]
+        [Authorize]
+        public async Task<IActionResult> GetVendorById(int id)
+        {
+            var vendor = await _context.Vendor.FindAsync(id);
+            if (vendor == null)
+            {
+                return NotFound("Vendor not found");
+            }
+            return Ok(vendor);
+        }
+
         // POST: api/vendor
         [HttpPost(Name = "CreateVendor")]
         [Authorize]

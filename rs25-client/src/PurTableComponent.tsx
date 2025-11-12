@@ -7,12 +7,11 @@ import {
   InputFieldTextArea,
   InputSelect,
   FileInput,
+  InputRadio,
 } from "./Components";
 import { toast } from "react-toastify";
-import OpenAI from "openai";
 import { useLoading } from "./LoadingContext";
 import { usePurchaseFunctions } from "./purchaseFunctions";
-
 export interface Purchase {
   id: number;
   accountp: string;
@@ -90,7 +89,7 @@ export function PurchaseTable({
   const [datep, setDate] = React.useState("");
   const [file, setFile] = React.useState<File | null>(null);
   const { setLoading } = useLoading();
-  const { getAISummary } = usePurchaseFunctions();
+  const { getAISummary, hasReceipt, setHasReceipt } = usePurchaseFunctions();
 
   const toBase64 = (file: File | null): Promise<string> => {
     if (!file) {
@@ -105,8 +104,15 @@ export function PurchaseTable({
   };
 
   const addPurchase = () => {
-    if (!accountp || !descriptionp || !amountp || !datep || file == null) {
+    if (!accountp || !descriptionp || !amountp || !datep) {
       toast.error("Please fill in all purchase fields correctly.");
+    } else if (hasReceipt === "receipt" && file == null) {
+      toast.error(
+        "Please upload a receipt file or select 'Does not have receipt.'"
+      );
+    } else if (hasReceipt === "noreceipt" && file != null) {
+      toast.error("Please remove the receipt file or select 'Has receipt.'");
+      setFile(null);
     } else {
       const newPurchase: Purchase = {
         id: rows.length + 1,
@@ -224,12 +230,39 @@ export function PurchaseTable({
             onChange={(e) => setDate(e.target.value)}
             value={datep}
           />
-          <FileInput
-            id="receipts"
-            label="Receipt (Please ensure receipt is readable to ensure accurate AI autofill results)"
-            onChange={handleFileChange}
-            ref={inputRef}
-          />
+          <label htmlFor="radio-container-fileinput">
+            Select if purchase has receipt.
+          </label>
+          <div className="radio-input-container" id="radio-container-fileinput">
+            <InputRadio
+              id="receipt"
+              value="receipt"
+              name="hasreceipt"
+              label="Has receipt"
+              checked={true}
+              onChange={(e) => setHasReceipt(e.target.value)}
+            />
+            <InputRadio
+              id="noreceipt"
+              value="noreceipt"
+              name="hasreceipt"
+              label="Does not have receipt"
+              onChange={(e) => setHasReceipt(e.target.value)}
+            />
+          </div>
+          {hasReceipt === "receipt" ? (
+            <FileInput
+              id="receipts"
+              label="Receipt (Please ensure receipt is readable to ensure accurate AI autofill results)"
+              onChange={handleFileChange}
+              ref={inputRef}
+            />
+          ) : (
+            <div>
+              <p></p>
+            </div>
+          )}
+
           <div className="pur-table-button-div">
             <Button
               content="Add Purchase"
