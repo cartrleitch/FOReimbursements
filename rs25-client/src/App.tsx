@@ -167,7 +167,6 @@ function CreateReimbursementPage() {
   const { sendEmail } = useEmailFunctions();
   const [rowsPur, setRowsPur] = React.useState<Purchase[]>([]);
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
-  const [vendorInfo, setVendorInfo] = React.useState<any>(null);
 
   const nav = useNavigate();
   const auth = useAuth();
@@ -206,13 +205,9 @@ function CreateReimbursementPage() {
 
       if (successPur) {
         let vendorData = null;
-        console.log("new reimbursement: ", newReimResponse);
         if (newReimResponse.vendorId) {
-          console.log("Fetching vendor info for ID:", newReimResponse.vendorId);
           vendorData = await fetchVendorByID(Number(newReimResponse.vendorId));
-          setVendorInfo(vendorData);
         }
-        console.log("VendorInfo: ", vendorInfo);
 
         const doc = new jsPDF();
         doc.setFontSize(16);
@@ -316,7 +311,6 @@ function CreateReimbursementPage() {
           attachment: pdfBlob,
           attachmentFileName: `Reimbursement_${newReimId}_Details.pdf`,
         };
-        console.log("<----- Final vendorInfo:", vendorInfo);
         sendEmail(data);
         toast.success("Reimbursement created successfully!");
         nav("/");
@@ -737,7 +731,6 @@ function DetailsPage() {
   if (!reimbursement) {
     return <div>Loading...</div>;
   }
-  console.log(vendorInfo);
   return (
     <div className="content">
       <Title content="Reimbursement Details" />

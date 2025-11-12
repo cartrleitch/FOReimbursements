@@ -40,22 +40,26 @@ namespace RS25.Controllers
             }
             var purchases = await _context.Purchase
                 .Where(p => p.ReimId == reimId)
-                .Join(
+                .GroupJoin(
                 _context.Receipt,
                 purchase => purchase.Id,
                 receipt => receipt.PurId,
-                (purchase, receipt) => new
+                (purchase, receipts) => new { purchase, receipts }
+                ).SelectMany(
+                a => a.receipts.DefaultIfEmpty(),
+                (a, receipt) => new
                 {
-                    purchase.Id,
-                    purchase.Account,
-                    purchase.Description,
-                    purchase.Amount,
-                    purchase.PurchaseDate,
-                    purchase.ReimId,
-                    receipt.FileName,
-                    receipt.FilePath
+                    a.purchase.Id,
+                    a.purchase.Account,
+                    a.purchase.Description,
+                    a.purchase.Amount,
+                    a.purchase.PurchaseDate,
+                    a.purchase.ReimId,
+                    FileName = receipt != null ?  receipt.FileName : null,
+                    FilePath = receipt != null ? receipt.FilePath : null
                 }
-                ).ToListAsync();
+                )
+                .ToListAsync();
             if (purchases == null)
             {
                 return NotFound("Purchase not found");
