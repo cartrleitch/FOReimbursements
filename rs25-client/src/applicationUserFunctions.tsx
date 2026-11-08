@@ -56,7 +56,7 @@ export function updateAppUser(
     city?: string;
     state?: string;
     zipCode?: string;
-  }
+  },
 ) {
   const API_URL = `${apiUrl}/api/ApplicationUser/${userId}`;
   console.log("Updating application user with ID:", userId);

@@ -86,15 +86,15 @@ body {
   font-family: "Roboto", sans-serif;
 }
 .inactive-input {
-    width: 100%;
-    padding: 8px;
-    margin: 8px 0;
-    box-sizing: border-box; /* Include padding and border in element's total width and height */
-    border: 1px solid #ccc; /* Light gray border */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 16px; /* Font size for input */
-    font-family: "Roboto", sans-serif;
-    background-color: #eaeaea; /* Light gray background for inactive input */
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size for input */
+  font-family: "Roboto", sans-serif;
+  background-color: #eaeaea; /* Light gray background for inactive input */
 }
 .text-area-input {
   width: 100%;
@@ -368,21 +368,21 @@ body {
 }
 
 .loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1000;
 }
 
 .loading-message {
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
 }

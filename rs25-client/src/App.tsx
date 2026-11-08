@@ -188,7 +188,7 @@ function CreateReimbursementPage() {
   const handleSubmit = async () => {
     if (rowsPur.length === 0) {
       toast.error(
-        "Please fill in all fields correctly and add at least one purchase."
+        "Please fill in all fields correctly and add at least one purchase.",
       );
       return;
     }
@@ -220,12 +220,12 @@ function CreateReimbursementPage() {
         doc.text(
           `User Phone Number: ${auth?.user?.phoneNumber}`,
           10,
-          (yOffset += 10)
+          (yOffset += 10),
         );
         doc.text(
           `Reimbursee: ${newReimResponse.vendorName || auth?.user?.username}`,
           10,
-          (yOffset += 10)
+          (yOffset += 10),
         );
 
         if (vendorData) {
@@ -234,26 +234,26 @@ function CreateReimbursementPage() {
               vendorData.state || ""
             }, ${vendorData.zipCode || ""}`,
             10,
-            (yOffset += 10)
+            (yOffset += 10),
           );
         } else {
           doc.text(
             `Address: ${auth?.user?.address}, ${auth?.user?.city}, ${auth?.user?.state}, ${auth?.user?.zipCode}`,
             10,
-            (yOffset += 10)
+            (yOffset += 10),
           );
         }
         if (vendorData && vendorData.website) {
           doc.text(
             `Reimbursee Website: ${vendorData.website}`,
             10,
-            (yOffset += 10)
+            (yOffset += 10),
           );
         }
         doc.text(
           `Action Requested: ${newReimResponse.actionRequested}`,
           10,
-          (yOffset += 10)
+          (yOffset += 10),
         );
         doc.text(
           `Total: ${newReimResponse.totalAmount.toLocaleString("en-US", {
@@ -261,12 +261,12 @@ function CreateReimbursementPage() {
             currency: "USD",
           })}`,
           10,
-          (yOffset += 10)
+          (yOffset += 10),
         );
         doc.text(
           `Date Submitted: ${newReimResponse.dateSubmitted.split("T")[0]}`,
           10,
-          (yOffset += 10)
+          (yOffset += 10),
         );
 
         yOffset += 15;
@@ -280,7 +280,7 @@ function CreateReimbursementPage() {
               currency: "USD",
             })}`,
             10,
-            yOffset + 30
+            yOffset + 30,
           );
           doc.text(`Date: ${purchase.datep}`, 10, yOffset + 40);
           yOffset += 50;
@@ -870,7 +870,7 @@ function DetailsPage() {
                       {
                         style: "currency",
                         currency: "USD",
-                      }
+                      },
                     )}
                     readonly={true}
                   />

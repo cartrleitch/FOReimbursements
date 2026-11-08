@@ -4,14 +4,14 @@ import { jwtDecode } from "jwt-decode";
 interface User {
   id: string;
   username: string;
-    role: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    address: string;
-    city: string;
-    state: string;
-    zipCode: string;
+  role: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
 }
 
 interface AuthContextType {
