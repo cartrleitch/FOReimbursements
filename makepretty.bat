@@ -1,0 +1,1 @@
+cd rs25-client && npx prettier --write "src/**/*.{js,jsx,ts,tsx,css}"

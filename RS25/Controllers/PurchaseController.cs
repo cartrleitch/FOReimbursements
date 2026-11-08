@@ -182,13 +182,13 @@ namespace RS25.Controllers
             }
 
             ChatClient client = new(
-                model: "gpt-4.1-mini",
+                model: "gpt-6-luna",
                 apiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY")
             );
 
             string promptString = $$"""
                 {
-                    "model": "gpt-4.1-mini",
+                    "model": "gpt-6-luna",
                     "messages": [
                         {
                             "role": "user",

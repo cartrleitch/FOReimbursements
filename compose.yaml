@@ -23,14 +23,14 @@ services:
       - .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=churchdb;Username=postgres;Password=research25
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=churchdb;Username=postgres;Password=${POSTGRES_PASSWORD}
 
   db:
     image: postgres:15
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: research25
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: churchdb
     ports:
         - "5432:5432"
