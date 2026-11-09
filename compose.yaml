@@ -3,10 +3,12 @@ services:
     build: 
       context: ./rs25-client/
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_BUG_REPORT_EMAIL: ${VITE_BUG_REPORT_EMAIL}
+        VITE_REIMBURSEMENT_REPORT_EMAIL: ${VITE_REIMBURSEMENT_REPORT_EMAIL}
     ports:
       - "3000:3000"
-    env_file:
-    - .env
 
   db:
     image: postgres:15
