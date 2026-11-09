@@ -162,6 +162,28 @@ namespace RS25.Controllers
                 return NotFound();
             }
 
+            user.IsDeleted = true;
+            user.DeletedAt = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
+
+            return Ok("User deleted successfully");
+        }
+        // DELETE: api/applicationuser/{id}
+        [HttpDelete("/fulldelete/{id}", Name = "FullDeleteApplicationUserById")]
+        [Authorize]
+        public async Task<IActionResult> FullDeleteApplicationUserById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Invalid User ID");
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {

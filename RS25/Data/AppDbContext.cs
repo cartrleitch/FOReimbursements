@@ -14,5 +14,13 @@ namespace RS25.Data
         public DbSet<Purchase> Purchase { get; set; }
         public DbSet<Receipt> Receipt { get; set; }
         public DbSet<Vendor> Vendor { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Apply global query filter to exclude soft-deleted users
+            builder.Entity<ApplicationUser>().HasQueryFilter(u => !u.IsDeleted);
+        }
     }
 }

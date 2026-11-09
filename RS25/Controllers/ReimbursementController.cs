@@ -32,7 +32,7 @@ namespace RS25.Controllers
                 r.DateApproved,
                 r.ActionRequested,
                 VendorName = _context.Vendor.Where(v => v.Id.ToString() == r.VendorId).Select(v => v.Name).FirstOrDefault(),
-                UserName = _context.Users.Where(u => u.Id == r.UserId).Select(u => u.UserName).FirstOrDefault()
+                UserName = _context.Users.IgnoreQueryFilters().Where(u => u.Id == r.UserId).Select(u => u.UserName).FirstOrDefault()
             }).ToListAsync();
 
             return Ok(reimbursements);

@@ -14,7 +14,10 @@ export default function UserDashboardPage() {
   }, [auth?.user?.role]);
   return (
     <div>
-      <UserTable rows={data.filter((user) => user.role !== "Admin")} onDelete={deleteAppUser} />
+      <UserTable
+        rows={data.filter((user) => user.role !== "Admin")}
+        onDelete={deleteAppUser}
+      />
     </div>
   );
 }

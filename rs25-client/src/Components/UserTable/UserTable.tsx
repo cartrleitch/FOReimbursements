@@ -37,7 +37,7 @@ export default function UserTable({ rows, onDelete }: TableProps) {
           onClick={async () => {
             if (selectedRowId !== null) {
               const userChoice = confirm(
-                "Are you sure you want to permanently delete this account? This action cannot be undone!",
+                "Are you sure you want to delete this account? Reimbursements associated with this account will NOT be deleted.",
               );
               if (userChoice) {
                 try {
