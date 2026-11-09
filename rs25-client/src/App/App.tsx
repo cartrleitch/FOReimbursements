@@ -141,7 +141,7 @@ function App() {
           />
         </Routes>
       </Router>
-      <ToastContainer position="bottom-left" autoClose={3000} limit={5} />
+      <ToastContainer position="bottom-left" autoClose={2000} limit={5} />
     </div>
   );
 }
