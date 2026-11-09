@@ -1,4 +1,5 @@
 import { Title } from "../UniversalComponents/UniversalComponents";
+
 export default function AccessDeniedPage() {
   return (
     <div className="content">

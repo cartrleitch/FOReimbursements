@@ -12,6 +12,7 @@ import {
 import { toast } from "react-toastify";
 import { useLoading } from "../../Overlays/LoadingContext";
 import { usePurchaseFunctions } from "../../HelperFunctions/purchaseFunctions";
+import "./PurTableComponent.css";
 export interface Purchase {
   id: number;
   accountp: string;

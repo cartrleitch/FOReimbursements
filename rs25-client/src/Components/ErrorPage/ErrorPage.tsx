@@ -1,4 +1,5 @@
 import { Title } from "../UniversalComponents/UniversalComponents";
+import "./ErrorPage.css";
 export default function ErrorPage() {
   return (
     <div className="content">

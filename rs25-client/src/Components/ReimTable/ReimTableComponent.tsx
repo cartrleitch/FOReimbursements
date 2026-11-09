@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../Auth/AuthContext";
 import { useEmailFunctions } from "../../HelperFunctions/emailFunctions";
 import { useNavigate } from "react-router-dom";
+import "./ReimTableComponent.css";
 
 export interface Reimbursement {
   id: number;
@@ -227,7 +228,7 @@ export function ReimbursementTable({
           />
         </AdminOnlyWrapper>
         <AdminOnlyWrapper>
-          <Button
+          <SpookyButton
             onClick={async () => {
               if (selectedRowId !== null) {
                 deleteReimbursement(selectedRowId);
@@ -236,7 +237,6 @@ export function ReimbursementTable({
               }
             }}
             content="Delete"
-            className="spooky-button"
           />
         </AdminOnlyWrapper>
       </div>

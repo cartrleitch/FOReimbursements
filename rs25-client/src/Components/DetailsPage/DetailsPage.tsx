@@ -9,6 +9,7 @@ import {
   SmallerTitle,
   Title,
 } from "../UniversalComponents/UniversalComponents";
+
 export default function DetailsPage() {
   interface PurchaseDetails {
     id: number;

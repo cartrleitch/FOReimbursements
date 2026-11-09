@@ -15,6 +15,7 @@ import LogoutPage from "../Components/LogoutPage/LogoutPage";
 import AccessDeniedPage from "../Components/AccessDeniedPage/AccessDeniedPage";
 import AccountPage from "../Components/AccountPage/AccountPage";
 import DetailsPage from "../Components/DetailsPage/DetailsPage";
+import "../universalstyles.css";
 
 function App() {
   const auth = useAuth();

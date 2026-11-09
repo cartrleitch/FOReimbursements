@@ -1,0 +1,16 @@
+.reim-table {
+  width: 85%;
+  height: 475px;
+  margin: auto;
+}
+
+.table-button-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+  gap: 8px;
+}

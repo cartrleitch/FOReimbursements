@@ -13,6 +13,7 @@ import {
   fetchAppUserById,
   updateAppUser,
 } from "../../HelperFunctions/applicationUserFunctions";
+
 export default function AccountPage() {
   const [editMode, setEditMode] = React.useState(false);
   const nav = useNavigate();

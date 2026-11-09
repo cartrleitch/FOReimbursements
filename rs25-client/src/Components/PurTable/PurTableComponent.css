@@ -1,0 +1,85 @@
+.pur-table {
+  width: 100%;
+  height: 215px;
+  margin: auto;
+  overflow: visible; /* Enable scrolling for the table */
+}
+.pur-table-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+  max-height: auto;
+  overflow-x: auto;
+  overflow: visible;
+}
+
+.pur-table-button-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+  gap: 4px;
+}
+
+.pur-table-inputs {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size for input */
+  font-family: "Roboto", sans-serif;
+}
+
+/* Buttons */
+.pur-table-normal-button {
+  display: inline-block;
+  background-color: #497529; /* Green background */
+  color: white; /* White text */
+  border: none; /* No border */
+  padding: 8px 16px; /* Padding for button */
+  font-size: 16px; /* Font size for button */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 4px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  text-decoration: none;
+  margin-right: 3px;
+  width: 100%;
+}
+
+.pur-table-normal-button:hover {
+  background-color: #3a5c22; /* Darker green on hover */
+}
+
+.pur-table-normal-button:active {
+  background-color: #2a3d16; /* Even darker green on click */
+}
+
+.pur-table-spooky-button {
+  display: inline-block;
+  background-color: #dc0303;
+  color: white; /* White text */
+  border: none; /* No border */
+  padding: 8px 16px; /* Padding for button */
+  font-size: 16px; /* Font size for button */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 4px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  text-decoration: none;
+  margin: 1px;
+  margin-right: 3px;
+  width: 100%;
+}
+
+.pur-table-spooky-button:hover {
+  background-color: #b90808;
+}
+
+.pur-table-spooky-button:active {
+  background-color: #b70000;
+}

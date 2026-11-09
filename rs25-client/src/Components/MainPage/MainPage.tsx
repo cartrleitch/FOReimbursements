@@ -3,7 +3,7 @@ import { ReimbursementTable } from "../../Components/ReimTable/ReimTableComponen
 import { useReimbursementFunctions } from "../../HelperFunctions/reimbursementFunctions";
 import { useAuth } from "../../Auth/AuthContext";
 import { Title } from "../UniversalComponents/UniversalComponents";
-
+import "./MainPage.css";
 export default function MainPage() {
   const auth = useAuth();
   const {
