@@ -8,10 +8,10 @@ import {
   InputSelect,
   FileInput,
   InputRadio,
-} from "./Components";
+} from "../UniversalComponents/UniversalComponents";
 import { toast } from "react-toastify";
-import { useLoading } from "./LoadingContext";
-import { usePurchaseFunctions } from "./purchaseFunctions";
+import { useLoading } from "../../Overlays/LoadingContext";
+import { usePurchaseFunctions } from "../../HelperFunctions/purchaseFunctions";
 export interface Purchase {
   id: number;
   accountp: string;

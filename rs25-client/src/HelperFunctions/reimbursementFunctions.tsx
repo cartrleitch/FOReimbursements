@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../Auth/AuthContext";
 import { createVendor } from "./vendorFunctions";
 export function useReimbursementFunctions() {
   const apiUrl = process.env.REACT_APP_API_URL;

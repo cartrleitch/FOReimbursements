@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Purchase } from "./PurTableComponent";
+import { Purchase } from "../Components/PurTable/PurTableComponent";
 import React from "react";
 import { toast } from "react-toastify";
 export function usePurchaseFunctions() {

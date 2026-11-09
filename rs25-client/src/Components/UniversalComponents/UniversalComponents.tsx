@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import React from "react";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../../Auth/AuthContext";
 
 export function Button({
   onClick,

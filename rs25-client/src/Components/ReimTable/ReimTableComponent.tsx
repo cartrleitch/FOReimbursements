@@ -6,12 +6,15 @@ import {
   AdminOnlyWrapper,
   SpookyButton,
   InputSelect,
-} from "./Components";
-import { DisplayOnlyPurchaseTable, Purchase } from "./PurTableComponent";
-import { usePurchaseFunctions } from "./purchaseFunctions";
+} from "../UniversalComponents/UniversalComponents";
+import {
+  DisplayOnlyPurchaseTable,
+  Purchase,
+} from "../PurTable/PurTableComponent";
+import { usePurchaseFunctions } from "../../HelperFunctions/purchaseFunctions";
 import { toast } from "react-toastify";
-import { useAuth } from "./AuthContext";
-import { useEmailFunctions } from "./emailFunctions";
+import { useAuth } from "../../Auth/AuthContext";
+import { useEmailFunctions } from "../../HelperFunctions/emailFunctions";
 import { useNavigate } from "react-router-dom";
 
 export interface Reimbursement {
