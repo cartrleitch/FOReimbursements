@@ -28,7 +28,7 @@ interface TableProps {
   updateTotalAmount?: (rowsToUse: Purchase[]) => void;
 }
 
-const columnns: GridColDef[] = [
+const columns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
   { field: "accountp", headerName: "Account", flex: 1 },
   { field: "descriptionp", headerName: "Description", flex: 1 },
@@ -53,7 +53,6 @@ const columnns: GridColDef[] = [
     type: "date",
     valueGetter: (value: any) => {
       if (typeof value === "string") {
-        console.log("<---- Date value raw1: ", value);
         const date = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
         if (date) {
           return new Date(
@@ -193,7 +192,7 @@ export function PurchaseTable({
       <div className="pur-table">
         <DataGrid
           rows={rows}
-          columns={columnns}
+          columns={columns}
           checkboxSelection
           disableMultipleRowSelection
           autoPageSize
@@ -298,7 +297,7 @@ interface DisplayOnlyProps {
   rows: Purchase[];
 }
 
-const displayColumnns: GridColDef[] = [
+const displayColumns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
   { field: "account", headerName: "Account", flex: 1 },
   { field: "description", headerName: "Description", flex: 1 },
@@ -323,7 +322,6 @@ const displayColumnns: GridColDef[] = [
     type: "date",
     valueGetter: (value: any) => {
       if (typeof value === "string") {
-        console.log("<---- Date value raw2: ", value);
         const date = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
         if (date) {
           return new Date(
@@ -361,7 +359,7 @@ export function DisplayOnlyPurchaseTable({ rows }: DisplayOnlyProps) {
     <div className="pur-table">
       <DataGrid
         rows={rows}
-        columns={displayColumnns}
+        columns={displayColumns}
         autoPageSize
         columnVisibilityModel={{ id: false }}
       />
