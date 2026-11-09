@@ -7,6 +7,7 @@ import {
   SubmitButton,
   Button,
   SpookyButton,
+  InputSelect,
 } from "../UniversalComponents/UniversalComponents";
 import { toast } from "react-toastify";
 import {
@@ -14,10 +15,65 @@ import {
   updateAppUser,
 } from "../../HelperFunctions/applicationUserFunctions";
 
+const states: string[] = [
+  "AL",
+  "AK",
+  "AZ",
+  "AR",
+  "CA",
+  "CO",
+  "CT",
+  "DE",
+  "FL",
+  "GA",
+  "HI",
+  "ID",
+  "IL",
+  "IN",
+  "IA",
+  "KS",
+  "KY",
+  "LA",
+  "ME",
+  "MD",
+  "MA",
+  "MI",
+  "MN",
+  "MS",
+  "MO",
+  "MT",
+  "NE",
+  "NV",
+  "NH",
+  "NJ",
+  "NM",
+  "NY",
+  "NC",
+  "ND",
+  "OH",
+  "OK",
+  "OR",
+  "PA",
+  "RI",
+  "SC",
+  "SD",
+  "TN",
+  "TX",
+  "UT",
+  "VT",
+  "VA",
+  "WA",
+  "WV",
+  "WI",
+  "WY",
+];
+
 export default function AccountPage() {
   const [editMode, setEditMode] = React.useState(false);
-  const nav = useNavigate();
   const auth = useAuth();
+
+  const [state, setState] = React.useState<string>(auth?.user?.state || "");
+  const nav = useNavigate();
 
   const handleLogout = () => {
     auth?.logout();
@@ -39,7 +95,6 @@ export default function AccountPage() {
     const address = (document.getElementById("address") as HTMLInputElement)
       .value;
     const city = (document.getElementById("city") as HTMLInputElement).value;
-    const state = (document.getElementById("state") as HTMLInputElement).value;
     const zipCode = (document.getElementById("zipCode") as HTMLInputElement)
       .value;
     if (
@@ -152,12 +207,13 @@ export default function AccountPage() {
             defaultValue={auth?.user?.city}
             readonly={!editMode}
           />
-          <InputField
+          <InputSelect
             id="state"
-            type="text"
             label="State"
-            defaultValue={auth?.user?.state}
             readonly={!editMode}
+            options={states}
+            value={state}
+            onChange={(e) => setState(e.target.value)}
           />
           <InputField
             id="zipCode"
