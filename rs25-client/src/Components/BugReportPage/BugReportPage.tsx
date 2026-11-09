@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../Auth/AuthContext";
 import { useEmailFunctions } from "../../HelperFunctions/emailFunctions";
 
-const bugReportEmail = process.env.BUG_REPORT_EMAIL || "";
+const bugReportEmail = process.env.REACT_APP_BUG_REPORT_EMAIL || "";
 export default function BugReportPage() {
   const auth = useAuth();
   const { sendEmail } = useEmailFunctions();

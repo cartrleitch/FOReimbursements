@@ -19,6 +19,9 @@ import {
 } from "../UniversalComponents/UniversalComponents";
 import { fetchVendorByID } from "../../HelperFunctions/vendorFunctions";
 
+const reimbursementReportEmail =
+  process.env.REACT_APP_REIMBURSEMENT_REPORT_EMAIL || "";
+
 export default function CreateReimbursementPage() {
   const {
     createReimbursement,
@@ -168,7 +171,7 @@ export default function CreateReimbursementPage() {
 
         // to should be email address of admin
         const data = {
-          to: `carterleitch@gmail.com`,
+          to: reimbursementReportEmail,
           subject: `New Reimbursement Created!`,
           content: "Reimbursement request PDF is attached.",
           attachment: pdfBlob,

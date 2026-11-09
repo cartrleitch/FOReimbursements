@@ -51,7 +51,20 @@ const columnns: GridColDef[] = [
     headerName: "Date",
     flex: 1,
     type: "date",
-    valueGetter: (value: any) => new Date(value),
+    valueGetter: (value: any) => {
+      if (typeof value === "string") {
+        console.log("<---- Date value raw1: ", value);
+        const date = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+        if (date) {
+          return new Date(
+            Number(date[1]),
+            Number(date[2]) - 1,
+            Number(date[3]),
+          );
+        }
+      }
+      return new Date(value);
+    },
   },
   {
     field: "file",
@@ -308,7 +321,20 @@ const displayColumnns: GridColDef[] = [
     headerName: "Date",
     flex: 1,
     type: "date",
-    valueGetter: (value: any) => new Date(value),
+    valueGetter: (value: any) => {
+      if (typeof value === "string") {
+        console.log("<---- Date value raw2: ", value);
+        const date = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+        if (date) {
+          return new Date(
+            Number(date[1]),
+            Number(date[2]) - 1,
+            Number(date[3]),
+          );
+        }
+      }
+      return new Date(value);
+    },
   },
   {
     field: "file",
