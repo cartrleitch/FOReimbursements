@@ -22,39 +22,31 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded: any = jwtDecode(token);
-        const isExpired = decoded.exp * 1000 < Date.now();
-        if (isExpired) {
-          console.warn("Token is expired");
-          logout();
-        } else {
-          setUser(decoded);
-        }
-      } catch (error) {
-        console.error("Token decoding failed:", error);
-        setUser(null);
-      }
-    } else {
-      setUser(null);
+function loadUserFromStorage(): User | null {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+  try {
+    const decoded: any = jwtDecode(token);
+    const isExpired = decoded.exp * 1000 < Date.now();
+    if (isExpired) {
+      console.warn("Token is expired");
+      localStorage.removeItem("token");
+      return null;
     }
-  }, []);
+    return decoded;
+  } catch (error) {
+    console.error("Token decoding failed:", error);
+    return null;
+  }
+}
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(loadUserFromStorage);
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
-    try {
-      const decoded: any = jwtDecode(token);
-      setUser(decoded);
-    } catch (error) {
-      console.error("Token decoding failed:", error);
-      setUser(null);
-    }
+    const decoded = loadUserFromStorage();
+    setUser(decoded);
   };
 
   const logout = () => {
