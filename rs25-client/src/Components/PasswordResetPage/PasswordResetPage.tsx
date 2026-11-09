@@ -5,7 +5,7 @@ import {
 } from "../UniversalComponents/UniversalComponents";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 export default function PasswordResetPage() {
@@ -20,7 +20,7 @@ export default function PasswordResetPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   // Request password reset link from server
-  async function requestLink(e: React.FormEvent<HTMLFormElement>) {
+  async function requestLink(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!emailInput) {
       toast.error("Please enter your email address.");
@@ -44,7 +44,7 @@ export default function PasswordResetPage() {
     }
   }
 
-  async function resetPassword(e: React.FormEvent<HTMLFormElement>) {
+  async function resetPassword(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!newPassword) {
       toast.error("Enter a new password.");

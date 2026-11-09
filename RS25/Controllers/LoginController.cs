@@ -95,7 +95,7 @@ namespace RS25.Controllers
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.EmailAddress);
-            if (user != null)
+            if (user != null && !string.IsNullOrEmpty(user.EmailAddress))
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));

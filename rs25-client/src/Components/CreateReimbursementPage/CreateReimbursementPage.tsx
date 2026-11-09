@@ -287,7 +287,7 @@ export default function CreateReimbursementPage() {
           label="Total Amount"
           step="0.01"
           min="0"
-          value={totalAmount.toString()}
+          value={totalAmount.toFixed(2)}
           readonly={true}
         />
         <div className="pur-table-container">
