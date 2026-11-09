@@ -2,7 +2,11 @@ import React from "react";
 import { toast } from "react-toastify";
 import { User } from "../../Auth/AuthContext";
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
-import { SpookyButton } from "../UniversalComponents/UniversalComponents";
+import {
+  SpookyButton,
+  RedirectButton,
+  Title,
+} from "../UniversalComponents/UniversalComponents";
 import { useApplicationUserFunctions } from "../../HelperFunctions/applicationUserFunctions";
 import "./UserTable.css";
 
@@ -28,49 +32,52 @@ export default function UserTable({ rows, onDelete }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
-  const { deleteAppUser } = useApplicationUserFunctions();
 
   return (
-    <div className="user-table">
-      <div className="user-table-button-div">
-        <SpookyButton
-          onClick={async () => {
-            if (selectedRowId !== null) {
-              const userChoice = confirm(
-                "Are you sure you want to delete this account? Reimbursements associated with this account will NOT be deleted.",
-              );
-              if (userChoice) {
-                try {
-                  onDelete(selectedRowId);
-                  toast.success("Account deleted successfully!");
-                } catch (error) {
-                  toast.error("Failed to delete account.");
+    <div className="content">
+      <div className="user-table">
+        <Title content="User Dashboard" />
+        <div className="user-table-button-div">
+          <RedirectButton to="/Account/create" content="New" />
+          <SpookyButton
+            onClick={async () => {
+              if (selectedRowId !== null) {
+                const userChoice = confirm(
+                  "Are you sure you want to delete this account? Reimbursements associated with this account will NOT be deleted.",
+                );
+                if (userChoice) {
+                  try {
+                    onDelete(selectedRowId);
+                    toast.success("Account deleted successfully!");
+                  } catch (error) {
+                    toast.error("Failed to delete account.");
+                  }
                 }
+              } else {
+                toast.error("No row selected!");
               }
-            } else {
-              toast.error("No row selected!");
-            }
+            }}
+            content="Delete"
+          />
+        </div>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          columnVisibilityModel={{ id: false }}
+          checkboxSelection
+          disableMultipleRowSelection
+          autoPageSize
+          getRowId={(row) => row.id}
+          onRowSelectionModelChange={(id) => {
+            setRowSelectionModel(id);
+            const selectedRowData = rows.find(
+              (row) => row.id === Array.from(id.ids)[0],
+            );
+            setSelectedRowId(selectedRowData?.id || null);
           }}
-          content="Delete"
+          rowSelectionModel={rowSelectionModel}
         />
       </div>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        columnVisibilityModel={{ id: false }}
-        checkboxSelection
-        disableMultipleRowSelection
-        autoPageSize
-        getRowId={(row) => row.id}
-        onRowSelectionModelChange={(id) => {
-          setRowSelectionModel(id);
-          const selectedRowData = rows.find(
-            (row) => row.id === Array.from(id.ids)[0],
-          );
-          setSelectedRowId(selectedRowData?.id || null);
-        }}
-        rowSelectionModel={rowSelectionModel}
-      />
     </div>
   );
 }

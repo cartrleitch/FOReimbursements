@@ -47,6 +47,36 @@ export function useApplicationUserFunctions() {
         throw err;
       });
   }
+  async function createAppUser(userData: {
+    emailAddress: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+  }) {
+    const API_URL = `${apiUrl}/api/ApplicationUser`;
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(userData),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const newUser = await response.json();
+      setData((prevData) => [...prevData, newUser]);
+    } catch (err) {
+      console.error("Failed to create application user:", err);
+      throw err;
+    }
+  }
 
   async function updateAppUser(
     userId: string,
@@ -110,6 +140,7 @@ export function useApplicationUserFunctions() {
     data,
     fetchAppUsers,
     fetchAppUserById,
+    createAppUser,
     updateAppUser,
     deleteAppUser,
   };

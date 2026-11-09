@@ -2,8 +2,7 @@
   width: 85%;
   height: 415px;
   margin: auto;
-  margin-top: 100px;
-  overflow: visible; /* Enable scrolling for the table */
+  overflow: visible;
 }
 .user-table-button-div {
   display: flex;

@@ -72,9 +72,36 @@ namespace RS25.Controllers
             {
                 return BadRequest("User data is null");
             }
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return CreatedAtRoute("GetApplicationUserById", new { id = user.Id }, user);
+
+            // Creates user with any data client might send for it (automatically sets ID, etc., because of model)
+            var newUser = new ApplicationUser
+            {
+                UserName = user.EmailAddress,
+                Email = user.EmailAddress,
+                EmailAddress = user.EmailAddress,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                City = user.City,
+                State = user.State,
+                ZipCode = user.ZipCode
+            };
+
+            var createResult = await _userManager.CreateAsync(newUser);
+            if (!createResult.Succeeded)
+            {
+                return BadRequest(createResult.Errors.Select(e => e.Description).ToList());
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(newUser, "User");
+            if (!roleResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(newUser);
+                return BadRequest(roleResult.Errors.Select(e => e.Description).ToList());
+            }
+            
+            return CreatedAtRoute("GetApplicationUserById", new { id = newUser.Id }, newUser);
         }
         // PUT: api/applicationuser/{id}
         [HttpPut("{id}", Name = "UpdateApplicationUser")]

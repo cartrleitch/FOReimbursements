@@ -18,6 +18,7 @@ import AccountPage from "../Components/AccountPage/AccountPage";
 import DetailsPage from "../Components/DetailsPage/DetailsPage";
 import PasswordResetPage from "../Components/PasswordResetPage/PasswordResetPage";
 import UserDashboardPage from "../Components/UserDashboardPage/UserDashboardPage";
+import CreateAccountPage from "../Components/CreateAccountPage/CreateAccountPage";
 import "../universalstyles.css";
 
 function App() {
@@ -109,6 +110,14 @@ function App() {
             element={
               <PrivateRoute allowedRoles={["Admin", "User"]}>
                 <BugReportPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/Account/create"
+            element={
+              <PrivateRoute allowedRoles={["Admin"]}>
+                <CreateAccountPage />
               </PrivateRoute>
             }
           />
