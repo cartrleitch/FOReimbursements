@@ -6,6 +6,8 @@ import {
   Title,
 } from "../UniversalComponents/UniversalComponents";
 import { useAuth } from "../../Auth/AuthContext";
+import "./LoginPage.css";
+
 export default function LoginPage() {
   const nav = useNavigate();
   const auth = useAuth();
@@ -66,6 +68,9 @@ export default function LoginPage() {
         />
         <SubmitButton content="Login" />
       </form>
+      <a href="/Account/passwordreset" className="forgot-password-link">
+        Forgot Password?
+      </a>
     </div>
   );
 }

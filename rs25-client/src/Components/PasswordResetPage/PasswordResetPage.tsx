@@ -27,6 +27,7 @@ export default function PasswordResetPage() {
       return;
     }
     try {
+      toast.success("Sent link to reset password!");
       const response = await fetch(`${apiUrl}/api/Auth/forgot-password`, {
         method: "POST",
         headers: {
@@ -36,9 +37,6 @@ export default function PasswordResetPage() {
       });
       if (response.ok) {
         const data = await response.json();
-        toast.success("Password reset link sent to your email.");
-      } else {
-        toast.error("Failed to send password reset link.");
       }
     } catch (error) {
       console.error("Error requesting password reset link:", error);
