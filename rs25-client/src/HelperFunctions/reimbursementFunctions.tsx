@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../Auth/AuthContext";
 import { createVendor } from "./vendorFunctions";
@@ -9,10 +9,8 @@ export function useReimbursementFunctions() {
   const API_URL_PURCHASE = `${apiUrl}/api/Purchase`;
   const API_URL_RECEIPT = `${apiUrl}/api/Receipt`;
   const API_URL_GETBYID = `${apiUrl}/get`;
-  // eslint-disable-next-line
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  // eslint-disable-next-line
   const [error, setError] = useState<string | null>(null);
   const [userOrVendor, setUserOrVendor] = useState<string>("user");
   const [actionRequested, setActionRequested] =
@@ -20,79 +18,88 @@ export function useReimbursementFunctions() {
 
   const auth = useAuth();
 
-  async function fetchReimbursements() {
-    setLoading(true);
-    setError(null);
-    console.log("fetchReimbursements triggered");
-    try {
-      const response = await fetch(API_URL, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+  const fetchReimbursements = useCallback(
+    async function fetchReimbursements() {
+      setLoading(true);
+      setError(null);
+      console.log("fetchReimbursements triggered");
+      try {
+        const response = await fetch(API_URL, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        setData(result);
+        return result;
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-      const result = await response.json();
-      setData(result);
-      return result;
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [API_URL],
+  );
 
-  async function fetchReimbursementByUserId(userId: string | undefined) {
-    setLoading(true);
-    setError(null);
-    console.log("fetchReimbursementByUserId triggered for userId:", userId);
-    try {
-      const response = await fetch(`${API_URL}/${userId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+  const fetchReimbursementByUserId = useCallback(
+    async function fetchReimbursementByUserId(userId: string | undefined) {
+      setLoading(true);
+      setError(null);
+      console.log("fetchReimbursementByUserId triggered for userId:", userId);
+      try {
+        const response = await fetch(`${API_URL}/${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        setData(result);
+        return result;
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-      const result = await response.json();
-      setData(result);
-      return result;
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [API_URL],
+  );
 
-  async function fetchReimbursementById(id: number) {
-    setLoading(true);
-    setError(null);
-    console.log("fetchReimbursementById triggered for id:", id);
-    try {
-      const response = await fetch(`${API_URL_GETBYID}/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+  const fetchReimbursementById = useCallback(
+    async function fetchReimbursementById(id: number) {
+      setLoading(true);
+      setError(null);
+      console.log("fetchReimbursementById triggered for id:", id);
+      try {
+        const response = await fetch(`${API_URL_GETBYID}/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        return result;
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-      const result = await response.json();
-      return result;
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [API_URL_GETBYID],
+  );
 
   // POST a new reimbursement to the API
   async function createReimbursement() {

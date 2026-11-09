@@ -14,13 +14,18 @@ export default function MainPage() {
     updateReimbursement,
     fetchReimbursementById,
   } = useReimbursementFunctions();
+
+  const userRole = auth?.user?.role;
+  const userId = auth?.user?.id;
+
   useEffect(() => {
-    if (auth?.user?.role === "Admin") {
+    if (userRole === "Admin") {
       fetchReimbursements();
     } else {
-      fetchReimbursementByUserId(auth?.user?.id);
+      fetchReimbursementByUserId(userId);
     }
-  }, []);
+  }, [userRole, userId, fetchReimbursements, fetchReimbursementByUserId]);
+
   return (
     <div className="content">
       <Title content="Reimbursement Dashboard" />

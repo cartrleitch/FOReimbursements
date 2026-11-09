@@ -41,8 +41,8 @@ export default function DetailsPage() {
         setPurchases(data);
       });
     }
-    // eslint-disable-next-line
-  }, []);
+  }, [selectedReimId, fetchReimbursementById, fetchPurchaseByReimId]);
+
   console.log("Reimbursement Data:", reimbursement);
 
   if (!reimbursement) {
