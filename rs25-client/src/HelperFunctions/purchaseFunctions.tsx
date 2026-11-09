@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Purchase } from "./PurTableComponent";
+import { useState, useCallback } from "react";
+import { Purchase } from "../Components/PurTable/PurTableComponent";
 import React from "react";
 import { toast } from "react-toastify";
 export function usePurchaseFunctions() {
@@ -177,29 +177,32 @@ export function usePurchaseFunctions() {
     }
   }
 
-  async function fetchPurchaseByReimId(reimId: number) {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${API_URL}/${reimId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+  const fetchPurchaseByReimId = useCallback(
+    async function fetchPurchaseByReimId(reimId: number) {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${API_URL}/${reimId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+      } catch (err: any) {
+        setError(err.message);
+        return [];
+      } finally {
+        setLoading(false);
       }
-      const data = await response.json();
-      return data;
-    } catch (err: any) {
-      setError(err.message);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [API_URL],
+  );
 
   async function getAISummary(fileBase64: string) {
     setLoading(true);

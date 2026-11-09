@@ -8,10 +8,11 @@ import {
   InputSelect,
   FileInput,
   InputRadio,
-} from "./Components";
+} from "../UniversalComponents/UniversalComponents";
 import { toast } from "react-toastify";
-import { useLoading } from "./LoadingContext";
-import { usePurchaseFunctions } from "./purchaseFunctions";
+import { useLoading } from "../../Overlays/LoadingContext";
+import { usePurchaseFunctions } from "../../HelperFunctions/purchaseFunctions";
+import "./PurTableComponent.css";
 export interface Purchase {
   id: number;
   accountp: string;
@@ -28,7 +29,7 @@ interface TableProps {
   updateTotalAmount?: (rowsToUse: Purchase[]) => void;
 }
 
-const columnns: GridColDef[] = [
+const columns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
   { field: "accountp", headerName: "Account", flex: 1 },
   { field: "descriptionp", headerName: "Description", flex: 1 },
@@ -51,7 +52,19 @@ const columnns: GridColDef[] = [
     headerName: "Date",
     flex: 1,
     type: "date",
-    valueGetter: (value: any) => new Date(value),
+    valueGetter: (value: any) => {
+      if (typeof value === "string") {
+        const date = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+        if (date) {
+          return new Date(
+            Number(date[1]),
+            Number(date[2]) - 1,
+            Number(date[3]),
+          );
+        }
+      }
+      return new Date(value);
+    },
   },
   {
     field: "file",
@@ -180,7 +193,7 @@ export function PurchaseTable({
       <div className="pur-table">
         <DataGrid
           rows={rows}
-          columns={columnns}
+          columns={columns}
           checkboxSelection
           disableMultipleRowSelection
           autoPageSize
@@ -285,7 +298,7 @@ interface DisplayOnlyProps {
   rows: Purchase[];
 }
 
-const displayColumnns: GridColDef[] = [
+const displayColumns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
   { field: "account", headerName: "Account", flex: 1 },
   { field: "description", headerName: "Description", flex: 1 },
@@ -308,7 +321,19 @@ const displayColumnns: GridColDef[] = [
     headerName: "Date",
     flex: 1,
     type: "date",
-    valueGetter: (value: any) => new Date(value),
+    valueGetter: (value: any) => {
+      if (typeof value === "string") {
+        const date = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+        if (date) {
+          return new Date(
+            Number(date[1]),
+            Number(date[2]) - 1,
+            Number(date[3]),
+          );
+        }
+      }
+      return new Date(value);
+    },
   },
   {
     field: "file",
@@ -335,7 +360,7 @@ export function DisplayOnlyPurchaseTable({ rows }: DisplayOnlyProps) {
     <div className="pur-table">
       <DataGrid
         rows={rows}
-        columns={displayColumnns}
+        columns={displayColumns}
         autoPageSize
         columnVisibilityModel={{ id: false }}
       />

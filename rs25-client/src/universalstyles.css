@@ -1,0 +1,30 @@
+.radio-input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 50%;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+  gap: 25px;
+}
+.center-p {
+  text-align: center;
+  margin: 0 auto;
+  width: 50%;
+}
+
+.normal-form {
+  width: 50%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  border: 1px solid #ccc; /* Light gray border */
+  padding: 16px;
+  border-radius: 4px; /* Rounded corners */
+  gap: 6px;
+  height: auto;
+  overflow: visible;
+}

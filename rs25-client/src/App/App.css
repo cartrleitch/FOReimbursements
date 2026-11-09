@@ -1,0 +1,76 @@
+/*Broad styles*/
+.App {
+  text-align: center;
+}
+
+body {
+  margin: 0px;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  background-color: #f0f0f0; /* Light background for contrast */
+}
+.content-title-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+  margin-bottom: 1px;
+}
+
+.content-title {
+}
+
+.content {
+  margin: 16px;
+  padding-top: 32px;
+}
+
+/*Navbar styles*/
+.nav-bar {
+  display: flex;
+  justify-content: space-between; /* Align items to the right */
+  align-items: center;
+  padding: 16px;
+  background-color: #282c34;
+  white-space: nowrap; /* Prevent text wrapping */
+  min-width: 200px; /* Minimum width for navbar */
+  position: fixed; /* Keep navbar at the top */
+  top: 0px;
+  height: 32px; /* Fixed height for navbar */
+  width: 100%; /* Full width */
+  z-index: 1000; /* Ensure navbar is above other content */
+}
+
+.nav-bar-image {
+  width: 110px; /* Fixed width for the image */
+  height: 48px; /* Fixed height for the image */
+  margin-right: 16px; /* Space between image and first link */
+}
+
+/*Link list styles*/
+.link-list {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  padding: 16px;
+  margin: 0;
+  margin-right: 32px; /* Space between navbar and right edge */
+  gap: 16px; /* Space between buttons/links */
+}
+
+.link-list-item {
+  color: #fff;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  padding: 8px; /* Minimum size for buttons/links */
+  text-decoration: none;
+  min-width: 80px; /* Minimum width for each item */
+  text-align: center;
+  white-space: nowrap; /* Prevent text wrapping on items */
+  box-sizing: border-box;
+  transition: color 0.3s ease;
+}
+.link-list-item:hover {
+  color: #497529;
+}
