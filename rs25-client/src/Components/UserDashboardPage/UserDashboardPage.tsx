@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 export default function UserDashboardPage() {
   const auth = useAuth();
-  const { fetchAppUsers, data } = useApplicationUserFunctions();
+  const { fetchAppUsers, deleteAppUser, data } = useApplicationUserFunctions();
 
   useEffect(() => {
     if (auth?.user?.role === "Admin") {
@@ -14,7 +14,7 @@ export default function UserDashboardPage() {
   }, [auth?.user?.role]);
   return (
     <div>
-      <UserTable rows={data.filter((user) => user.role !== "Admin")} />
+      <UserTable rows={data.filter((user) => user.role !== "Admin")} onDelete={deleteAppUser} />
     </div>
   );
 }

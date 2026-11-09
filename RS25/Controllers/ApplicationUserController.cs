@@ -146,5 +146,29 @@ namespace RS25.Controllers
             }
             return Ok(existingUser);
         }
+        // DELETE: api/applicationuser/{id}
+        [HttpDelete("{id}", Name = "DeleteApplicationUserById")]
+        [Authorize]
+        public async Task<IActionResult> DeleteApplicationUserById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Invalid User ID");
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors.Select(e => e.Description).ToList());
+            }
+
+            return Ok("User deleted successfully");
+        }
     }
 }

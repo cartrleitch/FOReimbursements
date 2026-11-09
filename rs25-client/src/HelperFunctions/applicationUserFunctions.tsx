@@ -84,10 +84,33 @@ export function useApplicationUserFunctions() {
         throw err;
       });
   }
+
+  async function deleteAppUser(userId: string) {
+    const API_URL = `${apiUrl}/api/ApplicationUser/${userId}`;
+    try {
+      const result = await fetch(API_URL, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!result.ok) {
+        throw new Error(`HTTP error! status: ${result.status}`);
+      }
+
+      setData((prevData) => prevData.filter((user) => user.id !== userId));
+    } catch (err) {
+      console.error("Failed to delete application user:", err);
+      throw err;
+    }
+  }
+
   return {
     data,
     fetchAppUsers,
     fetchAppUserById,
     updateAppUser,
+    deleteAppUser,
   };
 }

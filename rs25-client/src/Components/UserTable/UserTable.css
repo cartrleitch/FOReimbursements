@@ -5,3 +5,13 @@
   margin-top: 100px;
   overflow: visible; /* Enable scrolling for the table */
 }
+.user-table-button-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+  gap: 8px;
+}

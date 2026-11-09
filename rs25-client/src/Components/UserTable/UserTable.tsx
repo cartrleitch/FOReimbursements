@@ -1,7 +1,8 @@
 import React from "react";
 import { toast } from "react-toastify";
-import { User, useAuth } from "../../Auth/AuthContext";
+import { User } from "../../Auth/AuthContext";
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { SpookyButton } from "../UniversalComponents/UniversalComponents";
 import { useApplicationUserFunctions } from "../../HelperFunctions/applicationUserFunctions";
 import "./UserTable.css";
 
@@ -20,17 +21,39 @@ const columns: GridColDef[] = [
 
 interface TableProps {
   rows: User[];
+  onDelete: (userId: string) => Promise<void>;
 }
 
-export default function UserTable({ rows }: TableProps) {
+export default function UserTable({ rows, onDelete }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
-
-  const auth = useAuth();
+  const { deleteAppUser } = useApplicationUserFunctions();
 
   return (
     <div className="user-table">
+      <div className="user-table-button-div">
+        <SpookyButton
+          onClick={async () => {
+            if (selectedRowId !== null) {
+              const userChoice = confirm(
+                "Are you sure you want to permanently delete this account? This action cannot be undone!",
+              );
+              if (userChoice) {
+                try {
+                  onDelete(selectedRowId);
+                  toast.success("Account deleted successfully!");
+                } catch (error) {
+                  toast.error("Failed to delete account.");
+                }
+              }
+            } else {
+              toast.error("No row selected!");
+            }
+          }}
+          content="Delete"
+        />
+      </div>
       <DataGrid
         rows={rows}
         columns={columns}

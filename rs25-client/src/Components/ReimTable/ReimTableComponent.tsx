@@ -191,6 +191,13 @@ export function ReimbursementTable({
                     );
                     return;
                   }
+                  if (
+                    !confirm(
+                      "Are you sure you want to reject this reimbursement? This cannot be undone!",
+                    )
+                  ) {
+                    return;
+                  }
                   updateReimbursement(
                     selectedRowId || 0,
                     reimbursement.totalAmount,
@@ -231,7 +238,13 @@ export function ReimbursementTable({
           <SpookyButton
             onClick={async () => {
               if (selectedRowId !== null) {
-                deleteReimbursement(selectedRowId);
+                const userChoice = confirm(
+                  "Are you sure you want to delete this reimbursement and all associated purchases?",
+                );
+                if (userChoice) {
+                  deleteReimbursement(selectedRowId);
+                  toast.success("Reimbursement deleted successfully!");
+                }
               } else {
                 toast.error("No row selected!");
               }
