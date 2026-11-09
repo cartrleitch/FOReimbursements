@@ -10,10 +10,7 @@ import {
   InputSelect,
 } from "../UniversalComponents/UniversalComponents";
 import { toast } from "react-toastify";
-import {
-  fetchAppUserById,
-  updateAppUser,
-} from "../../HelperFunctions/applicationUserFunctions";
+import { useApplicationUserFunctions } from "../../HelperFunctions/applicationUserFunctions";
 
 const states: string[] = [
   "AL",
@@ -71,6 +68,7 @@ const states: string[] = [
 export default function AccountPage() {
   const [editMode, setEditMode] = React.useState(false);
   const auth = useAuth();
+  const { fetchAppUserById, updateAppUser } = useApplicationUserFunctions();
 
   const [state, setState] = React.useState<string>(auth?.user?.state || "");
   const nav = useNavigate();
@@ -115,7 +113,7 @@ export default function AccountPage() {
     }
     const updatedData = {
       id: auth?.user?.id,
-      emailAddress: auth?.user?.username,
+      emailAddress: auth?.user?.email,
       firstName,
       lastName,
       phoneNumber,
@@ -166,7 +164,7 @@ export default function AccountPage() {
             id="userName"
             type="text"
             label="Email/Username"
-            defaultValue={auth?.user?.username}
+            defaultValue={auth?.user?.email}
             readonly={true}
           />
           <InputField

@@ -1,82 +1,93 @@
+import { useState } from "react";
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export function fetchAppUsers() {
-  const API_URL = `${apiUrl}/api/ApplicationUser`;
+export function useApplicationUserFunctions() {
+  const [data, setData] = useState<any[]>([]);
 
-  return fetch(API_URL, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  })
-    .then((response) => {
+  async function fetchAppUsers() {
+    const API_URL = `${apiUrl}/api/ApplicationUser`;
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return response.json();
-    })
-    .catch((err) => {
+      const data = await response.json();
+      setData(data);
+    } catch (err) {
       console.error("Failed to fetch application users:", err);
-      throw err;
-    });
-}
+    }
+  }
 
-export function fetchAppUserById(userId: string) {
-  const API_URL = `${apiUrl}/api/ApplicationUser/${userId}`;
+  async function fetchAppUserById(userId: string) {
+    const API_URL = `${apiUrl}/api/ApplicationUser/${userId}`;
 
-  return fetch(API_URL, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
+    return fetch(API_URL, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     })
-    .catch((err) => {
-      console.error("Failed to fetch application user:", err);
-      throw err;
-    });
-}
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch((err) => {
+        console.error("Failed to fetch application user:", err);
+        throw err;
+      });
+  }
 
-export function updateAppUser(
-  userId: string,
-  updatedData: {
-    id?: string;
-    emailAddress?: string;
-    firstName?: string;
-    lastName?: string;
-    phoneNumber?: string;
-    address?: string;
-    city?: string;
-    state?: string;
-    zipCode?: string;
-  },
-) {
-  const API_URL = `${apiUrl}/api/ApplicationUser/${userId}`;
-  console.log("Updating application user with ID:", userId);
-  console.log("Updated data:", updatedData);
-  return fetch(API_URL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+  async function updateAppUser(
+    userId: string,
+    updatedData: {
+      id?: string;
+      emailAddress?: string;
+      firstName?: string;
+      lastName?: string;
+      phoneNumber?: string;
+      address?: string;
+      city?: string;
+      state?: string;
+      zipCode?: string;
     },
-    body: JSON.stringify(updatedData),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
+  ) {
+    const API_URL = `${apiUrl}/api/ApplicationUser/${userId}`;
+    console.log("Updating application user with ID:", userId);
+    console.log("Updated data:", updatedData);
+    return fetch(API_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(updatedData),
     })
-    .catch((err) => {
-      console.error("Failed to update application user:", err);
-      throw err;
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch((err) => {
+        console.error("Failed to update application user:", err);
+        throw err;
+      });
+  }
+  return {
+    data,
+    fetchAppUsers,
+    fetchAppUserById,
+    updateAppUser,
+  };
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using RS25.Data;
 using RS25.Models;
 
@@ -10,10 +11,13 @@ namespace RS25.Controllers
     [Route("api/[controller]")]
     public class ApplicationUserController : ControllerBase
     {
+
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppDbContext _context;
-        public ApplicationUserController(AppDbContext context)
+        public ApplicationUserController(AppDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         // GET: api/applicationuser
         [HttpGet(Name = "GetApplicationUsers")]
@@ -21,7 +25,27 @@ namespace RS25.Controllers
         public async Task<IActionResult> GetApplicationUsers()
         {
             var users = await _context.Users.ToListAsync();
-            return Ok(users);
+            var result = new List<object>();
+            
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                result.Add(new
+                {
+                    id = user.Id,
+                    email = user.EmailAddress,
+                    role = roles.FirstOrDefault() ?? "",
+                    firstName = user.FirstName,
+                    lastName = user.LastName,
+                    phoneNumber = user.PhoneNumber,
+                    address = user.Address,
+                    city = user.City,
+                    state = user.State,
+                    zipCode = user.ZipCode
+                });
+            }
+
+            return Ok(result);
         }
         // GET: api/applicationuser/{id}
         [HttpGet("{id}", Name = "GetApplicationUserById")]

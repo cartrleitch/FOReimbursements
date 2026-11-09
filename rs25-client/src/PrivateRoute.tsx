@@ -13,7 +13,7 @@ export const PrivateRoute: React.FC<PrivateRouteType> = ({
 }) => {
   const auth = useAuth();
 
-  if (!auth?.user || !auth.user.username) {
+  if (!auth?.user || !auth.user.email) {
     console.log("User not authenticated, redirecting to login");
     return <Navigate to="/Account/login" replace />;
   }

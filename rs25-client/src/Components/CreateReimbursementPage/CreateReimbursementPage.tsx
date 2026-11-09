@@ -82,14 +82,14 @@ export default function CreateReimbursementPage() {
 
         let yOffset = 20;
 
-        doc.text(`Submitted by: ${auth?.user?.username}`, 10, (yOffset += 10));
+        doc.text(`Submitted by: ${auth?.user?.email}`, 10, (yOffset += 10));
         doc.text(
           `User Phone Number: ${auth?.user?.phoneNumber}`,
           10,
           (yOffset += 10),
         );
         doc.text(
-          `Reimbursee: ${newReimResponse.vendorName || auth?.user?.username}`,
+          `Reimbursee: ${newReimResponse.vendorName || auth?.user?.email}`,
           10,
           (yOffset += 10),
         );

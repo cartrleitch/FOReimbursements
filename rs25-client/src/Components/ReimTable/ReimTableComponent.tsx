@@ -208,7 +208,7 @@ export function ReimbursementTable({
                     to: reimbursement.userName,
                     subject: "Reimbursement Request Rejected",
                     content: `Your reimbursement request has been rejected. Please contact the administrator for more details.\nRejected Reimbursement Details:\nRejected by: ${
-                      auth?.user?.username
+                      auth?.user?.email
                     }\nReimbursement Submission Date: ${
                       reimbursement.dateSubmitted.split("T")[0]
                     }\nTotal: ${reimbursement.totalAmount.toLocaleString(
@@ -279,7 +279,7 @@ export function ReimbursementTable({
                     to: reimbursement.userName,
                     subject: "Reimbursement Request Approved",
                     content: `Your reimbursement request has been approved. Please contact the administrator for more details or if you experience any issues.\nApproved Reimbursement Details:\nApproved by: ${
-                      auth?.user?.username
+                      auth?.user?.email
                     }\nReimbursement Submission Date: ${
                       reimbursement.dateSubmitted.split("T")[0]
                     }\nTotal: ${reimbursement.totalAmount.toLocaleString(

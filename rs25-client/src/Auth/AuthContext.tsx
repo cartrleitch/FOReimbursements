@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
-interface User {
+export interface User {
   id: string;
-  username: string;
+  email: string;
   role: string;
   firstName: string;
   lastName: string;

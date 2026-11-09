@@ -5,6 +5,7 @@ import "./App.css";
 import { useAuth } from "../Auth/AuthContext";
 import { PrivateRoute } from "../PrivateRoute";
 import { GlobalLoading } from "../Overlays/LoadingOverlay";
+import { AdminOnlyWrapper } from "../Components/UniversalComponents/UniversalComponents";
 import AboutPage from "../Components/AboutPage/AboutPage";
 import ErrorPage from "../Components/ErrorPage/ErrorPage";
 import MainPage from "../Components/MainPage/MainPage";
@@ -16,6 +17,7 @@ import AccessDeniedPage from "../Components/AccessDeniedPage/AccessDeniedPage";
 import AccountPage from "../Components/AccountPage/AccountPage";
 import DetailsPage from "../Components/DetailsPage/DetailsPage";
 import PasswordResetPage from "../Components/PasswordResetPage/PasswordResetPage";
+import UserDashboardPage from "../Components/UserDashboardPage/UserDashboardPage";
 import "../universalstyles.css";
 
 function App() {
@@ -34,7 +36,7 @@ function App() {
           </Link>
           <ul className="link-list">
             <li>
-              {auth?.user?.username !== undefined ? (
+              {auth?.user?.email !== undefined ? (
                 <Link className="link-list-item" to="/">
                   Dashboard
                 </Link>
@@ -43,12 +45,19 @@ function App() {
               )}
             </li>
             <li>
+              <AdminOnlyWrapper>
+                <Link className="link-list-item" to="/userdashboard">
+                  User Dashboard
+                </Link>
+              </AdminOnlyWrapper>
+            </li>
+            <li>
               <Link className="link-list-item" to="/about">
                 About
               </Link>
             </li>
             <li>
-              {auth?.user?.username !== undefined ? (
+              {auth?.user?.email !== undefined ? (
                 <Link className="link-list-item" to="/bugreport">
                   Bug Report
                 </Link>
@@ -57,9 +66,9 @@ function App() {
               )}
             </li>
             <li>
-              {auth?.user?.username !== undefined ? (
+              {auth?.user?.email !== undefined ? (
                 <Link className="link-list-item" to="/Account">
-                  {auth?.user?.username}
+                  {auth?.user?.email}
                 </Link>
               ) : (
                 <Link className="link-list-item" to="/Account/login">
@@ -76,6 +85,14 @@ function App() {
             element={
               <PrivateRoute allowedRoles={["Admin", "User"]}>
                 <MainPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/userdashboard"
+            element={
+              <PrivateRoute allowedRoles={["Admin"]}>
+                <UserDashboardPage />
               </PrivateRoute>
             }
           />
