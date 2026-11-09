@@ -342,7 +342,7 @@ const displayColumns: GridColDef[] = [
     hideable: true,
     renderCell: (params) => {
       const fileName = params.row.fileName;
-      const apiUrl = process.env.REACT_APP_API_URL;
+      const apiUrl = import.meta.env.VITE_API_URL;
       const downloadUrl = `${apiUrl}/api/receipt/download/${fileName}`;
       if (fileName) {
         return (

@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../Auth/AuthContext";
 import { createVendor } from "./vendorFunctions";
 export function useReimbursementFunctions() {
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const API_URL = `${apiUrl}/api/Reimbursement`;
   const API_URL_PURCHASE = `${apiUrl}/api/Purchase`;

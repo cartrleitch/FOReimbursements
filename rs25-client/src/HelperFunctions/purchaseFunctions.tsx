@@ -3,7 +3,7 @@ import { Purchase } from "../Components/PurTable/PurTableComponent";
 import React from "react";
 import { toast } from "react-toastify";
 export function usePurchaseFunctions() {
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const API_URL = `${apiUrl}/api/Purchase`;
   const API_URL_RECEIPT = `${apiUrl}/api/Receipt`;

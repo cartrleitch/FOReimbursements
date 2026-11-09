@@ -20,7 +20,7 @@ import {
 import { fetchVendorByID } from "../../HelperFunctions/vendorFunctions";
 
 const reimbursementReportEmail =
-  process.env.REACT_APP_REIMBURSEMENT_REPORT_EMAIL || "";
+  import.meta.env.VITE_REIMBURSEMENT_REPORT_EMAIL || "";
 
 export default function CreateReimbursementPage() {
   const {
