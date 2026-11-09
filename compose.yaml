@@ -8,23 +8,6 @@ services:
     env_file:
     - .env
 
-  server:
-    build: 
-      context: .
-      dockerfile: RS25/Dockerfile  
-    ports:
-      - "5000:8080"
-    volumes:
-      - ./RS25/Uploads:/app/Uploads
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file: 
-      - .env
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=churchdb;Username=postgres;Password=${POSTGRES_PASSWORD}
-
   db:
     image: postgres:15
     restart: always
@@ -41,6 +24,23 @@ services:
         interval: 5s
         timeout: 5s
         retries: 5
+
+  server:
+    build: 
+      context: .
+      dockerfile: RS25/Dockerfile  
+    ports:
+      - "5000:8080"
+    volumes:
+      - ./RS25/Uploads:/app/Uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: 
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=churchdb;Username=postgres;Password=${POSTGRES_PASSWORD}
 
 volumes:
   postgres_data:

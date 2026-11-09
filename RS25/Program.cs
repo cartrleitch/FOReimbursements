@@ -93,6 +93,8 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
+        var db = services.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();
         SeedRoles.Initialize(services).Wait();
     }
     catch (Exception ex)
