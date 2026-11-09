@@ -20,7 +20,7 @@ export function useReimbursementFunctions() {
 
   const auth = useAuth();
 
-    async function fetchReimbursements() {
+  async function fetchReimbursements() {
     setLoading(true);
     setError(null);
     console.log("fetchReimbursements triggered");
@@ -97,7 +97,7 @@ export function useReimbursementFunctions() {
   // POST a new reimbursement to the API
   async function createReimbursement() {
     const totalAmount = parseFloat(
-      (document.getElementById("totalamount") as HTMLInputElement).value
+      (document.getElementById("totalamount") as HTMLInputElement).value,
     );
 
     const dateSubmitted: string = new Date().toISOString();
@@ -231,7 +231,7 @@ export function useReimbursementFunctions() {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
-            }
+            },
           );
           if (!relatedReceipt.ok) {
             throw new Error(`HTTP error! status: ${relatedReceipt.status}`);
@@ -245,14 +245,14 @@ export function useReimbursementFunctions() {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
-            }
+            },
           );
           if (!responseRec.ok) {
             throw new Error(`HTTP error! status: ${responseRec.status}`);
           }
         } catch (err: any) {
           console.error(
-            `Failed to delete receipt for purchase ${purchase.id}: ${err.message}`
+            `Failed to delete receipt for purchase ${purchase.id}: ${err.message}`,
           );
         }
 
@@ -296,7 +296,7 @@ export function useReimbursementFunctions() {
     dateApproved?: Date,
     actionRequested?: string,
     userId?: string,
-    vendorId?: string
+    vendorId?: string,
   ) {
     try {
       setLoading(true);
@@ -315,7 +315,7 @@ export function useReimbursementFunctions() {
       console.log("Reimbursement data before filtering:", reimData);
       // Filter out undefined properties
       const filteredReimData = Object.fromEntries(
-        Object.entries(reimData).filter(([_, value]) => value !== undefined)
+        Object.entries(reimData).filter(([_, value]) => value !== undefined),
       );
       console.log("Updating reimbursement with data:", filteredReimData);
       const response = await fetch(`${API_URL}/${id}`, {

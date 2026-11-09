@@ -43,7 +43,7 @@ interface TableProps {
     dateApproved?: Date,
     actionRequested?: string,
     userId?: string,
-    vendorId?: string
+    vendorId?: string,
   ) => Promise<void>;
   fetchReimbursementById: (id: number) => Promise<Reimbursement>;
 }
@@ -183,7 +183,7 @@ export function ReimbursementTable({
                 (reimbursement) => {
                   if (reimbursement.status !== "Pending") {
                     toast.error(
-                      "Reimbursement has already been approved or rejected."
+                      "Reimbursement has already been approved or rejected.",
                     );
                     return;
                   }
@@ -198,7 +198,7 @@ export function ReimbursementTable({
                     new Date(),
                     reimbursement.actionRequested,
                     reimbursement.userId,
-                    reimbursement.vendorId
+                    reimbursement.vendorId,
                   );
                   const emailData = {
                     to: reimbursement.userName,
@@ -212,12 +212,12 @@ export function ReimbursementTable({
                       {
                         style: "currency",
                         currency: "USD",
-                      }
+                      },
                     )}\nAction Requested: ${reimbursement.actionRequested}`,
                   };
                   toast.success("Reimbursement rejected successfully!");
                   sendEmail(emailData);
-                }
+                },
               );
             }}
             content="Reject"
@@ -250,13 +250,13 @@ export function ReimbursementTable({
                 (reimbursement) => {
                   if (reimbursement.status !== "Pending") {
                     toast.error(
-                      "Reimbursement has already been approved or rejected."
+                      "Reimbursement has already been approved or rejected.",
                     );
                     return;
                   }
                   const paymentMethodSelected = (
                     document.getElementById(
-                      "paymentMethodSelect"
+                      "paymentMethodSelect",
                     ) as HTMLSelectElement
                   ).value;
                   updateReimbursement(
@@ -270,7 +270,7 @@ export function ReimbursementTable({
                     new Date(),
                     reimbursement.actionRequested,
                     reimbursement.userId,
-                    reimbursement.vendorId
+                    reimbursement.vendorId,
                   );
                   const emailData = {
                     to: reimbursement.userName,
@@ -284,13 +284,13 @@ export function ReimbursementTable({
                       {
                         style: "currency",
                         currency: "USD",
-                      }
+                      },
                     )}\nAction Requested: ${reimbursement.actionRequested}`,
                   };
                   sendEmail(emailData);
                   toast.success("Reimbursement approved successfully!");
                   setShowApprovalForm(false);
-                }
+                },
               );
             }}
             content="Approve Reimbursement"
@@ -309,7 +309,7 @@ export function ReimbursementTable({
           setSelectedRowPurchases([]);
           setRowSelectionModel(id);
           const selectedRowData = rows.find(
-            (row) => row.id === Array.from(id.ids)[0]
+            (row) => row.id === Array.from(id.ids)[0],
           );
           setSelectedRowId(selectedRowData?.id || null);
           if (selectedRowData) {

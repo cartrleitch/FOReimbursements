@@ -57,7 +57,7 @@ namespace RS25.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateApplicationUser([FromBody] ApplicationUser user)
         {
-            Console.WriteLine($"<---- Updating user with ID111111: {user.Id}");
+            Console.WriteLine($"<---- Updating user with ID: {user.Id}");
             Console.WriteLine($"<---- User data: {user}");
             Console.WriteLine($"<---- User data: {user.FirstName}");
             if (user == null)

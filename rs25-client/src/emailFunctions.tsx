@@ -13,7 +13,8 @@ export function useEmailFunctions() {
     attachmentFileName?: string;
   }) {
     try {
-      const { to, subject, content, attachment, attachmentFileName } = emailData;
+      const { to, subject, content, attachment, attachmentFileName } =
+        emailData;
 
       let attachmentB64 = null;
       if (attachment) {
@@ -35,7 +36,7 @@ export function useEmailFunctions() {
         content,
         attachmentB64,
         attachmentFileName,
-        };
+      };
 
       const response = await fetch(API_URL, {
         method: "POST",

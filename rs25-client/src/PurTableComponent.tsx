@@ -108,7 +108,7 @@ export function PurchaseTable({
       toast.error("Please fill in all purchase fields correctly.");
     } else if (hasReceipt === "receipt" && file == null) {
       toast.error(
-        "Please upload a receipt file or select 'Does not have receipt.'"
+        "Please upload a receipt file or select 'Does not have receipt.'",
       );
     } else if (hasReceipt === "noreceipt" && file != null) {
       toast.error("Please remove the receipt file or select 'Has receipt.'");
@@ -148,7 +148,7 @@ export function PurchaseTable({
   };
 
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
@@ -189,7 +189,7 @@ export function PurchaseTable({
           onRowSelectionModelChange={(id) => {
             setRowSelectionModel(id);
             const selectedRowData = rows.find(
-              (row) => row.id === Array.from(id.ids)[0]
+              (row) => row.id === Array.from(id.ids)[0],
             );
             setSelectedRowId(selectedRowData?.id || null);
           }}

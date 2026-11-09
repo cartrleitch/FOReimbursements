@@ -23,12 +23,18 @@ namespace RS25.Data
             }
             Env.Load();
 
+            var adminFirstName = Environment.GetEnvironmentVariable("ADMIN_SEED_FIRSTNAME")!;
+            var adminLastName = Environment.GetEnvironmentVariable("ADMIN_SEED_LASTNAME")!;
             var adminEmailDefault = Environment.GetEnvironmentVariable("ADMIN_SEED_EMAIL")!;
             var adminPasswordDefault = Environment.GetEnvironmentVariable("ADMIN_SEED_PASSWORD")!;
 
+            var userFirstName = Environment.GetEnvironmentVariable("USER_SEED_FIRSTNAME")!;
+            var userLastName = Environment.GetEnvironmentVariable("USER_SEED_LASTNAME")!;
             var userEmailDefault = Environment.GetEnvironmentVariable("USER_SEED_EMAIL")!;
             var userPasswordDefault = Environment.GetEnvironmentVariable("USER_SEED_PASSWORD")!;
 
+            var motherAccountFirstName = Environment.GetEnvironmentVariable("MOTHER_SEED_FIRSTNAME")!;
+            var motherAccountLastName = Environment.GetEnvironmentVariable("MOTHER_SEED_LASTNAME")!;
             var motherAccountEmail = Environment.GetEnvironmentVariable("MOTHER_SEED_EMAIL")!;
             var motherAccountPasswordDefault = Environment.GetEnvironmentVariable("MOTHER_SEED_PASSWORD")!;
 
@@ -42,8 +48,8 @@ namespace RS25.Data
                 // Create the admin user if it does not exist
                 adminUser = new ApplicationUser
                 {
-                    FirstName = "Carter",
-                    LastName = "Leitch",
+                    FirstName = adminFirstName,
+                    LastName = adminLastName,
                     EmailAddress = adminEmailDefault,
                     Email = adminEmailDefault,
                     UserName = adminEmailDefault
@@ -64,8 +70,8 @@ namespace RS25.Data
                 // Create the default user if it does not exist
                 defaultUser = new ApplicationUser
                 {
-                    FirstName = "Carter",
-                    LastName = "Leitch",
+                    FirstName = userFirstName,
+                    LastName = userLastName,
                     EmailAddress = userEmailDefault,
                     Email = userEmailDefault,
                     UserName = userEmailDefault
@@ -86,8 +92,8 @@ namespace RS25.Data
                 // Create the mother account user if it does not exist
                 motherAccountUser = new ApplicationUser
                 {
-                    FirstName = "Paget",
-                    LastName = "Leitch",
+                    FirstName = motherAccountFirstName,
+                    LastName = motherAccountLastName,
                     EmailAddress = motherAccountEmail,
                     Email = motherAccountEmail,
                     UserName = motherAccountEmail

@@ -8,8 +8,7 @@ export function usePurchaseFunctions() {
   const API_URL = `${apiUrl}/api/Purchase`;
   const API_URL_RECEIPT = `${apiUrl}/api/Receipt`;
 
-  // eslint-disable-next-line
-  const [data, setData] = useState<any[]>([]);
+  const [data] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasReceipt, setHasReceipt] = React.useState<string>("receipt");
