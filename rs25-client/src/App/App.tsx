@@ -15,6 +15,7 @@ import LogoutPage from "../Components/LogoutPage/LogoutPage";
 import AccessDeniedPage from "../Components/AccessDeniedPage/AccessDeniedPage";
 import AccountPage from "../Components/AccountPage/AccountPage";
 import DetailsPage from "../Components/DetailsPage/DetailsPage";
+import PasswordResetPage from "../Components/PasswordResetPage/PasswordResetPage";
 import "../universalstyles.css";
 
 function App() {
@@ -99,6 +100,10 @@ function App() {
           <Route path="/Account/login" element={<LoginPage />} />
           <Route path="/Account/logout" element={<LogoutPage />} />
           <Route path="/Account/accessdenied" element={<AccessDeniedPage />} />
+          <Route
+            path="/Account/passwordreset"
+            element={<PasswordResetPage />}
+          />
           <Route path="/details" element={<DetailsPage />} />
           <Route
             path="/Account"

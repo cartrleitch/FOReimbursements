@@ -83,6 +83,10 @@ export default function AccountPage() {
     toast.success("Successfully logged out!");
   };
 
+  const handleResetPassword = () => {
+    nav("/Account/passwordreset");
+  };
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const firstName = (document.getElementById("firstName") as HTMLInputElement)
@@ -230,6 +234,10 @@ export default function AccountPage() {
       <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Button onClick={() => setEditMode(!editMode)} content="Edit Account" />
+        <Button
+          onClick={() => handleResetPassword()}
+          content="Reset Password"
+        />
         <SpookyButton onClick={handleLogout} content="Logout" />
       </div>
     </div>

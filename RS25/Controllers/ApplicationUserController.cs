@@ -72,7 +72,6 @@ namespace RS25.Controllers
             {
                 return NotFound("User not found");
             }
-
             if (!string.IsNullOrEmpty(user.FirstName))
             {
                 existingUser.FirstName = user.FirstName;
