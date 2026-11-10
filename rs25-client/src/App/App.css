@@ -25,28 +25,6 @@ body {
   padding-top: 32px;
 }
 
-/*Navbar styles*/
-.nav-bar {
-  display: flex;
-  justify-content: space-between; /* Align items to the right */
-  align-items: center;
-  padding: 16px;
-  background-color: #282c34;
-  white-space: nowrap; /* Prevent text wrapping */
-  min-width: 200px; /* Minimum width for navbar */
-  position: fixed; /* Keep navbar at the top */
-  top: 0px;
-  height: 32px; /* Fixed height for navbar */
-  width: 100%; /* Full width */
-  z-index: 1000; /* Ensure navbar is above other content */
-}
-
-.nav-bar-image {
-  width: 110px; /* Fixed width for the image */
-  height: 48px; /* Fixed height for the image */
-  margin-right: 16px; /* Space between image and first link */
-}
-
 /*Link list styles*/
 .link-list {
   display: flex;
