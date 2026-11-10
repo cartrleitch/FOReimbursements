@@ -24,31 +24,3 @@ body {
   margin: 16px;
   padding-top: 32px;
 }
-
-/*Link list styles*/
-.link-list {
-  display: flex;
-  flex-direction: row;
-  list-style: none;
-  padding: 16px;
-  margin: 0;
-  margin-right: 32px; /* Space between navbar and right edge */
-  gap: 16px; /* Space between buttons/links */
-}
-
-.link-list-item {
-  color: #fff;
-  font-family: "Roboto", sans-serif;
-  font-weight: 500;
-  font-size: 18px;
-  padding: 8px; /* Minimum size for buttons/links */
-  text-decoration: none;
-  min-width: 80px; /* Minimum width for each item */
-  text-align: center;
-  white-space: nowrap; /* Prevent text wrapping on items */
-  box-sizing: border-box;
-  transition: color 0.3s ease;
-}
-.link-list-item:hover {
-  color: #497529;
-}

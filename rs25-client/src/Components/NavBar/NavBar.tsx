@@ -1,21 +1,33 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { useAuth } from "../../Auth/AuthContext";
 import { AdminOnlyWrapper } from "../UniversalComponents/UniversalComponents";
+import { useState } from "react";
 import "./NavBar.css";
 
 export default function NavBar() {
   const auth = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <nav className="nav-bar">
-      <Link to="/">
+      <Link to="/" onClick={() => setMenuOpen(false)}>
         <img
           src="/fiveoaksbanner.png"
           alt="Five Oaks Church"
           className="nav-bar-image"
         ></img>
       </Link>
-      <ul className="link-list">
+
+      <button
+        className="menu-toggle"
+        aria-label="Toggle menu"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        ☰
+      </button>
+
+      <ul className={`link-list ${menuOpen ? "open" : ""}`}>
         <li>
           {auth?.user?.email !== undefined ? (
             <Link className="link-list-item" to="/">
