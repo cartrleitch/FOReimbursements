@@ -12,6 +12,7 @@ import {
 import { toast } from "react-toastify";
 import { useLoading } from "../../Overlays/LoadingContext";
 import { usePurchaseFunctions } from "../../HelperFunctions/purchaseFunctions";
+import { downloadReceipt } from "../../HelperFunctions/receiptFunctions";
 import "./PurTableComponent.css";
 export interface Purchase {
   id: number;
@@ -28,31 +29,6 @@ interface TableProps {
   setRows: React.Dispatch<React.SetStateAction<Purchase[]>>;
   updateTotalAmount?: (rowsToUse: Purchase[]) => void;
 }
-
-const downloadReceipt = async (fileName: string) => {
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const downloadUrl = `${apiUrl}/api/receipt/download/${encodeURIComponent(fileName)}`;
-
-  try {
-    const response = await fetch(downloadUrl, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("Error downloading receipt:", error);
-  }
-};
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
