@@ -29,6 +29,31 @@ interface TableProps {
   updateTotalAmount?: (rowsToUse: Purchase[]) => void;
 }
 
+const downloadReceipt = async (fileName: string) => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const downloadUrl = `${apiUrl}/api/receipt/download/${encodeURIComponent(fileName)}`;
+
+  try {
+    const response = await fetch(downloadUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Error downloading receipt:", error);
+  }
+};
+
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
   { field: "accountp", headerName: "Account", flex: 1 },
@@ -74,9 +99,14 @@ const columns: GridColDef[] = [
     renderCell: (params) => {
       const file = params.row.file;
       if (file) {
-        const fileURL = URL.createObjectURL(file);
         return (
-          <a href={fileURL} download={file.name}>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              downloadReceipt(file.name);
+            }}
+          >
             Download
           </a>
         );
@@ -343,10 +373,15 @@ const displayColumns: GridColDef[] = [
     renderCell: (params) => {
       const fileName = params.row.fileName;
       const apiUrl = import.meta.env.VITE_API_URL;
-      const downloadUrl = `${apiUrl}/api/receipt/download/${fileName}`;
       if (fileName) {
         return (
-          <a href={downloadUrl} download={fileName}>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              downloadReceipt(fileName);
+            }}
+          >
             Download
           </a>
         );
