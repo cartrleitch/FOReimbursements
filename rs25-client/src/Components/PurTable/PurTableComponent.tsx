@@ -99,21 +99,24 @@ const columns: GridColDef[] = [
     renderCell: (params) => {
       const file = params.row.file;
       if (file) {
-          return (
-              <a href="#" onClick={(e) => {
-                  e.preventDefault();
-                  const fileURL = URL.createObjectURL(file);
-                  const link = document.createElement("a");
-                  link.href = fileURL;
-                  link.download = file.name;
-                  document.body.appendChild(link);
-                  link.click();
-                  link.remove();
-                  document.body.removeChild(link);
-                  URL.revokeObjectURL(fileURL);
-              }}>
-                  {file.name}
-              </a>
+        return (
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              const fileURL = URL.createObjectURL(file);
+              const link = document.createElement("a");
+              link.href = fileURL;
+              link.download = file.name;
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(fileURL);
+            }}
+          >
+            {file.name}
+          </a>
         );
       }
       return <span>No file</span>;
@@ -377,7 +380,6 @@ const displayColumns: GridColDef[] = [
     hideable: true,
     renderCell: (params) => {
       const fileName = params.row.fileName;
-      const apiUrl = import.meta.env.VITE_API_URL;
       if (fileName) {
         return (
           <a
@@ -387,7 +389,7 @@ const displayColumns: GridColDef[] = [
               downloadReceipt(fileName);
             }}
           >
-            Download
+            {fileName.match(/^(.{37})(.*$)/)[2]}
           </a>
         );
       }
