@@ -9,7 +9,7 @@ import {
   SmallerTitle,
   Title,
 } from "../UniversalComponents/UniversalComponents";
-
+import { downloadReceipt } from "../../HelperFunctions/receiptFunctions";
 export default function DetailsPage() {
   interface PurchaseDetails {
     id: number;
@@ -17,6 +17,7 @@ export default function DetailsPage() {
     description: string;
     amount: number;
     purchaseDate: string;
+    fileName: string;
     reimId: string;
   }
 
@@ -199,6 +200,16 @@ export default function DetailsPage() {
                     defaultValue={purchase.purchaseDate.split("T")[0]}
                     readonly={true}
                   />
+                  <a
+                    href="#"
+                    className="center-p"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      downloadReceipt(purchase.fileName);
+                    }}
+                  >
+                    Download Receipt
+                  </a>
                 </form>
               </div>
             ))

@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using RS25.Models;
-using System.Net;
-using System.Net.Mail;
+using RS25.Services;
 
 namespace RS25.Controllers
 {
@@ -10,60 +9,30 @@ namespace RS25.Controllers
     [Route("api/[controller]")]
     public class EmailController : ControllerBase
     {
-        private readonly IConfiguration _config;
+        private readonly IEmailService _emailService;
 
-        public EmailController(IConfiguration config)
+        public EmailController(IEmailService emailService)
         {
-            _config = config;
+            _emailService = emailService;
         }
 
         [HttpPost("send", Name = "SendEmail")]
         [Authorize]
         public async Task<IActionResult> SendEmail([FromBody] Email email)
         {
-            var smtpSettings = _config.GetSection("SmtpSettings");
-            if (email == null || string.IsNullOrEmpty(email.Subject) || string.IsNullOrEmpty(email.Content))
+            if (email == null || string.IsNullOrEmpty(email.To) || string.IsNullOrEmpty(email.Subject) || string.IsNullOrEmpty(email.Content))
             {
-                return BadRequest("Invalid email data");
+                return BadRequest("Email, subject, and content are required.");
             }
-            if (string.IsNullOrEmpty(smtpSettings["Host"]) || 
-                string.IsNullOrEmpty(smtpSettings["Port"]) || 
-                string.IsNullOrEmpty(smtpSettings["Username"]) || 
-                string.IsNullOrEmpty(smtpSettings["Password"]) || 
-                string.IsNullOrEmpty(smtpSettings["EnableSsl"]))
+            try
             {
-                return BadRequest("SMTP settings are not configured properly");
+                await _emailService.SendAsync(email.To, email.Subject, email.Content, isHtml: false, email.AttachmentB64, email.AttachmentFileName);
+                return Ok("Email sent successfully.");
             }
-            var host = smtpSettings["Host"]!;
-            var port = smtpSettings["Port"]!;
-            var username = smtpSettings["Username"]!;
-            var password = smtpSettings["Password"]!;
-            var to = email.To;
-            var enableSsl = smtpSettings["EnableSsl"]!;
-
-            using var client = new SmtpClient(host, int.Parse(port))
+            catch (Exception ex)
             {
-                Credentials = new NetworkCredential(username, password),
-                EnableSsl = bool.Parse(enableSsl)
-            };
-
-            var mail = new MailMessage             {
-                From = new MailAddress(username),
-                Subject = email.Subject,
-                Body = email.Content,
-                IsBodyHtml = false
-            };
-            mail.To.Add(new MailAddress(to));
-            if (!string.IsNullOrEmpty(email.AttachmentB64) && !string.IsNullOrEmpty(email.AttachmentFileName))
-            {
-                var attachmentBytes = Convert.FromBase64String(email.AttachmentB64);
-                var attachmentStream = new MemoryStream(attachmentBytes);
-                var attachment = new Attachment(attachmentStream, email.AttachmentFileName);
-                mail.Attachments.Add(attachment);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
-            await client.SendMailAsync(mail);
-            return Ok("Email sent successfully");
         }
     }
 }

@@ -7,17 +7,19 @@ import {
   SubmitButton,
   Button,
   SpookyButton,
+  InputSelect,
 } from "../UniversalComponents/UniversalComponents";
 import { toast } from "react-toastify";
-import {
-  fetchAppUserById,
-  updateAppUser,
-} from "../../HelperFunctions/applicationUserFunctions";
+import { useApplicationUserFunctions } from "../../HelperFunctions/applicationUserFunctions";
+import { states } from "../../StateCodes";
 
 export default function AccountPage() {
   const [editMode, setEditMode] = React.useState(false);
-  const nav = useNavigate();
   const auth = useAuth();
+  const { fetchAppUserById, updateAppUser } = useApplicationUserFunctions();
+
+  const [state, setState] = React.useState<string>(auth?.user?.state || "");
+  const nav = useNavigate();
 
   const handleLogout = () => {
     auth?.logout();
@@ -25,6 +27,10 @@ export default function AccountPage() {
       nav("/Account/logout");
     }, 0);
     toast.success("Successfully logged out!");
+  };
+
+  const handleResetPassword = () => {
+    nav("/Account/passwordreset");
   };
 
   const handleSubmit = async (e: any) => {
@@ -39,7 +45,6 @@ export default function AccountPage() {
     const address = (document.getElementById("address") as HTMLInputElement)
       .value;
     const city = (document.getElementById("city") as HTMLInputElement).value;
-    const state = (document.getElementById("state") as HTMLInputElement).value;
     const zipCode = (document.getElementById("zipCode") as HTMLInputElement)
       .value;
     if (
@@ -56,7 +61,7 @@ export default function AccountPage() {
     }
     const updatedData = {
       id: auth?.user?.id,
-      emailAddress: auth?.user?.username,
+      emailAddress: auth?.user?.email,
       firstName,
       lastName,
       phoneNumber,
@@ -107,7 +112,7 @@ export default function AccountPage() {
             id="userName"
             type="text"
             label="Email/Username"
-            defaultValue={auth?.user?.username}
+            defaultValue={auth?.user?.email}
             readonly={true}
           />
           <InputField
@@ -152,12 +157,13 @@ export default function AccountPage() {
             defaultValue={auth?.user?.city}
             readonly={!editMode}
           />
-          <InputField
+          <InputSelect
             id="state"
-            type="text"
             label="State"
-            defaultValue={auth?.user?.state}
             readonly={!editMode}
+            options={states}
+            value={state}
+            onChange={(e) => setState(e.target.value)}
           />
           <InputField
             id="zipCode"
@@ -174,6 +180,10 @@ export default function AccountPage() {
       <br />
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Button onClick={() => setEditMode(!editMode)} content="Edit Account" />
+        <Button
+          onClick={() => handleResetPassword()}
+          content="Reset Password"
+        />
         <SpookyButton onClick={handleLogout} content="Logout" />
       </div>
     </div>

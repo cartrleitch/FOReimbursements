@@ -82,14 +82,14 @@ export default function CreateReimbursementPage() {
 
         let yOffset = 20;
 
-        doc.text(`Submitted by: ${auth?.user?.username}`, 10, (yOffset += 10));
+        doc.text(`Submitted by: ${auth?.user?.email}`, 10, (yOffset += 10));
         doc.text(
           `User Phone Number: ${auth?.user?.phoneNumber}`,
           10,
           (yOffset += 10),
         );
         doc.text(
-          `Reimbursee: ${newReimResponse.vendorName || auth?.user?.username}`,
+          `Reimbursee: ${newReimResponse.vendorName || auth?.user?.email}`,
           10,
           (yOffset += 10),
         );
@@ -287,7 +287,7 @@ export default function CreateReimbursementPage() {
           label="Total Amount"
           step="0.01"
           min="0"
-          value={totalAmount.toString()}
+          value={totalAmount.toFixed(2)}
           readonly={true}
         />
         <div className="pur-table-container">

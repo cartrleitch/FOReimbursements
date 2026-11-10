@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RS25.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DotNetEnv;
-
+using RS25.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +29,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => { options.User.Requ
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

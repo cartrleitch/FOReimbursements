@@ -12,6 +12,7 @@ import {
 import { toast } from "react-toastify";
 import { useLoading } from "../../Overlays/LoadingContext";
 import { usePurchaseFunctions } from "../../HelperFunctions/purchaseFunctions";
+import { downloadReceipt } from "../../HelperFunctions/receiptFunctions";
 import "./PurTableComponent.css";
 export interface Purchase {
   id: number;
@@ -74,10 +75,23 @@ const columns: GridColDef[] = [
     renderCell: (params) => {
       const file = params.row.file;
       if (file) {
-        const fileURL = URL.createObjectURL(file);
         return (
-          <a href={fileURL} download={file.name}>
-            Download
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              const fileURL = URL.createObjectURL(file);
+              const link = document.createElement("a");
+              link.href = fileURL;
+              link.download = file.name;
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(fileURL);
+            }}
+          >
+            {file.name}
           </a>
         );
       }
@@ -342,12 +356,16 @@ const displayColumns: GridColDef[] = [
     hideable: true,
     renderCell: (params) => {
       const fileName = params.row.fileName;
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const downloadUrl = `${apiUrl}/api/receipt/download/${fileName}`;
       if (fileName) {
         return (
-          <a href={downloadUrl} download={fileName}>
-            Download
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              downloadReceipt(fileName);
+            }}
+          >
+            {fileName.match(/^(.{37})(.*$)/)[2]}
           </a>
         );
       }

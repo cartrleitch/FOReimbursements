@@ -190,12 +190,14 @@ export function InputSelect({
   label,
   onChange,
   value,
+  readonly = false,
 }: {
   id: string;
   options: string[];
   label: string;
   onChange?: (e: any) => void;
   value?: string;
+  readonly?: boolean;
 }) {
   return (
     <div>
@@ -205,6 +207,8 @@ export function InputSelect({
         className="normal-input"
         onChange={onChange}
         value={value}
+        disabled={readonly}
+        inert={readonly}
       >
         <option disabled value="">
           -- Select an option --

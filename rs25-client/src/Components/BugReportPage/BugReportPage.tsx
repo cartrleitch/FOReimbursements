@@ -20,7 +20,7 @@ export default function BugReportPage() {
       document.getElementById("description") as HTMLTextAreaElement
     ).value;
 
-    const username = auth?.user?.username;
+    const username = auth?.user?.email;
     var bodyContent = "";
     if (username) {
       bodyContent =

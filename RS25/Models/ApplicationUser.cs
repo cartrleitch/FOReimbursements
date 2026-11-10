@@ -11,4 +11,6 @@ public class ApplicationUser : IdentityUser
 	public string? City { get; set; }
 	public string? State { get; set; }
 	public string? ZipCode { get; set; }
+	public bool IsDeleted { get; set; } = false;
+	public DateTime? DeletedAt { get; set; }
 }

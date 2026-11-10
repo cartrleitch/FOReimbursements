@@ -191,6 +191,13 @@ export function ReimbursementTable({
                     );
                     return;
                   }
+                  if (
+                    !confirm(
+                      "Are you sure you want to reject this reimbursement? This cannot be undone!",
+                    )
+                  ) {
+                    return;
+                  }
                   updateReimbursement(
                     selectedRowId || 0,
                     reimbursement.totalAmount,
@@ -208,7 +215,7 @@ export function ReimbursementTable({
                     to: reimbursement.userName,
                     subject: "Reimbursement Request Rejected",
                     content: `Your reimbursement request has been rejected. Please contact the administrator for more details.\nRejected Reimbursement Details:\nRejected by: ${
-                      auth?.user?.username
+                      auth?.user?.email
                     }\nReimbursement Submission Date: ${
                       reimbursement.dateSubmitted.split("T")[0]
                     }\nTotal: ${reimbursement.totalAmount.toLocaleString(
@@ -231,7 +238,13 @@ export function ReimbursementTable({
           <SpookyButton
             onClick={async () => {
               if (selectedRowId !== null) {
-                deleteReimbursement(selectedRowId);
+                const userChoice = confirm(
+                  "Are you sure you want to delete this reimbursement and all associated purchases?",
+                );
+                if (userChoice) {
+                  deleteReimbursement(selectedRowId);
+                  toast.success("Reimbursement deleted successfully!");
+                }
               } else {
                 toast.error("No row selected!");
               }
@@ -279,7 +292,7 @@ export function ReimbursementTable({
                     to: reimbursement.userName,
                     subject: "Reimbursement Request Approved",
                     content: `Your reimbursement request has been approved. Please contact the administrator for more details or if you experience any issues.\nApproved Reimbursement Details:\nApproved by: ${
-                      auth?.user?.username
+                      auth?.user?.email
                     }\nReimbursement Submission Date: ${
                       reimbursement.dateSubmitted.split("T")[0]
                     }\nTotal: ${reimbursement.totalAmount.toLocaleString(
