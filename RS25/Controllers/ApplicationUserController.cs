@@ -73,6 +73,28 @@ namespace RS25.Controllers
                 return BadRequest("User data is null");
             }
 
+            // If account with the same email already exists, return an error, unless it was previously deleted, in which case, it is restored
+            var accountExists = await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.EmailAddress == user.EmailAddress);
+            Console.WriteLine($"<------------ Account exists: {accountExists} <------------");
+            if (accountExists != null)
+            {
+                if (accountExists.IsDeleted)
+                {
+                    accountExists.IsDeleted = false;
+                    accountExists.DeletedAt = null;
+                    var updateResult = await _userManager.UpdateAsync(accountExists);
+                    if (!updateResult.Succeeded)
+                    {
+                        return BadRequest(updateResult.Errors.Select(e => e.Description).ToList());
+                    }
+                    return Ok("User account restored successfully");
+                }
+                else
+                {
+                    return BadRequest("User with this email already exists");
+                }
+            }
+
             // Creates user with any data client might send for it (automatically sets ID, etc., because of model)
             var newUser = new ApplicationUser
             {

@@ -3,11 +3,13 @@ import { InputField, InputSelect, SubmitButton, Title } from "../UniversalCompon
 import { states } from "../../StateCodes";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 export default function CreateAccountPage() {
 	const { createAppUser } = useApplicationUserFunctions();
-	const [state, setState] = useState<string>("");
+    const [state, setState] = useState<string>("");
+    const nav = useNavigate();
 
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+	function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
 		const email = (document.getElementById("email") as HTMLInputElement).value;
         const firstName = (document.getElementById("firstName") as HTMLInputElement)
@@ -40,6 +42,7 @@ export default function CreateAccountPage() {
         try {
             createAppUser(newAccountData);
             toast.success("Account created successfully!");
+            nav("/userdashboard");
         } catch (error) {
             toast.error("Failed to create account.");
         }
