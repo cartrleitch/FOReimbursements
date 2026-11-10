@@ -99,16 +99,21 @@ const columns: GridColDef[] = [
     renderCell: (params) => {
       const file = params.row.file;
       if (file) {
-        return (
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              downloadReceipt(file.name);
-            }}
-          >
-            Download
-          </a>
+          return (
+              <a href="#" onClick={(e) => {
+                  e.preventDefault();
+                  const fileURL = URL.createObjectURL(file);
+                  const link = document.createElement("a");
+                  link.href = fileURL;
+                  link.download = file.name;
+                  document.body.appendChild(link);
+                  link.click();
+                  link.remove();
+                  document.body.removeChild(link);
+                  URL.revokeObjectURL(fileURL);
+              }}>
+                  {file.name}
+              </a>
         );
       }
       return <span>No file</span>;
