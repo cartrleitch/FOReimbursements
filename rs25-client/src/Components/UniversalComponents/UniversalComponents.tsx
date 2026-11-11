@@ -267,7 +267,7 @@ export function InputRadio({
   onChange?: (e: any) => void;
 }) {
   return (
-    <div>
+    <div className="radio-container">
       <input
         type="radio"
         id={id}
@@ -276,7 +276,9 @@ export function InputRadio({
         defaultChecked={checked}
         onChange={onChange}
       />
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id} className="radio-label">
+        {label}
+      </label>
     </div>
   );
 }

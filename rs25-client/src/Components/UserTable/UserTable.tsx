@@ -32,6 +32,10 @@ export default function UserTable({ rows, onDelete }: TableProps) {
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>();
   const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
+  const gridColumns: GridColDef[] = columns.map((column) => ({
+    minWidth: 130,
+    ...column,
+  }));
 
   return (
     <div className="content">
@@ -62,7 +66,7 @@ export default function UserTable({ rows, onDelete }: TableProps) {
         </div>
         <DataGrid
           rows={rows}
-          columns={columns}
+          columns={gridColumns}
           columnVisibilityModel={{ id: false }}
           checkboxSelection
           disableMultipleRowSelection

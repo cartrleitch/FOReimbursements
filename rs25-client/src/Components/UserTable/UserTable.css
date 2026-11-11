@@ -14,3 +14,19 @@
   width: 100%;
   gap: 8px;
 }
+
+@media (max-width: 768px) {
+  .user-table {
+    width: 100%;
+    margin: auto;
+  }
+
+  .user-table-button-div {
+    display: flex;
+    justify-content: space-between;
+  }
+  .user-table-button-div > * {
+    flex: 1;
+    text-align: center;
+  }
+}

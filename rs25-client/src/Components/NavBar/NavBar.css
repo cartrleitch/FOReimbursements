@@ -1,0 +1,84 @@
+.nav-bar {
+  display: flex;
+  justify-content: space-between; /* Align items to the right */
+  align-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+  height: 64px;
+  background-color: #282c34;
+  white-space: nowrap; /* Prevent text wrapping */
+  min-width: 200px; /* Minimum width for navbar */
+  position: fixed; /* Keep navbar at the top */
+  top: 0px;
+  width: 100%; /* Full width */
+  z-index: 1000; /* Ensure navbar is above other content */
+}
+
+.nav-bar-image {
+  width: 110px; /* Fixed width for the image */
+  height: 48px; /* Fixed height for the image */
+  margin-right: 16px; /* Space between image and first link */
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.link-list {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  padding: 16px;
+  margin: 0;
+  margin-right: 32px; /* Space between navbar and right edge */
+  gap: 16px; /* Space between buttons/links */
+}
+
+.link-list-item {
+  color: #fff;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  padding: 8px; /* Minimum size for buttons/links */
+  text-decoration: none;
+  min-width: 80px; /* Minimum width for each item */
+  text-align: center;
+  white-space: nowrap; /* Prevent text wrapping on items */
+  box-sizing: border-box;
+  transition: color 0.3s ease;
+  text-overflow: ellipsis;
+}
+
+.link-list-item:hover {
+  color: #497529;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .link-list {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #282c34;
+    position: absolute;
+    top: 64px;
+    left: 0;
+  }
+
+  .link-list.open {
+    display: flex;
+  }
+
+  .link-list-item {
+    padding: 16px;
+    text-align: center;
+  }
+}

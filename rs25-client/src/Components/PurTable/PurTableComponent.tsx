@@ -117,6 +117,10 @@ export function PurchaseTable({
   const [file, setFile] = React.useState<File | null>(null);
   const { setLoading } = useLoading();
   const { getAISummary, hasReceipt, setHasReceipt } = usePurchaseFunctions();
+  const gridColumns: GridColDef[] = columns.map((column) => ({
+    minWidth: 130,
+    ...column,
+  }));
 
   const toBase64 = (file: File | null): Promise<string> => {
     if (!file) {
@@ -207,7 +211,7 @@ export function PurchaseTable({
       <div className="pur-table">
         <DataGrid
           rows={rows}
-          columns={columns}
+          columns={gridColumns}
           checkboxSelection
           disableMultipleRowSelection
           autoPageSize
@@ -374,11 +378,15 @@ const displayColumns: GridColDef[] = [
   },
 ];
 export function DisplayOnlyPurchaseTable({ rows }: DisplayOnlyProps) {
+  const gridColumns: GridColDef[] = displayColumns.map((column) => ({
+    minWidth: 130,
+    ...column,
+  }));
   return (
     <div className="pur-table">
       <DataGrid
         rows={rows}
-        columns={displayColumns}
+        columns={gridColumns}
         autoPageSize
         columnVisibilityModel={{ id: false }}
       />

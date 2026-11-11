@@ -12,7 +12,7 @@ import {
 import { toast } from "react-toastify";
 import { useApplicationUserFunctions } from "../../HelperFunctions/applicationUserFunctions";
 import { states } from "../../StateCodes";
-
+import "./AccountPage.css";
 export default function AccountPage() {
   const [editMode, setEditMode] = React.useState(false);
   const auth = useAuth();
@@ -178,7 +178,7 @@ export default function AccountPage() {
         </form>
       </div>
       <br />
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div className="button-container">
         <Button onClick={() => setEditMode(!editMode)} content="Edit Account" />
         <Button
           onClick={() => handleResetPassword()}
