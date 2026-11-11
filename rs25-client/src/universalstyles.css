@@ -28,3 +28,11 @@
   height: auto;
   overflow: visible;
 }
+
+@media (max-width: 768px) {
+  .normal-form,
+  .center-p,
+  .radio-input-container {
+    width: 95%;
+  }
+}

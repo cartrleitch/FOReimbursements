@@ -52,7 +52,7 @@ interface TableProps {
   fetchReimbursementById: (id: number) => Promise<Reimbursement>;
 }
 
-const columnns: GridColDef[] = [
+const columns: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1, hideable: false },
   { field: "vendorId", headerName: "VendorId", flex: 1, hideable: false },
   { field: "userId", headerName: "UserId", flex: 1, hideable: false },
@@ -132,6 +132,10 @@ export function ReimbursementTable({
   };
   const auth = useAuth();
   const { sendEmail } = useEmailFunctions();
+  const gridColumns: GridColDef[] = columns.map((column) => ({
+    minWidth: 130,
+    ...column,
+  }));
 
   function DetailsButton() {
     const navigate = useNavigate();
@@ -313,28 +317,30 @@ export function ReimbursementTable({
           />
         </div>
       )}
-      <DataGrid
-        rows={rows}
-        columns={columnns}
-        checkboxSelection
-        disableMultipleRowSelection
-        autoPageSize
-        columnVisibilityModel={{ id: false, vendorId: false, userId: false }}
-        getRowId={(row) => row.id}
-        onRowSelectionModelChange={(id) => {
-          setSelectedRowPurchases([]);
-          setRowSelectionModel(id);
-          const selectedRowData = rows.find(
-            (row) => row.id === Array.from(id.ids)[0],
-          );
-          setSelectedRowId(selectedRowData?.id || null);
-          if (selectedRowData) {
-            getRelatedPurchases(selectedRowData.id);
-          }
-        }}
-        rowSelectionModel={rowSelectionModel}
-      />
-      <DisplayOnlyPurchaseTable rows={selectedRowPurchases} />
+      <div className="reim-grid">
+        <DataGrid
+          rows={rows}
+          columns={gridColumns}
+          checkboxSelection
+          disableMultipleRowSelection
+          autoPageSize
+          columnVisibilityModel={{ id: false, vendorId: false, userId: false }}
+          getRowId={(row) => row.id}
+          onRowSelectionModelChange={(id) => {
+            setSelectedRowPurchases([]);
+            setRowSelectionModel(id);
+            const selectedRowData = rows.find(
+              (row) => row.id === Array.from(id.ids)[0],
+            );
+            setSelectedRowId(selectedRowData?.id || null);
+            if (selectedRowData) {
+              getRelatedPurchases(selectedRowData.id);
+            }
+          }}
+          rowSelectionModel={rowSelectionModel}
+        />
+        <DisplayOnlyPurchaseTable rows={selectedRowPurchases} />
+      </div>
       <br />
     </div>
   );
